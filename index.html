@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Body Composition Analyzer (MOH CPG 2023)</title>
+    <title>AraShift Body Analyzer</title>
     <style>
         /* --- STANDARD WEB STYLING (Screen View) --- */
         :root { --primary: #2563eb; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
@@ -14,7 +14,7 @@
         #login-screen { text-align: center; margin-top: 100px; }
         .login-btn { padding: 15px 30px; font-size: 1.2rem; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; }
         header { text-align: center; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header-content { flex-grow: 1; }
+        .header-content { flex-grow: 1; text-align: center; }
         .logout-btn { background: none; border: 1px solid #ccc; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; }
 
         /* Main Grid & Cards */
@@ -61,7 +61,7 @@
             #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, header p { display: none !important; }
             
             /* HEADER & FOOTER */
-            header h1 { font-size: 18pt; margin: 0 0 15px 0; color: #000; text-align: left; }
+            header h1 { font-size: 24pt; margin: 0 0 15px 0; color: #000; text-align: left; }
             #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
 
             /* RESET INPUT STYLES FOR PRINT */
@@ -72,10 +72,9 @@
             textarea { display: block; height: 100%; }
 
             /* --- COMPACT GRID LAYOUT --- */
-            /* Define the main container as a grid for print */
             #app-screen {
                 display: grid !important;
-                grid-template-columns: 1fr 1fr; /* Split middle section */
+                grid-template-columns: 1fr 1fr;
                 gap: 15px;
                 grid-template-areas:
                     "header header"
@@ -91,16 +90,16 @@
             .grid-container {
                 grid-area: top-params;
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 columns for compact data */
+                grid-template-columns: 1fr 1fr 1fr 1fr;
                 gap: 10px;
-                border: 2px solid #444; /* Thick gray/black border like reference */
+                border: 2px solid #444;
                 padding: 15px;
                 background: #fff;
             }
             .grid-container .card {
                 box-shadow: none; border: none; padding: 0; background: none;
             }
-            .grid-container h3 { display: none; } /* Hide section headers in top box to save space */
+            .grid-container h3 { display: none; }
             .form-group { margin-bottom: 5px; }
             label { font-size: 8pt; text-transform: uppercase; color: #666; margin-bottom: 0; }
             input { font-size: 11pt; }
@@ -112,7 +111,7 @@
                 background: #fff !important;
                 padding: 15px;
                 margin: 0 !important;
-                height: 100%; /* Fill height */
+                height: 100%;
             }
             #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
             #analysisOutput p { margin: 5px 0; border-bottom: 1px dotted #ccc; padding-bottom: 2px; }
@@ -134,7 +133,7 @@
                 background: #fff;
                 box-shadow: none;
                 margin: 0 !important;
-                height: 100%; /* Fill height */
+                height: 100%;
                 display: flex; flex-direction: column;
             }
             #doctor-inputs-card h3 { 
@@ -165,8 +164,8 @@
     <div id="app-screen" class="main-container hidden">
         <header>
             <div class="header-content">
-                <h1>🩺 Body Composition Report</h1>
-                <p>MOH CPG 2023 Guidelines Edition</p>
+                <h1>AraShift</h1>
+                <p>Medical Body Composition Analysis</p>
             </div>
             <button id="logoutBtn" class="logout-btn">Logout</button>
         </header>
@@ -174,11 +173,12 @@
         <div class="grid-container">
             <div class="card">
                 <h3>Profile</h3>
+                <div class="form-group"><label>Name (Optional)</label><input type="text" id="pName" placeholder="Patient Name"></div>
                 <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
             </div>
             <div class="card">
                 <h3>Bodyshape</h3>
+                <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
                 <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="175"></div>
                 <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
             </div>
@@ -187,17 +187,17 @@
                 <h3>Composition</h3>
                 <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist" placeholder="95"></div>
                 <div class="form-group"><label>BMI</label><input type="number" step="0.1" id="bmi" placeholder="28.5"></div>
+                <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="11"></div>
             </div>
              <div class="card">
                 <h3>Analysis Data</h3>
-                <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="11"></div>
                 <div class="form-group"><label>Body Fat %</label><input type="number" step="0.1" id="fat" placeholder="32.0"></div>
                 <div class="form-group"><label>Muscle %</label><input type="number" step="0.1" id="muscle" placeholder="28.5"></div>
             </div>
         </div>
 
         <div id="resultArea" class="results hidden">
-            <h2>Analysis Summary (CPG 2023)</h2>
+            <h2>Analysis Summary (MOH CPG 2023)</h2>
             <div id="analysisOutput"></div>
             
             <div class="auto-plan">
@@ -210,11 +210,11 @@
             <h3>Clinical Assessment</h3>
             <div class="form-group">
                 <label>Doctor's Diagnosis / Remarks</label>
-                <textarea id="docRemarks" placeholder="Enter specific diagnosis here..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
+                <textarea id="docRemarks" placeholder="Enter diagnosis here..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
             </div>
             <div class="form-group" style="margin-bottom:0;">
                 <label>Management Plan</label>
-                <textarea id="docPlan" placeholder="Additional notes..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
+                <textarea id="docPlan" placeholder="Plan notes..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
             </div>
         </div>
 
@@ -261,6 +261,7 @@
         const docInputsCard = document.getElementById('doctor-inputs-card');
         
         const inputs = {
+            pName: document.getElementById('pName'),
             gender: document.getElementById('gender'),
             age: document.getElementById('age'),
             height: document.getElementById('height'),
@@ -348,6 +349,22 @@
                  results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${color('Normal', 'good')}</p>`;
             }
 
+            // 4. Skeletal Muscle Analysis (Added Logic)
+            let muscleStatus = "";
+            if (data.gender === 'male') {
+                if (data.muscle < 32.9) muscleStatus = color('Low', 'mid');
+                else if (data.muscle <= 35.7) muscleStatus = color('Normal', 'good');
+                else if (data.muscle <= 37.3) muscleStatus = color('High', 'good');
+                else muscleStatus = color('Very High', 'good');
+            } else { // female
+                if (data.muscle < 25.9) muscleStatus = color('Low', 'mid');
+                else if (data.muscle <= 27.9) muscleStatus = color('Normal', 'good');
+                else if (data.muscle <= 29.0) muscleStatus = color('High', 'good');
+                else muscleStatus = color('Very High', 'good');
+            }
+            results += `<p><strong>Muscle:</strong> ${data.muscle}% → ${muscleStatus}</p>`;
+
+
             // --- CPG SUGGESTIONS ---
             if (data.bmi >= 23) {
                 const loss5 = (data.weight * 0.05).toFixed(1);
@@ -377,6 +394,7 @@
 
             const data = {
                 uid: currentUser.uid,
+                pName: inputs.pName.value,
                 gender: inputs.gender.value,
                 age: inputs.age.value,
                 height: inputs.height.value,
@@ -447,11 +465,12 @@
                 snapshot.forEach((docSnap) => {
                     const d = docSnap.data();
                     const dateStr = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Just now";
+                    const pNameDisplay = d.pName ? `<strong>${d.pName}</strong> - ` : "";
                     const li = document.createElement('li');
                     li.innerHTML = `
                         <button class="delete-btn" data-id="${docSnap.id}">X</button>
                         <div style="font-size: 0.8em; color: #666;">${dateStr}</div>
-                        <strong>${d.gender.toUpperCase()}, ${d.age} yrs, BMI: ${d.bmi}</strong><br>
+                        ${pNameDisplay} ${d.gender.toUpperCase()}, ${d.age} yrs, BMI: ${d.bmi}<br>
                         <small>${d.remarks ? "Has Remarks" : "No remarks"}</small>
                     `;
                     list.appendChild(li);
