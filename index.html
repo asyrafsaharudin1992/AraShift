@@ -6,10 +6,10 @@
     <title>AraShift Body Analyzer</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- STANDARD STYLING --- */
+        /* --- STANDARD STYLING (Screen) --- */
         :root { --primary: #2563eb; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .main-container { max-width: 900px; margin: 0 auto; } /* Widened slightly for new column */
+        .main-container { max-width: 900px; margin: 0 auto; }
         
         #login-screen { text-align: center; margin-top: 100px; }
         .login-btn { padding: 15px 30px; font-size: 1.2rem; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; }
@@ -20,7 +20,7 @@
         .header-content p { margin: 5px 0 0 0; color: #666; font-weight: 500; }
         .logout-btn { background: none; border: 1px solid #ccc; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; }
 
-        /* Grid Update: 3 Columns for Desktop to fit Comorbidities */
+        /* Screen Grid */
         .grid-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         @media (max-width: 800px) { .grid-container { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
@@ -32,8 +32,9 @@
         label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
         input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
         textarea { resize: vertical; min-height: 80px; }
+        /* Add a subtle background to BMI to indicate it's calculated */
+        #bmi { background-color: #f8fafc; }
 
-        /* Checkbox Styling */
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
         .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
         .checkbox-item input { width: auto; margin: 0; }
@@ -73,94 +74,171 @@
         
         .print-only-text { display: none; }
 
-        /* --- PRINT STYLING --- */
+        /* --- PROFESSIONAL PRINT STYLING (A4 Clean Break) --- */
         @media print {
-            body { background: white; padding: 10px; font-size: 10pt; color: #000; }
-            .main-container { max-width: 100%; margin: 0; }
-            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box, .toggle-btn { display: none !important; }
-            
-            header { display: block; text-align: center; border-bottom: 2px solid #444; padding-bottom: 10px; margin-bottom: 20px; }
-            .header-content h1 { font-size: 22pt; color: #000; }
-            .header-content p { font-size: 12pt; color: #444; font-weight: bold; }
+            @page {
+                size: A4;
+                margin: 15mm; /* Standard A4 Margin */
+            }
 
-            #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
+            body { 
+                background: white; 
+                padding: 0; 
+                margin: 0; 
+                font-size: 10pt; 
+                color: #000; 
+                width: 100%;
+            }
+
+            .main-container { 
+                width: 100%; 
+                max-width: none; 
+                margin: 0; 
+                box-shadow: none;
+            }
+
+            /* Hide Web Elements */
+            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box, .toggle-btn { 
+                display: none !important; 
+            }
             
-            input, select { border: none; padding: 0; background: transparent; width: auto; font-weight: bold; font-family: inherit; color: #000; font-size: 11pt; }
-            select { appearance: none; padding-right: 0; }
+            /* --- HEADER --- */
+            header { 
+                display: block; 
+                text-align: center; 
+                border-bottom: 2px solid #000; 
+                padding-bottom: 15px; 
+                margin-bottom: 20px; 
+            }
+            .header-content h1 { font-size: 24pt; color: #000; margin-bottom: 5px; }
+            .header-content p { font-size: 12pt; color: #333; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+            /* --- INPUT CLEANUP --- */
+            input, select { 
+                border: none; 
+                padding: 0; 
+                background: transparent; 
+                width: auto; 
+                font-weight: bold; 
+                font-family: inherit; 
+                color: #000; 
+                font-size: 10pt;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
             
+            /* Textarea Swap for Print */
             textarea { display: none !important; }
-            .print-only-text { display: block; white-space: pre-wrap; font-family: inherit; border: 1px solid #ccc; padding: 10px; min-height: 100px; }
+            .print-only-text { 
+                display: block; 
+                white-space: pre-wrap; 
+                font-family: inherit; 
+                font-size: 10pt;
+                line-height: 1.4;
+                color: #000;
+                /* Allow long text to break pages cleanly */
+                page-break-inside: auto; 
+            }
 
-            /* LAYOUT GRID FOR PRINT */
-            #app-screen {
-                display: grid !important;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-                grid-template-areas:
-                    "header header"
-                    "top-params top-params"
-                    "mid-analysis mid-analysis"
-                    "mid-doctor mid-doctor"
-                    "footer footer";
-                align-items: start;
-            }
-            header { grid-area: header; }
+            /* --- LAYOUT STRUCTURE (Clean Breaks) --- */
             
-            /* Biometric Details + Comorbidities */
+            /* 1. Biometrics Section - Compact Grid */
             .grid-container {
-                grid-area: top-params;
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 cols for dense data */
+                grid-template-columns: repeat(5, 1fr); /* 5 Columns for density */
                 gap: 10px;
+                margin-bottom: 20px;
+                page-break-inside: avoid; /* Keep bio data together */
             }
-            /* Combine Cards for Print */
+            
+            /* Rounded Grey Boxes */
             .grid-container .card {
                 background-color: #f3f4f6 !important;
-                border-radius: 12px !important;
+                border-radius: 8px !important;
                 border: none !important;
                 box-shadow: none !important;
-                padding: 10px 15px;
+                padding: 8px 12px;
                 -webkit-print-color-adjust: exact;
+                page-break-inside: avoid;
             }
-            /* Specifically style the Comorbidities card for print */
-            .comorb-card {
-                grid-column: span 5; /* Full width for comorb list */
-                display: flex;
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            .comorb-card .checkbox-item { margin-right: 15px; }
             
-            .grid-container h3 { font-size: 9pt; text-transform: uppercase; color: #666; margin-top: 0; border: none; padding-bottom: 5px; }
-            .form-group { margin-bottom: 0; }
-            label { font-size: 8pt; color: #555; margin-bottom: 0; }
-            
+            /* Specific Card Spans */
+            /* Identity & Profile take small space */
+            .grid-container .card:nth-child(1) { grid-column: span 1; }
+            .grid-container .card:nth-child(2) { grid-column: span 1; }
+            .grid-container .card:nth-child(3) { grid-column: span 1; }
+            .grid-container .card:nth-child(4) { grid-column: span 2; } /* Analysis is wider */
+            .comorb-card { grid-column: span 5; } /* Full width for Risks */
+
+            .grid-container h3 { font-size: 9pt; text-transform: uppercase; color: #555; margin: 0 0 5px 0; border: none; }
+            .form-group { margin-bottom: 2px; }
+            label { font-size: 7pt; color: #666; margin-bottom: 0; text-transform: uppercase; }
+
+            /* 2. Results Section */
             #resultArea {
-                grid-area: mid-analysis;
-                border: 2px solid #444 !important;
+                border: 2px solid #000 !important;
                 background: #fff !important;
                 padding: 15px;
-                margin: 0 !important;
+                margin-bottom: 20px;
+                border-radius: 8px;
+                page-break-inside: avoid; /* Prevent splitting result summary */
             }
-            #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
+            #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 1px solid #000; padding-bottom: 5px; }
             
             .chart-wrapper.hidden { display: none !important; }
-            .chart-wrapper { border: 1px solid #ccc; height: 250px; page-break-inside: avoid; }
-            .chart-container { height: 240px; }
-
-            .auto-plan { border: none; border-top: 1px solid #444; padding: 10px 0 0 0; margin-top: 10px; background: none; }
-            
-            #doctor-inputs-card {
-                grid-area: mid-doctor;
-                border: 2px solid #444 !important;
-                padding: 15px;
-                background: #fff;
-                box-shadow: none;
-                margin: 0 !important;
+            .chart-wrapper { 
+                border: 1px solid #ccc; 
+                height: 250px; 
+                margin: 10px 0;
+                page-break-inside: avoid; 
             }
-            #doctor-inputs-card h3 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
             
-            #print-footer { grid-area: footer; }
+            .auto-plan { border: none; border-top: 1px dashed #000; padding-top: 10px; margin-top: 10px; }
+            .auto-plan h4 { color: #000; text-decoration: underline; }
+
+            /* 3. Clinical Assessment (Full Width, Page Break Friendly) */
+            #doctor-inputs-card {
+                border: 2px solid #000 !important;
+                background: #fff;
+                padding: 15px;
+                border-radius: 8px;
+                margin-top: 0;
+                box-shadow: none;
+                /* Allow breaking inside if text is very long */
+                page-break-inside: auto; 
+            }
+            #doctor-inputs-card h3 { 
+                font-size: 14pt; margin-top: 0; color: #000; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px;
+            }
+            #doctor-inputs-card .form-group {
+                margin-bottom: 15px;
+                page-break-inside: avoid; /* Keep label with at least some text */
+            }
+            #doctor-inputs-card label {
+                background: #eee; 
+                padding: 5px 10px; 
+                font-weight: bold; 
+                color: #000; 
+                font-size: 9pt; 
+                border-radius: 4px;
+                display: inline-block;
+                margin-bottom: 5px;
+                -webkit-print-color-adjust: exact;
+            }
+
+            /* 4. Footer */
+            #print-footer { 
+                display: block !important; 
+                margin-top: 30px; 
+                border-top: 2px solid #000; 
+                padding-top: 10px; 
+                width: 200px; 
+                float: right; 
+                text-align: center; 
+                font-weight: bold; 
+                page-break-inside: avoid;
+            }
         }
     </style>
 </head>
@@ -206,7 +284,7 @@
                 <h3>Composition</h3>
                 <div class="form-group"><label>BMI / Visc.</label>
                     <div style="display:flex; gap:5px;">
-                        <input type="number" step="0.1" id="bmi" placeholder="BMI">
+                        <input type="number" step="0.1" id="bmi" placeholder="BMI (Auto)">
                         <input type="number" id="vfat" placeholder="VFat">
                     </div>
                 </div>
@@ -219,14 +297,14 @@
             </div>
             <div class="card comorb-card">
                 <h3>Comorbidities (CPG Risk)</h3>
-                <div class="checkbox-group">
-                    <div class="checkbox-item"><input type="checkbox" id="risk_t2dm" value="T2DM"><label for="risk_t2dm">T2DM / Pre-Diabetes</label></div>
+                <div class="checkbox-group" style="flex-direction:row; flex-wrap:wrap;">
+                    <div class="checkbox-item"><input type="checkbox" id="risk_t2dm" value="T2DM"><label for="risk_t2dm">T2DM</label></div>
                     <div class="checkbox-item"><input type="checkbox" id="risk_htn" value="HTN"><label for="risk_htn">Hypertension</label></div>
                     <div class="checkbox-item"><input type="checkbox" id="risk_dys" value="DYS"><label for="risk_dys">Dyslipidaemia</label></div>
                     <div class="checkbox-item"><input type="checkbox" id="risk_pcos" value="PCOS"><label for="risk_pcos">PCOS</label></div>
                     <div class="checkbox-item"><input type="checkbox" id="risk_osa" value="OSA"><label for="risk_osa">Sleep Apnoea</label></div>
-                    <div class="checkbox-item"><input type="checkbox" id="risk_mafld" value="MAFLD"><label for="risk_mafld">MAFLD (Fatty Liver)</label></div>
-                    <div class="checkbox-item"><input type="checkbox" id="risk_meta" value="META"><label for="risk_meta">Metabolic Syndrome</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_mafld" value="MAFLD"><label for="risk_mafld">MAFLD</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_meta" value="META"><label for="risk_meta">Metabolic Syn</label></div>
                 </div>
             </div>
         </div>
@@ -349,6 +427,28 @@
         let currentUser = null;
         let trendChart = null;
 
+        // --- NEW: AUTO-CALCULATE BMI ---
+        function calculateBMI() {
+            const heightCm = parseFloat(inputs.height.value);
+            const weightKg = parseFloat(inputs.weight.value);
+
+            if (heightCm > 0 && weightKg > 0) {
+                // BMI = kg / (m * m)
+                const heightM = heightCm / 100;
+                const bmi = weightKg / (heightM * heightM);
+                // Round to 1 decimal place
+                inputs.bmi.value = bmi.toFixed(1);
+            } else {
+                // Clear BMI if inputs are invalid/empty
+                inputs.bmi.value = '';
+            }
+        }
+
+        // Attach listeners to Height and Weight inputs
+        inputs.height.addEventListener('input', calculateBMI);
+        inputs.weight.addEventListener('input', calculateBMI);
+
+
         window.updatePrintText = (el, targetId) => {
             document.getElementById(targetId).innerText = el.value;
         };
@@ -377,7 +477,6 @@
             analyzeBtn.disabled = !e.target.checked;
         });
 
-        // --- CPG ANALYSIS LOGIC ---
         function generateAnalysis(data, risks) {
             let results = "";
             let problems = [];
@@ -390,7 +489,7 @@
                 return `<span>${text}</span>`;
             }
 
-            // BMI
+            // BMI Classification based on image_7.png (MOH CPG 2023 Table 2-1)
             let bmiStatus = "";
             if (data.bmi < 18.5) { bmiStatus = color('Underweight', 'mid'); problems.push("Underweight"); }
             else if (data.bmi <= 22.9) { bmiStatus = color('Normal', 'good'); }
@@ -400,7 +499,6 @@
             else { bmiStatus = color('Obesity Class III', 'bad'); problems.push("Obesity Class III"); }
             results += `<p><strong>BMI:</strong> ${data.bmi} → ${bmiStatus}</p>`;
 
-            // Visual Marker
             const bmiVisual = document.getElementById('bmiVisual');
             const bmiMarker = document.getElementById('bmiMarker');
             bmiVisual.classList.remove('hidden');
@@ -408,7 +506,6 @@
             if(pos > 100) pos = 100;
             bmiMarker.style.left = pos + "%";
 
-            // Waist
             let waistRisk = false;
             if (data.gender === 'male' && data.waist >= 90) waistRisk = true;
             if (data.gender === 'female' && data.waist >= 80) waistRisk = true;
@@ -419,12 +516,10 @@
                 results += `<p><strong>Waist:</strong> ${data.waist}cm → ${color('Normal', 'good')}</p>`;
             }
 
-            // Visceral
             let vfatStatus = data.vfat > 9 ? color('High', 'bad') : color('Normal', 'good');
             if(data.vfat > 9) problems.push(`High Visceral Fat (Lv ${data.vfat})`);
             results += `<p><strong>Visc. Fat:</strong> ${data.vfat} → ${vfatStatus}</p>`;
 
-            // Fat %
             let fatHigh = false;
             if(data.gender === 'male' && data.fat > 25) fatHigh = true;
             if(data.gender === 'female' && data.fat > 35) fatHigh = true;
@@ -435,7 +530,6 @@
                  results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${color('Normal', 'good')}</p>`;
             }
 
-            // Muscle
             let muscleStatus = "";
             if (data.gender === 'male') {
                 if (data.muscle < 32.9) muscleStatus = color('Low', 'mid');
@@ -450,13 +544,8 @@
             }
             results += `<p><strong>Muscle:</strong> ${data.muscle}% → ${muscleStatus}</p>`;
 
-            // --- SMART CPG TARGET LOGIC ---
-            // CPG Table 2-3 (Pg 28)
             let targetLossLow = 5;
             let targetLossHigh = 10;
-            let targetMsg = "";
-
-            // Check comorbidities to adjust target
             let comorbidText = [];
             if(risks.t2dm) { targetLossLow=5; targetLossHigh=15; comorbidText.push("T2DM (Target 5-15%)"); }
             if(risks.htn) { targetLossLow=5; targetLossHigh=15; comorbidText.push("Hypertension (Target 5-15%)"); }
@@ -470,16 +559,13 @@
                 results += `<p><strong>Comorbidities:</strong> ${comorbidText.join(", ")}</p>`;
             }
 
-            // Generate Suggestion Text
             if (data.bmi >= 23) {
                 const wLow = (data.weight * (targetLossLow/100)).toFixed(1);
                 const wHigh = (data.weight * (targetLossHigh/100)).toFixed(1);
                 
                 suggestions.push(`<strong>Weight Target:</strong> Aim for ${targetLossLow}-${targetLossHigh}% loss (${wLow}-${wHigh}kg) based on risk profile.`);
-                
                 let calSuggestion = data.gender === 'male' ? "1500-1800" : "1200-1500";
                 suggestions.push(`<strong>Diet (MNT):</strong> Recommended ${calSuggestion} kcal/day (Deficit 500-750kcal).`);
-                
                 let activity = "200-300 mins/week";
                 if(data.bmi >= 35) activity = "Low impact (swimming/walking) initially";
                 suggestions.push(`<strong>Activity:</strong> ${activity} moderate intensity.`);
@@ -537,9 +623,12 @@
 
         analyzeBtn.addEventListener('click', async () => {
             if(!inputs.pId.value) { alert("Please enter Patient ID"); return; }
-            if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age and BMI"); return; }
+            // Ensure BMI is calculated if user skipped it but entered height/weight
+            if(!inputs.bmi.value && inputs.height.value && inputs.weight.value) {
+                 calculateBMI();
+            }
+            if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age, Height and Weight (or BMI)"); return; }
 
-            // Gather Comorbidities
             const risks = {
                 t2dm: riskInputs.t2dm.checked,
                 htn: riskInputs.htn.checked,
@@ -562,7 +651,7 @@
                 vfat: Number(inputs.vfat.value),
                 muscle: Number(inputs.muscle.value),
                 fat: Number(inputs.fat.value),
-                risks: risks, // Save Checkboxes
+                risks: risks, 
                 remarks: inputs.docRemarks.value,
                 plan: inputs.docPlan.value,
                 timestamp: serverTimestamp()
