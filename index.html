@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Composition Analyzer</title>
+    <style>
+        /* --- STYLING --- */
+        :root { --primary: #2563eb; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .main-container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 20px; }
+        
+        /* Grid Layout for Inputs */
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
+        
+        .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        
+        .action-btn { width: 100%; padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.2s; }
+        .action-btn:hover { background-color: #1d4ed8; }
+        
+        .results { background: #dbeafe; border: 2px solid #2563eb; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .hidden { display: none; }
+        
+        .history-section { margin-top: 30px; }
+        ul { list-style: none; padding: 0; }
+        li { background: white; margin-bottom: 10px; padding: 15px; border-radius: 8px; border-left: 5px solid var(--primary); font-size: 0.9rem; position: relative; }
+        
+        /* Delete Button Style */
+        .delete-btn { position: absolute; top: 10px; right: 10px; color: #ff4444; cursor: pointer; font-weight: bold; border: none; background: none; }
+        .delete-btn:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <header>
+            <h1>🩺 Body Composition Analyzer</h1>
+            <p>Enter your biometric details below for analysis.</p>
+        </header>
+
+        <div class="grid-container">
+            <div class="card">
+                <h3>1. Basic Profile</h3>
+                <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="e.g. 30"></div>
+                <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="e.g. 175"></div>
+                <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="e.g. 70"></div>
+            </div>
+
+            <div class="card">
+                <h3>2. Composition Metrics</h3>
+                <div class="form-group"><label>Waist Circumference (cm)</label><input type="number" id="waist" placeholder="e.g. 85"></div>
+                <div class="form-group"><label>BMI</label><input type="number" step="0.1" id="bmi" placeholder="e.g. 22.5"></div>
+                <div class="form-group"><label>Visceral Fat Level</label><input type="number" id="vfat" placeholder="e.g. 5"></div>
+                <div class="form-group"><label>Skeletal Muscle (%)</label><input type="number" step="0.1" id="muscle" placeholder="e.g. 35.5"></div>
+                <div class="form-group"><label>Body Fat (%)</label><input type="number" step="0.1" id="fat" placeholder="e.g. 18.2"></div>
+            </div>
+        </div>
+
+        <button id="analyzeBtn" class="action-btn">Analyze & Save Results</button>
+
+        <div id="resultArea" class="results hidden">
+            <h2>Analysis Results</h2>
+            <div id="analysisOutput"></div>
+        </div>
+        
+        <div class="history-section">
+            <h3>Recent Records (from Database)</h3>
+            <ul id="historyList"><li>Loading history...</li></ul>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // *** YOUR CONFIGURATION ***
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnL8Lv6iPN7c_j6vuygjifMIbmU7Fr0Ew",
+            authDomain: "arashift-8a3cc.firebaseapp.com",
+            projectId: "arashift-8a3cc",
+            storageBucket: "arashift-8a3cc.firebasestorage.app",
+            messagingSenderId: "1018560049929",
+            appId: "1:1018560049929:web:23b7ebfd6d5822de7bd9d8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const dbCollection = "body_composition_records";
+
+        // DOM Elements
+        const inputs = {
+            gender: document.getElementById('gender'),
+            age: document.getElementById('age'),
+            height: document.getElementById('height'),
+            weight: document.getElementById('weight'),
+            waist: document.getElementById('waist'),
+            bmi: document.getElementById('bmi'),
+            vfat: document.getElementById('vfat'),
+            muscle: document.getElementById('muscle'),
+            fat: document.getElementById('fat'),
+        };
+        const btn = document.getElementById('analyzeBtn');
+        const resultArea = document.getElementById('resultArea');
+        const output = document.getElementById('analysisOutput');
+        const list = document.getElementById('historyList');
+
+        // --- ANALYSIS LOGIC ---
+        function generateAnalysis(data) {
+            let results = "";
+            
+            // 1. BMI Logic
+            let bmiStatus = "";
+            if (data.bmi < 18.5) bmiStatus = '<span style="color:orange">Underweight</span>';
+            else if (data.bmi <= 22.9) bmiStatus = '<span style="color:green">Normal (Low Risk)</span>';
+            else if (data.bmi <= 27.4) bmiStatus = '<span style="color:orange">Overweight (Moderate Risk)</span>';
+            else bmiStatus = '<span style="color:red">Obese (High Risk)</span>';
+            results += `<p><strong>BMI:</strong> ${data.bmi} → ${bmiStatus}</p>`;
+
+            // 2. Visceral Fat Logic
+            let vfatStatus = "";
+            if (data.vfat <= 9) vfatStatus = '<span style="color:green">Normal (0)</span>';
+            else if (data.vfat <= 14) vfatStatus = '<span style="color:red">High (+)</span>';
+            else vfatStatus = '<span style="color:darkred">Very High (++)</span>';
+            results += `<p><strong>Visceral Fat:</strong> ${data.vfat} → ${vfatStatus}</p>`;
+
+            // 3. Skeletal Muscle Logic
+            let muscleStatus = "";
+            if (data.gender === 'male') {
+                if (data.muscle < 32.9) muscleStatus = '<span style="color:blue">Low (-)</span>';
+                else if (data.muscle <= 35.7) muscleStatus = '<span style="color:green">Normal (0)</span>';
+                else if (data.muscle <= 37.3) muscleStatus = '<span style="color:green">High (+)</span>';
+                else muscleStatus = '<span style="color:green">Very High (++)</span>';
+            } else {
+                if (data.muscle < 25.9) muscleStatus = '<span style="color:blue">Low (-)</span>';
+                else if (data.muscle <= 27.9) muscleStatus = '<span style="color:green">Normal (0)</span>';
+                else if (data.muscle <= 29.0) muscleStatus = '<span style="color:green">High (+)</span>';
+                else muscleStatus = '<span style="color:green">Very High (++)</span>';
+            }
+            results += `<p><strong>Skeletal Muscle:</strong> ${data.muscle}% → ${muscleStatus}</p>`;
+
+            // 4. Body Fat Logic
+            let fatStatus = "";
+            if (data.gender === 'male') {
+                if (data.fat < 10.0) fatStatus = '<span style="color:blue">Low (-)</span>';
+                else if (data.fat <= 19.9) fatStatus = '<span style="color:green">Normal (0)</span>';
+                else if (data.fat <= 24.9) fatStatus = '<span style="color:orange">High (+)</span>';
+                else fatStatus = '<span style="color:red">Very High (++)</span>';
+            } else {
+                if (data.fat < 20.0) fatStatus = '<span style="color:blue">Low (-)</span>';
+                else if (data.fat <= 29.9) fatStatus = '<span style="color:green">Normal (0)</span>';
+                else if (data.fat <= 34.9) fatStatus = '<span style="color:orange">High (+)</span>';
+                else fatStatus = '<span style="color:red">Very High (++)</span>';
+            }
+            results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${fatStatus}</p>`;
+
+            return results;
+        }
+
+        // --- BUTTON ACTION ---
+        btn.addEventListener('click', async () => {
+            // Basic Validation
+            if(!inputs.age.value || !inputs.bmi.value) {
+                alert("Please fill in at least Age and BMI to calculate.");
+                return;
+            }
+
+            const data = {
+                gender: inputs.gender.value,
+                age: Number(inputs.age.value),
+                height: Number(inputs.height.value),
+                weight: Number(inputs.weight.value),
+                waist: Number(inputs.waist.value),
+                bmi: Number(inputs.bmi.value),
+                vfat: Number(inputs.vfat.value),
+                muscle: Number(inputs.muscle.value),
+                fat: Number(inputs.fat.value),
+                timestamp: serverTimestamp()
+            };
+
+            // Run Analysis
+            const resultHTML = generateAnalysis(data);
+
+            // Display Results
+            resultArea.classList.remove('hidden');
+            output.innerHTML = resultHTML;
+
+            // Save to Firebase
+            try {
+                await addDoc(collection(db, dbCollection), {
+                    ...data,
+                    analysisHTML: resultHTML
+                });
+                console.log("Data saved successfully");
+            } catch (e) {
+                console.error("Error saving: ", e);
+                alert("Error saving data. Make sure Firestore is in 'Test Mode'.");
+            }
+        });
+
+        // --- LOAD HISTORY (Real-time) ---
+        const q = query(collection(db, dbCollection), orderBy("timestamp", "desc"), limit(10));
+        
+        onSnapshot(q, (snapshot) => {
+            list.innerHTML = "";
+            if (snapshot.empty) {
+                list.innerHTML = "<li>No records found yet. Try adding one!</li>";
+                return;
+            }
+
+            snapshot.forEach((docSnap) => {
+                const d = docSnap.data();
+                const id = docSnap.id;
+                
+                let dateStr = "Recent";
+                if (d.timestamp && d.timestamp.toDate) {
+                    dateStr = d.timestamp.toDate().toLocaleDateString() + " " + d.timestamp.toDate().toLocaleTimeString();
+                }
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <button class="delete-btn" data-id="${id}">X</button>
+                    <div style="font-size: 0.8em; color: #666;">${dateStr}</div>
+                    <strong>${d.gender.toUpperCase()}, ${d.age} yrs</strong>
+                    <hr style="opacity: 0.3; margin: 5px 0;">
+                    <div>${d.analysisHTML || "No analysis data"}</div>
+                `;
+                list.appendChild(li);
+            });
+
+            // Add Delete Functionality
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    if(confirm("Delete this record?")) {
+                        await deleteDoc(doc(db, dbCollection, e.target.dataset.id));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
