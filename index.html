@@ -5,71 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Body Composition Analyzer (MOH CPG 2023)</title>
     <style>
-        /* --- STANDARD STYLING --- */
+        /* --- STANDARD WEB STYLING (Screen View) --- */
         :root { --primary: #2563eb; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .main-container { max-width: 850px; margin: 0 auto; }
         
-        /* Login Screen */
+        /* Login & Header */
         #login-screen { text-align: center; margin-top: 100px; }
         .login-btn { padding: 15px 30px; font-size: 1.2rem; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        
-        /* App Layout */
         header { text-align: center; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .header-content { flex-grow: 1; }
         .logout-btn { background: none; border: 1px solid #ccc; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; }
 
+        /* Main Grid & Cards */
         .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
-        
         .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: var(--primary); }
         
+        /* Forms */
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
         textarea { resize: vertical; min-height: 80px; }
 
-        /* Buttons Grid */
+        /* Buttons */
         .btn-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-top: 20px; }
         .action-btn { padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         .action-btn:hover { background-color: #1d4ed8; }
         .secondary-btn { padding: 15px; background-color: #64748b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .reset-btn { background-color: #ef4444; }
 
-        /* Results & History */
+        /* Results, Auto-Plan, History */
         .results { background: #dbeafe; border: 2px solid #2563eb; padding: 20px; border-radius: 12px; margin-top: 20px; }
         .hidden { display: none !important; }
-        
-        .history-section { margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; }
-        ul { list-style: none; padding: 0; }
-        li { background: white; margin-bottom: 10px; padding: 15px; border-radius: 8px; border-left: 5px solid var(--primary); font-size: 0.9rem; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .delete-btn { position: absolute; top: 10px; right: 10px; color: #ff4444; cursor: pointer; font-weight: bold; border: none; background: none; }
-
-        /* Auto-Generated Suggestions Style */
         .auto-plan { background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 15px; font-size: 0.95rem; }
-        .auto-plan h4 { margin-top: 0; color: #d97706; }
-        .problem-list { color: #dc2626; font-weight: bold; }
+        .auto-plan h4 { margin-top: 0; color: #d97706; margin-bottom: 10px; }
+        .problem-list { color: #dc2626; font-weight: bold; margin-bottom: 10px; display: block; }
+        .auto-plan ul { margin-top: 5px; padding-left: 20px; list-style: disc; }
+        .auto-plan li { margin-bottom: 5px; background: none; padding: 0; border: none; box-shadow: none; font-size: 0.95rem; }
 
-        /* --- PDF PRINT STYLING --- */
-        @media print {
-            body { background: white; padding: 0; font-size: 12pt; }
-            .main-container { max-width: 100%; margin: 0; box-shadow: none; }
-            /* Hide Interface Elements */
-            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn { display: none !important; }
-            /* Make Inputs look like text */
-            input, select, textarea { border: none; padding: 0; background: transparent; width: auto; font-weight: bold; }
-            select { appearance: none; }
-            textarea { height: auto; resize: none; } 
-            /* Layout Adjustments */
-            .card { box-shadow: none; border: 1px solid #ccc; margin-bottom: 20px; break-inside: avoid; }
-            .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-            .results { border: 1px solid #000; background: #fff; }
-            header h1 { font-size: 24px; color: #000; }
-            header p { display: none; }
-            #print-footer { display: block !important; margin-top: 50px; border-top: 1px solid #000; padding-top: 10px; width: 200px; text-align: center; }
-        }
+        .history-section { margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; }
+        #historyList ul { list-style: none; padding: 0; }
+        #historyList li { background: white; margin-bottom: 10px; padding: 15px; border-radius: 8px; border-left: 5px solid var(--primary); font-size: 0.9rem; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .delete-btn { position: absolute; top: 10px; right: 10px; color: #ff4444; cursor: pointer; font-weight: bold; border: none; background: none; }
         #print-footer { display: none; }
+
+
+        /* --- PDF / PRINT LAYOUT STYLING (Compact & Boxed) --- */
+        @media print {
+            body { background: white; padding: 10px; font-size: 10pt; color: #000; }
+            .main-container { max-width: 100%; margin: 0; }
+
+            /* HIDE INTERFACE ELEMENTS */
+            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, header p { display: none !important; }
+            
+            /* HEADER & FOOTER */
+            header h1 { font-size: 18pt; margin: 0 0 15px 0; color: #000; text-align: left; }
+            #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
+
+            /* RESET INPUT STYLES FOR PRINT */
+            input, select, textarea { border: none; padding: 2px 0; background: transparent; width: auto; font-weight: bold; font-family: inherit; color: #000; }
+            select { appearance: none; padding-right: 0; }
+            textarea { resize: none; height: auto; overflow: visible; min-height: 30px; width: 100%; font-weight: normal; }
+            /* Expand textareas to show content */
+            textarea { display: block; height: 100%; }
+
+            /* --- COMPACT GRID LAYOUT --- */
+            /* Define the main container as a grid for print */
+            #app-screen {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr; /* Split middle section */
+                gap: 15px;
+                grid-template-areas:
+                    "header header"
+                    "top-params top-params"
+                    "mid-analysis mid-doctor"
+                    "footer footer";
+                align-items: start;
+            }
+
+            header { grid-area: header; }
+            
+            /* 1. TOP BOX: Patient Profile & Biometrics */
+            .grid-container {
+                grid-area: top-params;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 columns for compact data */
+                gap: 10px;
+                border: 2px solid #444; /* Thick gray/black border like reference */
+                padding: 15px;
+                background: #fff;
+            }
+            .grid-container .card {
+                box-shadow: none; border: none; padding: 0; background: none;
+            }
+            .grid-container h3 { display: none; } /* Hide section headers in top box to save space */
+            .form-group { margin-bottom: 5px; }
+            label { font-size: 8pt; text-transform: uppercase; color: #666; margin-bottom: 0; }
+            input { font-size: 11pt; }
+
+            /* 2. MIDDLE LEFT BOX: Automated Analysis & Plan */
+            #resultArea {
+                grid-area: mid-analysis;
+                border: 2px solid #444 !important;
+                background: #fff !important;
+                padding: 15px;
+                margin: 0 !important;
+                height: 100%; /* Fill height */
+            }
+            #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
+            #analysisOutput p { margin: 5px 0; border-bottom: 1px dotted #ccc; padding-bottom: 2px; }
+            
+            .auto-plan {
+                border: none; border-top: 2px solid #444;
+                padding: 15px 0 0 0; margin-top: 15px; background: none;
+            }
+            .auto-plan h4 { color: #000; text-decoration: underline; margin-bottom: 5px; }
+            .problem-list { color: #000; background: #eee; padding: 5px; }
+            .auto-plan ul { padding-left: 15px; margin-top: 5px; }
+            .auto-plan li { margin-bottom: 8px; line-height: 1.3; }
+
+            /* 3. MIDDLE RIGHT BOX: Doctor's Input */
+            #doctor-inputs-card {
+                grid-area: mid-doctor;
+                border: 2px solid #444 !important;
+                padding: 15px;
+                background: #fff;
+                box-shadow: none;
+                margin: 0 !important;
+                height: 100%; /* Fill height */
+                display: flex; flex-direction: column;
+            }
+            #doctor-inputs-card h3 { 
+                font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; 
+            }
+            #doctor-inputs-card .form-group {
+                flex-grow: 1; display: flex; flex-direction: column; margin-bottom: 15px;
+            }
+            #doctor-inputs-card label {
+                background: #eee; padding: 5px; font-weight: bold; color: #000; font-size: 9pt; border: 1px solid #444; border-bottom: none;
+            }
+            #doctor-inputs-card textarea {
+                flex-grow: 1; border: 1px solid #444; padding: 10px; font-weight: normal; white-space: pre-wrap;
+            }
+
+            #print-footer { grid-area: footer; }
+        }
     </style>
 </head>
 <body>
@@ -91,54 +173,58 @@
 
         <div class="grid-container">
             <div class="card">
-                <h3>1. Patient Profile</h3>
+                <h3>Profile</h3>
                 <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="e.g. 30"></div>
-                <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="e.g. 175"></div>
-                <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="e.g. 70"></div>
+                <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
+            </div>
+            <div class="card">
+                <h3>Bodyshape</h3>
+                <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="175"></div>
+                <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
             </div>
 
             <div class="card">
-                <h3>2. Biometrics</h3>
-                <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist" placeholder="e.g. 95"></div>
-                <div class="form-group"><label>BMI</label><input type="number" step="0.1" id="bmi" placeholder="e.g. 28.5"></div>
-                <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="e.g. 11"></div>
-                <div class="form-group"><label>Muscle %</label><input type="number" step="0.1" id="muscle" placeholder="e.g. 28.5"></div>
-                <div class="form-group"><label>Body Fat %</label><input type="number" step="0.1" id="fat" placeholder="e.g. 32.0"></div>
+                <h3>Composition</h3>
+                <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist" placeholder="95"></div>
+                <div class="form-group"><label>BMI</label><input type="number" step="0.1" id="bmi" placeholder="28.5"></div>
+            </div>
+             <div class="card">
+                <h3>Analysis Data</h3>
+                <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="11"></div>
+                <div class="form-group"><label>Body Fat %</label><input type="number" step="0.1" id="fat" placeholder="32.0"></div>
+                <div class="form-group"><label>Muscle %</label><input type="number" step="0.1" id="muscle" placeholder="28.5"></div>
             </div>
         </div>
 
         <div id="resultArea" class="results hidden">
-            <h2>Analysis Summary</h2>
+            <h2>Analysis Summary (CPG 2023)</h2>
             <div id="analysisOutput"></div>
             
-            <hr>
-            
             <div class="auto-plan">
-                <h4>⚠️ Identified Problems & CPG Recommendations</h4>
+                <h4>⚠️ Identified Problems & Recommendations</h4>
                 <div id="autoSuggestions"></div>
             </div>
         </div>
 
-        <div class="card" style="margin-top: 20px;">
-            <h3>3. Clinical Assessment</h3>
+        <div class="card hidden" id="doctor-inputs-card" style="margin-top: 20px;">
+            <h3>Clinical Assessment</h3>
             <div class="form-group">
-                <label>Doctor's Remarks / Diagnosis</label>
-                <textarea id="docRemarks" placeholder="Enter specific diagnosis here..."></textarea>
+                <label>Doctor's Diagnosis / Remarks</label>
+                <textarea id="docRemarks" placeholder="Enter specific diagnosis here..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0;">
                 <label>Management Plan</label>
-                <textarea id="docPlan" placeholder="Additional notes..."></textarea>
+                <textarea id="docPlan" placeholder="Additional notes..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
             </div>
         </div>
 
         <div class="btn-grid">
             <button id="analyzeBtn" class="action-btn">Analyze & Generate Plan</button>
-            <button id="printBtn" class="secondary-btn">🖨️ PDF Report</button>
+            <button id="printBtn" class="secondary-btn">🖨️ Print Report</button>
             <button id="resetBtn" class="secondary-btn reset-btn">New Patient</button>
         </div>
         
-        <div id="print-footer">Doctor's Signature</div>
+        <div id="print-footer">Doctor's Signature / Stamp</div>
 
         <div class="history-section">
             <h3>Recent History (Logged User Only)</h3>
@@ -172,6 +258,7 @@
         const loginBtn = document.getElementById('loginBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const autoSuggestions = document.getElementById('autoSuggestions');
+        const docInputsCard = document.getElementById('doctor-inputs-card');
         
         const inputs = {
             gender: document.getElementById('gender'),
@@ -210,109 +297,81 @@
             }
         });
 
-        // --- CORE ANALYSIS LOGIC (UPDATED WITH CPG 2023) ---
+        // --- CORE ANALYSIS LOGIC (MOH CPG 2023) ---
         function generateAnalysis(data) {
             let results = "";
-            let problems = []; // Array to store identified problems
-            let suggestions = []; // Array to store CPG suggestions
+            let problems = [];
+            let suggestions = [];
 
+            // Color helper - uses dark text for print readability, bold colors for web
             const color = (text, type) => {
-                if(type === 'good') return `<span style="color:green; font-weight:bold">${text}</span>`;
-                if(type === 'bad') return `<span style="color:red; font-weight:bold">${text}</span>`;
-                if(type === 'mid') return `<span style="color:orange; font-weight:bold">${text}</span>`;
+                // We rely on print CSS to remove colors, but keep bold marks
+                if(type === 'good') return `<strong>${text}</strong>`;
+                if(type === 'bad') return `<strong>${text} (High Risk)</strong>`;
+                if(type === 'mid') return `<strong>${text} (Risk)</strong>`;
                 return `<span>${text}</span>`;
             }
 
             // 1. BMI Analysis (Asian Cut-offs CPG 2023 pg.26)
             let bmiStatus = "";
-            if (data.bmi < 18.5) { 
-                bmiStatus = color('Underweight', 'mid'); 
-                problems.push("Underweight (Risk of nutritional deficiency)");
-            }
-            else if (data.bmi <= 22.9) { 
-                bmiStatus = color('Normal', 'good'); 
-            }
-            else if (data.bmi <= 27.4) { 
-                bmiStatus = color('Overweight (Pre-obese)', 'mid');
-                problems.push("Pre-obesity (Overweight)"); 
-            }
-            else if (data.bmi <= 32.4) { 
-                bmiStatus = color('Obesity Class I', 'bad');
-                problems.push("Obesity Class I (High Risk)");
-            }
-            else if (data.bmi <= 37.4) { 
-                bmiStatus = color('Obesity Class II', 'bad');
-                problems.push("Obesity Class II (Very High Risk)");
-            }
-            else { 
-                bmiStatus = color('Obesity Class III', 'bad');
-                problems.push("Obesity Class III (Extremely High Risk)");
-            }
+            if (data.bmi < 18.5) { bmiStatus = color('Underweight', 'mid'); problems.push("Underweight"); }
+            else if (data.bmi <= 22.9) { bmiStatus = color('Normal', 'good'); }
+            else if (data.bmi <= 27.4) { bmiStatus = color('Overweight', 'mid'); problems.push("Pre-obesity (Overweight)"); }
+            else if (data.bmi <= 32.4) { bmiStatus = color('Obesity Class I', 'bad'); problems.push("Obesity Class I"); }
+            else if (data.bmi <= 37.4) { bmiStatus = color('Obesity Class II', 'bad'); problems.push("Obesity Class II"); }
+            else { bmiStatus = color('Obesity Class III', 'bad'); problems.push("Obesity Class III"); }
             results += `<p><strong>BMI:</strong> ${data.bmi} → ${bmiStatus}</p>`;
 
-            // 2. Waist Circumference (Abdominal Obesity CPG 2023)
+            // 2. Waist Circumference
             let waistRisk = false;
             if (data.gender === 'male' && data.waist >= 90) waistRisk = true;
             if (data.gender === 'female' && data.waist >= 80) waistRisk = true;
-            
             if (waistRisk) {
                 results += `<p><strong>Waist:</strong> ${data.waist}cm → ${color('Abdominal Obesity', 'bad')}</p>`;
-                problems.push("Central Obesity (High Cardiometabolic Risk)");
+                problems.push("Central Obesity");
             } else {
                 results += `<p><strong>Waist:</strong> ${data.waist}cm → ${color('Normal', 'good')}</p>`;
             }
 
-            // 3. Visceral Fat & Body Fat (General Risk)
+            // 3. Visceral Fat & Body Fat
             let vfatStatus = data.vfat > 9 ? color('High', 'bad') : color('Normal', 'good');
-            if(data.vfat > 9) problems.push(`High Visceral Fat (Level ${data.vfat})`);
-            results += `<p><strong>Visceral Fat:</strong> ${data.vfat} → ${vfatStatus}</p>`;
+            if(data.vfat > 9) problems.push(`High Visceral Fat (Lv ${data.vfat})`);
+            results += `<p><strong>Visc. Fat:</strong> ${data.vfat} → ${vfatStatus}</p>`;
 
-            let fatStatus = "";
             let fatHigh = false;
             if(data.gender === 'male' && data.fat > 25) fatHigh = true;
             if(data.gender === 'female' && data.fat > 35) fatHigh = true;
             if(fatHigh) {
-                fatStatus = color('High', 'bad');
-                problems.push("Excess Body Fat Percentage");
+                problems.push(`Excess Body Fat (${data.fat}%)`);
+                 results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${color('High', 'bad')}</p>`;
             } else {
-                fatStatus = color('Normal', 'good');
+                 results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${color('Normal', 'good')}</p>`;
             }
-            results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${fatStatus}</p>`;
 
-
-            // --- GENERATE CPG SUGGESTIONS ---
-
-            // Weight Loss Goals (CPG pg.37)
+            // --- CPG SUGGESTIONS ---
             if (data.bmi >= 23) {
                 const loss5 = (data.weight * 0.05).toFixed(1);
                 const loss10 = (data.weight * 0.10).toFixed(1);
-                suggestions.push(`<strong>Target:</strong> Aim for 5-10% weight loss (${loss5}kg - ${loss10}kg) over 6 months.`);
-            }
-
-            // Dietary (CPG pg.38)
-            if (data.bmi >= 23) {
+                suggestions.push(`<strong>Target:</strong> 5-10% weight loss (${loss5}-${loss10}kg) over 6 months.`);
                 let calSuggestion = data.gender === 'male' ? "1500-1800" : "1200-1500";
-                suggestions.push(`<strong>Diet (MNT):</strong> Recommended calorie intake: ${calSuggestion} kcal/day (Deficit of 500-750 kcal).`);
-            }
-
-            // Exercise (CPG pg.44)
-            if (data.bmi >= 23) {
-                suggestions.push(`<strong>Activity:</strong> Aim for 200-300 mins/week of moderate intensity for weight loss.`);
+                suggestions.push(`<strong>Diet:</strong> Recommended intake ${calSuggestion} kcal/day (500-750kcal deficit).`);
+                suggestions.push(`<strong>Activity:</strong> Aim for 200-300 mins/week moderate intensity.`);
             } else {
-                suggestions.push(`<strong>Activity:</strong> Maintain 150 mins/week of moderate activity.`);
+                 suggestions.push(`<strong>Goal:</strong> Maintain healthy weight and lifestyle.`);
+                 suggestions.push(`<strong>Activity:</strong> Maintain 150 mins/week moderate activity.`);
             }
 
-            // Advanced Therapy (CPG pg.59)
+            // Advanced Therapy
             if (data.bmi >= 32.5) {
-                suggestions.push(`<strong>Referral:</strong> Consider specialist referral for Pharmacotherapy or Bariatric Surgery assessment.`);
+                suggestions.push(`<strong>Referral:</strong> Consider specialist assessment for Pharmacotherapy or Bariatric Surgery.`);
             } else if (data.bmi >= 27.5) {
-                suggestions.push(`<strong>Medical:</strong> If lifestyle fails after 3-6 months, consider Pharmacotherapy.`);
+                suggestions.push(`<strong>Medical:</strong> Consider Pharmacotherapy if lifestyle intervention fails after 3-6 months.`);
             }
 
             return { html: results, problems: problems, suggestions: suggestions };
         }
 
-        // --- ACTION BUTTONS ---
+        // --- ACTIONS ---
         document.getElementById('analyzeBtn').addEventListener('click', async () => {
             if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age and BMI"); return; }
 
@@ -334,43 +393,46 @@
 
             const analysis = generateAnalysis(data);
 
-            // Display Results
+            // Show areas
             resultArea.classList.remove('hidden');
+            docInputsCard.classList.remove('hidden');
+            docInputsCard.style.margin = "20px 0 0 0"; // reset margin for web view
+
             output.innerHTML = analysis.html;
 
-            // Display Auto-Generated Plan
-            let planHTML = `<div class="problem-list">Problems: ${analysis.problems.join(", ") || "None significant"}</div><ul>`;
+            let planHTML = `<span class="problem-list">Problems: ${analysis.problems.join(", ") || "None significant"}</span><ul>`;
             analysis.suggestions.forEach(s => planHTML += `<li>${s}</li>`);
             planHTML += "</ul>";
             autoSuggestions.innerHTML = planHTML;
 
-            // Also auto-fill the Doctor's Plan textarea if empty
-            if(!inputs.docPlan.value) {
-               inputs.docPlan.value = "CPG Recommendations:\n" + analysis.suggestions.map(s => s.replace(/<strong>.*?<\/strong>/g, "").trim()).join("\n");
+            // Auto-fill Doctor plan if empty
+            if(!inputs.docPlan.value && analysis.problems.length > 0) {
+               inputs.docPlan.value = "Based on CPG 2023 Guidelines:\n" + analysis.suggestions.map(s => "- " + s.replace(/<[^>]*>?/gm, "")).join("\n");
+               // Trigger auto-resize for the textarea
+               inputs.docPlan.dispatchEvent(new Event('input'));
             }
 
-            // Save entire HTML blob for history (Simple method)
-            const fullReportHTML = analysis.html + `<br><strong>Identified Problems:</strong> ${analysis.problems.join(", ")}`;
-
+            // Save
             try {
                 await addDoc(collection(db, `users/${currentUser.uid}/records`), {
-                    ...data,
-                    analysisHTML: fullReportHTML,
-                    autoPlan: analysis.suggestions
+                    ...data, analysisProblems: analysis.problems, analysisSuggestions: analysis.suggestions
                 });
-            } catch (e) {
-                console.error("Error", e);
-                alert("Error saving.");
-            }
+            } catch (e) { console.error("Error", e); alert("Error saving."); }
         });
 
-        document.getElementById('printBtn').addEventListener('click', () => { window.print(); });
+        document.getElementById('printBtn').addEventListener('click', () => { 
+            // Ensure textareas are resized before print
+            inputs.docRemarks.dispatchEvent(new Event('input'));
+            inputs.docPlan.dispatchEvent(new Event('input'));
+            window.print(); 
+        });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
             if(confirm("New Patient?")) {
                 Object.values(inputs).forEach(input => input.value = "");
                 inputs.gender.value = "male";
                 resultArea.classList.add('hidden');
+                docInputsCard.classList.add('hidden');
                 output.innerHTML = "";
                 autoSuggestions.innerHTML = "";
                 window.scrollTo(0,0);
@@ -390,7 +452,7 @@
                         <button class="delete-btn" data-id="${docSnap.id}">X</button>
                         <div style="font-size: 0.8em; color: #666;">${dateStr}</div>
                         <strong>${d.gender.toUpperCase()}, ${d.age} yrs, BMI: ${d.bmi}</strong><br>
-                        <small>${d.remarks || "No remarks"}</small>
+                        <small>${d.remarks ? "Has Remarks" : "No remarks"}</small>
                     `;
                     list.appendChild(li);
                 });
