@@ -6,7 +6,7 @@
     <title>AraShift Body Analyzer</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- STANDARD STYLING (Screen) --- */
+        /* --- STANDARD STYLING --- */
         :root { --primary: #2563eb; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .main-container { max-width: 900px; margin: 0 auto; }
@@ -20,7 +20,7 @@
         .header-content p { margin: 5px 0 0 0; color: #666; font-weight: 500; }
         .logout-btn { background: none; border: 1px solid #ccc; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; }
 
-        /* Screen Grid */
+        /* Grid Layout */
         .grid-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         @media (max-width: 800px) { .grid-container { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
@@ -32,7 +32,6 @@
         label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
         input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
         textarea { resize: vertical; min-height: 80px; }
-        /* Add a subtle background to BMI to indicate it's calculated */
         #bmi { background-color: #f8fafc; }
 
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
@@ -49,15 +48,20 @@
         .results { background: #dbeafe; border: 2px solid #2563eb; padding: 20px; border-radius: 12px; margin-top: 20px; }
         .hidden { display: none !important; }
         
+        /* --- VISUAL BAR STYLING --- */
+        .visual-row { margin-bottom: 15px; background: white; padding: 10px; border-radius: 8px; }
+        .visual-header { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px; font-weight: bold; }
+        .bar-container { height: 24px; width: 100%; background: #e5e7eb; border-radius: 4px; position: relative; overflow: hidden; display: flex; border: 1px solid #ccc; }
+        .bar-segment { height: 100%; }
+        .bar-marker { position: absolute; top: -2px; width: 4px; height: 28px; background: #000; border: 1px solid #fff; z-index: 10; transform: translateX(-50%); }
+        .bar-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: #666; margin-top: 2px; }
+        .val-display { font-size: 1.1rem; color: #2563eb; }
+
+        /* Graph & Toggle */
         .chart-wrapper { margin-top: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
         .chart-container { height: 300px; }
         .toggle-btn { background: #fff; border: 1px solid #2563eb; color: #2563eb; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; font-size: 0.9rem; width: 100%; }
         .toggle-btn:hover { background: #eff6ff; }
-
-        .bmi-bar-container { margin: 15px 0; background: #fff; border-radius: 5px; height: 20px; position: relative; overflow: hidden; display: flex; border: 1px solid #ccc; }
-        .bmi-segment { height: 100%; }
-        .bmi-marker { position: absolute; top: -2px; width: 4px; height: 24px; background: #000; border: 1px solid #fff; z-index: 10; transform: translateX(-50%); }
-        .bmi-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: #666; margin-top: 2px; }
 
         .auto-plan { background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 15px; font-size: 0.95rem; }
         .auto-plan h4 { margin-top: 0; color: #d97706; margin-bottom: 10px; }
@@ -74,171 +78,60 @@
         
         .print-only-text { display: none; }
 
-        /* --- PROFESSIONAL PRINT STYLING (A4 Clean Break) --- */
+        /* --- PRINT STYLING --- */
         @media print {
-            @page {
-                size: A4;
-                margin: 15mm; /* Standard A4 Margin */
-            }
-
-            body { 
-                background: white; 
-                padding: 0; 
-                margin: 0; 
-                font-size: 10pt; 
-                color: #000; 
-                width: 100%;
-            }
-
-            .main-container { 
-                width: 100%; 
-                max-width: none; 
-                margin: 0; 
-                box-shadow: none;
-            }
-
-            /* Hide Web Elements */
-            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box, .toggle-btn { 
-                display: none !important; 
-            }
+            @page { size: A4; margin: 15mm; }
+            body { background: white; padding: 0; margin: 0; font-size: 10pt; color: #000; width: 100%; }
+            .main-container { width: 100%; max-width: none; margin: 0; box-shadow: none; }
+            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box, .toggle-btn { display: none !important; }
             
-            /* --- HEADER --- */
-            header { 
-                display: block; 
-                text-align: center; 
-                border-bottom: 2px solid #000; 
-                padding-bottom: 15px; 
-                margin-bottom: 20px; 
-            }
-            .header-content h1 { font-size: 24pt; color: #000; margin-bottom: 5px; }
-            .header-content p { font-size: 12pt; color: #333; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+            header { display: block; text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
+            .header-content h1 { font-size: 22pt; color: #000; margin-bottom: 5px; }
+            .header-content p { font-size: 12pt; color: #444; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
 
-            /* --- INPUT CLEANUP --- */
-            input, select { 
-                border: none; 
-                padding: 0; 
-                background: transparent; 
-                width: auto; 
-                font-weight: bold; 
-                font-family: inherit; 
-                color: #000; 
-                font-size: 10pt;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-            }
+            #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
             
-            /* Textarea Swap for Print */
+            input, select { border: none; padding: 0; background: transparent; width: auto; font-weight: bold; font-family: inherit; color: #000; font-size: 10pt; -webkit-appearance: none; appearance: none; }
             textarea { display: none !important; }
-            .print-only-text { 
-                display: block; 
-                white-space: pre-wrap; 
-                font-family: inherit; 
-                font-size: 10pt;
-                line-height: 1.4;
-                color: #000;
-                /* Allow long text to break pages cleanly */
-                page-break-inside: auto; 
-            }
+            .print-only-text { display: block; white-space: pre-wrap; font-family: inherit; font-size: 10pt; line-height: 1.4; color: #000; page-break-inside: auto; }
 
-            /* --- LAYOUT STRUCTURE (Clean Breaks) --- */
-            
-            /* 1. Biometrics Section - Compact Grid */
-            .grid-container {
-                display: grid;
-                grid-template-columns: repeat(5, 1fr); /* 5 Columns for density */
-                gap: 10px;
-                margin-bottom: 20px;
-                page-break-inside: avoid; /* Keep bio data together */
+            /* LAYOUT */
+            #app-screen {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                grid-template-areas: "header header" "top-params top-params" "mid-analysis mid-analysis" "mid-doctor mid-doctor" "footer footer";
+                align-items: start;
             }
+            header { grid-area: header; }
             
-            /* Rounded Grey Boxes */
-            .grid-container .card {
-                background-color: #f3f4f6 !important;
-                border-radius: 8px !important;
-                border: none !important;
-                box-shadow: none !important;
-                padding: 8px 12px;
-                -webkit-print-color-adjust: exact;
-                page-break-inside: avoid;
-            }
-            
-            /* Specific Card Spans */
-            /* Identity & Profile take small space */
+            .grid-container { grid-area: top-params; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; page-break-inside: avoid; }
+            .grid-container .card { background-color: #f3f4f6 !important; border-radius: 8px !important; border: none !important; box-shadow: none !important; padding: 8px 12px; -webkit-print-color-adjust: exact; }
             .grid-container .card:nth-child(1) { grid-column: span 1; }
             .grid-container .card:nth-child(2) { grid-column: span 1; }
             .grid-container .card:nth-child(3) { grid-column: span 1; }
-            .grid-container .card:nth-child(4) { grid-column: span 2; } /* Analysis is wider */
-            .comorb-card { grid-column: span 5; } /* Full width for Risks */
-
+            .grid-container .card:nth-child(4) { grid-column: span 2; }
+            .comorb-card { grid-column: span 5; }
             .grid-container h3 { font-size: 9pt; text-transform: uppercase; color: #555; margin: 0 0 5px 0; border: none; }
-            .form-group { margin-bottom: 2px; }
+            .form-group { margin-bottom: 0; }
             label { font-size: 7pt; color: #666; margin-bottom: 0; text-transform: uppercase; }
-
-            /* 2. Results Section */
-            #resultArea {
-                border: 2px solid #000 !important;
-                background: #fff !important;
-                padding: 15px;
-                margin-bottom: 20px;
-                border-radius: 8px;
-                page-break-inside: avoid; /* Prevent splitting result summary */
-            }
+            
+            #resultArea { grid-area: mid-analysis; border: 2px solid #000 !important; background: #fff !important; padding: 15px; margin-bottom: 20px; border-radius: 8px; page-break-inside: avoid; }
             #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 1px solid #000; padding-bottom: 5px; }
             
-            .chart-wrapper.hidden { display: none !important; }
-            .chart-wrapper { 
-                border: 1px solid #ccc; 
-                height: 250px; 
-                margin: 10px 0;
-                page-break-inside: avoid; 
-            }
+            /* Print Visuals */
+            .visual-row { border: 1px solid #ccc; margin-bottom: 10px; page-break-inside: avoid; }
+            .bar-container { border: 1px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
+            .chart-wrapper.hidden { display: none !important; }
+            .chart-wrapper { border: 1px solid #ccc; height: 250px; margin: 10px 0; page-break-inside: avoid; }
             .auto-plan { border: none; border-top: 1px dashed #000; padding-top: 10px; margin-top: 10px; }
-            .auto-plan h4 { color: #000; text-decoration: underline; }
-
-            /* 3. Clinical Assessment (Full Width, Page Break Friendly) */
-            #doctor-inputs-card {
-                border: 2px solid #000 !important;
-                background: #fff;
-                padding: 15px;
-                border-radius: 8px;
-                margin-top: 0;
-                box-shadow: none;
-                /* Allow breaking inside if text is very long */
-                page-break-inside: auto; 
-            }
-            #doctor-inputs-card h3 { 
-                font-size: 14pt; margin-top: 0; color: #000; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px;
-            }
-            #doctor-inputs-card .form-group {
-                margin-bottom: 15px;
-                page-break-inside: avoid; /* Keep label with at least some text */
-            }
-            #doctor-inputs-card label {
-                background: #eee; 
-                padding: 5px 10px; 
-                font-weight: bold; 
-                color: #000; 
-                font-size: 9pt; 
-                border-radius: 4px;
-                display: inline-block;
-                margin-bottom: 5px;
-                -webkit-print-color-adjust: exact;
-            }
-
-            /* 4. Footer */
-            #print-footer { 
-                display: block !important; 
-                margin-top: 30px; 
-                border-top: 2px solid #000; 
-                padding-top: 10px; 
-                width: 200px; 
-                float: right; 
-                text-align: center; 
-                font-weight: bold; 
-                page-break-inside: avoid;
-            }
+            
+            #doctor-inputs-card { grid-area: mid-doctor; border: 2px solid #000 !important; background: #fff; padding: 15px; border-radius: 8px; margin-top: 0; box-shadow: none; page-break-inside: auto; }
+            #doctor-inputs-card h3 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 1px solid #000; padding-bottom: 10px; margin-bottom: 10px; }
+            #doctor-inputs-card label { background: #eee; padding: 5px 10px; font-weight: bold; color: #000; font-size: 9pt; border-radius: 4px; display: inline-block; margin-bottom: 5px; -webkit-print-color-adjust: exact; }
+            
+            #print-footer { grid-area: footer; }
         }
     </style>
 </head>
@@ -322,20 +215,6 @@
             <h2>Analysis Summary (MOH CPG 2023)</h2>
             <div id="analysisOutput"></div>
             
-            <div id="bmiVisual" class="hidden">
-                <div class="bmi-bar-container">
-                    <div class="bmi-segment" style="width: 18.5%; background: #fbbf24;" title="Underweight"></div>
-                    <div class="bmi-segment" style="width: 20%; background: #4ade80;" title="Normal"></div>
-                    <div class="bmi-segment" style="width: 20%; background: #fb923c;" title="Overweight"></div>
-                    <div class="bmi-segment" style="width: 20%; background: #ef4444;" title="Obese I"></div>
-                    <div class="bmi-segment" style="width: 21.5%; background: #991b1b;" title="Obese II/III"></div>
-                    <div id="bmiMarker" class="bmi-marker"></div>
-                </div>
-                <div class="bmi-legend">
-                    <span>0</span><span>18.5</span><span>23</span><span>27.5</span><span>32.5+</span>
-                </div>
-            </div>
-
             <button id="toggleGraphBtn" class="toggle-btn">📈 Show/Hide Trend Graph</button>
             <div id="chartWrapper" class="chart-wrapper hidden">
                 <div class="chart-container"><canvas id="progressChart"></canvas></div>
@@ -395,6 +274,7 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
+        // UI Refs
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
         const analyzeBtn = document.getElementById('analyzeBtn');
@@ -427,27 +307,19 @@
         let currentUser = null;
         let trendChart = null;
 
-        // --- NEW: AUTO-CALCULATE BMI ---
         function calculateBMI() {
             const heightCm = parseFloat(inputs.height.value);
             const weightKg = parseFloat(inputs.weight.value);
-
             if (heightCm > 0 && weightKg > 0) {
-                // BMI = kg / (m * m)
                 const heightM = heightCm / 100;
                 const bmi = weightKg / (heightM * heightM);
-                // Round to 1 decimal place
                 inputs.bmi.value = bmi.toFixed(1);
             } else {
-                // Clear BMI if inputs are invalid/empty
                 inputs.bmi.value = '';
             }
         }
-
-        // Attach listeners to Height and Weight inputs
         inputs.height.addEventListener('input', calculateBMI);
         inputs.weight.addEventListener('input', calculateBMI);
-
 
         window.updatePrintText = (el, targetId) => {
             document.getElementById(targetId).innerText = el.value;
@@ -477,109 +349,162 @@
             analyzeBtn.disabled = !e.target.checked;
         });
 
+        // --- VISUAL BAR GENERATOR ---
+        function getVisualBar(label, value, unit, statusText, colorType, percentage, displayVal) {
+            // Colors
+            const blue = "#3b82f6"; // Normal
+            const red = "#ef4444";  // Risk
+            
+            // Logic: Blue for normal, Red for Risk.
+            // We use simple 2-segment bars to illustrate "Normal vs Abnormal" zones based on logic.
+            // Note: Since boundaries change per gender, we rely on the logic passed in.
+            
+            let seg1Color, seg2Color, seg1Width;
+            
+            // Default Visual: Normal (Left) -> Abnormal (Right)
+            if(colorType === 'normal_low') {
+                // E.g. Visceral Fat: 0-9 Blue, >9 Red
+                seg1Color = blue; seg2Color = red; seg1Width = "40%"; // Visual representation
+            } else if (colorType === 'normal_mid') {
+                // E.g. BMI: Under (Red) - Normal (Blue) - Over (Red)
+                // Simplified for this bar: Just show risk color of the marker position
+                seg1Color = "#e5e7eb"; seg2Color = "#e5e7eb"; seg1Width = "100%";
+            }
+            
+            // To strictly follow "Blue = Normal, Red = Risk", we color the MARKER position based on result.
+            // And background segments can show the zones.
+            
+            // Let's use a generic background and just color the marker? 
+            // No, user wants diagrams.
+            
+            // Generic Risk Bar: [ Normal (Blue) ] [ High Risk (Red) ]
+            // This works for Waist, VFat, Body Fat.
+            // For Muscle: [ Low Risk (Red) ] [ Normal (Blue) ]
+            
+            let barHTML = "";
+            let markerPos = percentage; 
+            if(markerPos > 100) markerPos = 100;
+            if(markerPos < 0) markerPos = 0;
+
+            let leftColor, rightColor, split;
+            
+            if (label.includes("Muscle")) {
+                // Low is bad (Red), High is Good (Blue)
+                leftColor = red; rightColor = blue; split = "40%";
+            } else if (label.includes("BMI")) {
+                 // 3 zones: Red - Blue - Red. 
+                 // We handled BMI separately in HTML, but here we can generate standard bar
+                 leftColor = blue; rightColor = red; split = "50%"; // Generic fallback
+            } else {
+                // Waist, Fat, VFat: Low is Good (Blue), High is Bad (Red)
+                leftColor = blue; rightColor = red; split = "60%";
+            }
+
+            return `
+            <div class="visual-row">
+                <div class="visual-header">
+                    <span>${label}</span>
+                    <span class="val-display">${displayVal} <span style="font-size:0.8em; color:#666;">${unit}</span></span>
+                </div>
+                <div class="bar-container">
+                    <div class="bar-segment" style="width: ${split}; background: ${leftColor};"></div>
+                    <div class="bar-segment" style="width: calc(100% - ${split}); background: ${rightColor};"></div>
+                    <div class="bar-marker" style="left: ${markerPos}%;"></div>
+                </div>
+                <div class="bar-legend">
+                    <span>Low</span>
+                    <span>${statusText}</span>
+                    <span>High</span>
+                </div>
+            </div>`;
+        }
+
+        // --- CPG ANALYSIS LOGIC ---
         function generateAnalysis(data, risks) {
-            let results = "";
+            let outputHTML = "";
             let problems = [];
             let suggestions = [];
             
-            const color = (text, type) => {
-                if(type === 'good') return `<strong>${text}</strong>`;
-                if(type === 'bad') return `<strong>${text} (High Risk)</strong>`;
-                if(type === 'mid') return `<strong>${text} (Risk)</strong>`;
-                return `<span>${text}</span>`;
-            }
+            // 1. BMI (Existing Logic)
+            // Visual is handled by static HTML, we just update marker
+            let posBMI = (data.bmi / 45) * 100;
+            if(posBMI > 100) posBMI = 100;
+            document.getElementById('bmiMarker').style.left = posBMI + "%";
+            document.getElementById('bmiVisual').classList.remove('hidden');
+            
+            let bmiText = "Normal";
+            if(data.bmi < 18.5) { bmiText = "Underweight"; problems.push("Underweight"); }
+            else if(data.bmi > 23) { bmiText = "Overweight/Obese"; problems.push("High BMI"); }
+            
+            outputHTML += `<div style="margin-bottom:15px; font-weight:bold;">BMI: <span style="color:${data.bmi > 23 || data.bmi < 18.5 ? 'red':'blue'}">${data.bmi} (${bmiText})</span></div>`;
 
-            // BMI Classification based on image_7.png (MOH CPG 2023 Table 2-1)
-            let bmiStatus = "";
-            if (data.bmi < 18.5) { bmiStatus = color('Underweight', 'mid'); problems.push("Underweight"); }
-            else if (data.bmi <= 22.9) { bmiStatus = color('Normal', 'good'); }
-            else if (data.bmi <= 27.4) { bmiStatus = color('Overweight', 'mid'); problems.push("Pre-obesity"); }
-            else if (data.bmi <= 32.4) { bmiStatus = color('Obesity Class I', 'bad'); problems.push("Obesity Class I"); }
-            else if (data.bmi <= 37.4) { bmiStatus = color('Obesity Class II', 'bad'); problems.push("Obesity Class II"); }
-            else { bmiStatus = color('Obesity Class III', 'bad'); problems.push("Obesity Class III"); }
-            results += `<p><strong>BMI:</strong> ${data.bmi} → ${bmiStatus}</p>`;
+            // 2. Waist
+            let wRisk = false;
+            let wLimit = data.gender === 'male' ? 90 : 80;
+            if (data.waist >= wLimit) wRisk = true;
+            if (wRisk) problems.push("Central Obesity");
+            
+            // Calc position relative to limit. Let's say Limit is at 60% of bar.
+            // Val / Limit * 0.6 * 100?
+            // Simple linear: 0 to 130cm.
+            let wPos = (data.waist / 140) * 100;
+            outputHTML += getVisualBar("Waist Circumference", data.waist, "cm", wRisk ? "High Risk" : "Normal", "normal_high", wPos, data.waist);
 
-            const bmiVisual = document.getElementById('bmiVisual');
-            const bmiMarker = document.getElementById('bmiMarker');
-            bmiVisual.classList.remove('hidden');
-            let pos = (data.bmi / 45) * 100;
-            if(pos > 100) pos = 100;
-            bmiMarker.style.left = pos + "%";
+            // 3. Visceral Fat
+            let vRisk = data.vfat > 9;
+            if (vRisk) problems.push("High Visceral Fat");
+            let vPos = (data.vfat / 20) * 100; // Scale 0-20
+            outputHTML += getVisualBar("Visceral Fat", data.vfat, "Lvl", vRisk ? "High" : "Normal", "normal_high", vPos, data.vfat);
 
-            let waistRisk = false;
-            if (data.gender === 'male' && data.waist >= 90) waistRisk = true;
-            if (data.gender === 'female' && data.waist >= 80) waistRisk = true;
-            if (waistRisk) {
-                results += `<p><strong>Waist:</strong> ${data.waist}cm → ${color('Abdominal Obesity', 'bad')}</p>`;
-                problems.push("Central Obesity");
-            } else {
-                results += `<p><strong>Waist:</strong> ${data.waist}cm → ${color('Normal', 'good')}</p>`;
-            }
+            // 4. Body Fat
+            let fLimit = data.gender === 'male' ? 20 : 30; // High risk cutoff
+            let fRisk = data.fat > fLimit;
+            if (fRisk) problems.push("Excess Body Fat");
+            let fPos = (data.fat / 50) * 100; 
+            outputHTML += getVisualBar("Body Fat %", data.fat, "%", fRisk ? "High" : "Normal", "normal_high", fPos, data.fat);
 
-            let vfatStatus = data.vfat > 9 ? color('High', 'bad') : color('Normal', 'good');
-            if(data.vfat > 9) problems.push(`High Visceral Fat (Lv ${data.vfat})`);
-            results += `<p><strong>Visc. Fat:</strong> ${data.vfat} → ${vfatStatus}</p>`;
+            // 5. Muscle
+            let mLow = data.gender === 'male' ? 32.9 : 25.9;
+            let mRisk = data.muscle < mLow; // Low muscle is bad (Red)
+            if (mRisk) problems.push("Low Muscle Mass");
+            // For muscle, Low (Red) is left, Normal (Blue) is right.
+            let mPos = (data.muscle / 50) * 100;
+            outputHTML += getVisualBar("Skeletal Muscle", data.muscle, "%", mRisk ? "Low" : "Normal", "low_bad", mPos, data.muscle);
 
-            let fatHigh = false;
-            if(data.gender === 'male' && data.fat > 25) fatHigh = true;
-            if(data.gender === 'female' && data.fat > 35) fatHigh = true;
-            if(fatHigh) {
-                problems.push(`Excess Body Fat (${data.fat}%)`);
-                 results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${color('High', 'bad')}</p>`;
-            } else {
-                 results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${color('Normal', 'good')}</p>`;
-            }
-
-            let muscleStatus = "";
-            if (data.gender === 'male') {
-                if (data.muscle < 32.9) muscleStatus = color('Low', 'mid');
-                else if (data.muscle <= 35.7) muscleStatus = color('Normal', 'good');
-                else if (data.muscle <= 37.3) muscleStatus = color('High', 'good');
-                else muscleStatus = color('Very High', 'good');
-            } else {
-                if (data.muscle < 25.9) muscleStatus = color('Low', 'mid');
-                else if (data.muscle <= 27.9) muscleStatus = color('Normal', 'good');
-                else if (data.muscle <= 29.0) muscleStatus = color('High', 'good');
-                else muscleStatus = color('Very High', 'good');
-            }
-            results += `<p><strong>Muscle:</strong> ${data.muscle}% → ${muscleStatus}</p>`;
-
+            // --- TARGETS ---
             let targetLossLow = 5;
             let targetLossHigh = 10;
             let comorbidText = [];
-            if(risks.t2dm) { targetLossLow=5; targetLossHigh=15; comorbidText.push("T2DM (Target 5-15%)"); }
-            if(risks.htn) { targetLossLow=5; targetLossHigh=15; comorbidText.push("Hypertension (Target 5-15%)"); }
-            if(risks.dys) { targetLossLow=5; targetLossHigh=15; comorbidText.push("Dyslipidaemia (Target 5-15%)"); }
-            if(risks.pcos) { targetLossLow=5; targetLossHigh=15; comorbidText.push("PCOS (Target 5-15%)"); }
-            if(risks.osa) { targetLossLow=7; targetLossHigh=11; comorbidText.push("Sleep Apnoea (Target 7-11%)"); }
-            if(risks.meta) { targetLossLow=10; targetLossHigh=10; comorbidText.push("Metabolic Syn (Target 10%)"); }
-            if(risks.mafld) { targetLossLow=10; targetLossHigh=40; comorbidText.push("MAFLD (Target 10-40%)"); }
+            if(risks.t2dm) { targetLossLow=5; targetLossHigh=15; comorbidText.push("T2DM"); }
+            if(risks.htn) { targetLossLow=5; targetLossHigh=15; comorbidText.push("Hypertension"); }
+            if(risks.dys) { targetLossLow=5; targetLossHigh=15; comorbidText.push("Dyslipidaemia"); }
+            if(risks.pcos) { targetLossLow=5; targetLossHigh=15; comorbidText.push("PCOS"); }
+            if(risks.osa) { targetLossLow=7; targetLossHigh=11; comorbidText.push("Sleep Apnoea"); }
+            if(risks.meta) { targetLossLow=10; targetLossHigh=10; comorbidText.push("Metabolic Syn"); }
+            if(risks.mafld) { targetLossLow=10; targetLossHigh=40; comorbidText.push("MAFLD"); }
 
             if(comorbidText.length > 0) {
-                results += `<p><strong>Comorbidities:</strong> ${comorbidText.join(", ")}</p>`;
+                outputHTML += `<div style="margin-top:10px; padding:10px; background:#fff3cd; border-radius:5px;"><strong>Risks:</strong> ${comorbidText.join(", ")}</div>`;
             }
 
             if (data.bmi >= 23) {
                 const wLow = (data.weight * (targetLossLow/100)).toFixed(1);
                 const wHigh = (data.weight * (targetLossHigh/100)).toFixed(1);
-                
-                suggestions.push(`<strong>Weight Target:</strong> Aim for ${targetLossLow}-${targetLossHigh}% loss (${wLow}-${wHigh}kg) based on risk profile.`);
+                suggestions.push(`<strong>Weight Target:</strong> Aim for ${targetLossLow}-${targetLossHigh}% loss (${wLow}-${wHigh}kg).`);
                 let calSuggestion = data.gender === 'male' ? "1500-1800" : "1200-1500";
-                suggestions.push(`<strong>Diet (MNT):</strong> Recommended ${calSuggestion} kcal/day (Deficit 500-750kcal).`);
-                let activity = "200-300 mins/week";
-                if(data.bmi >= 35) activity = "Low impact (swimming/walking) initially";
-                suggestions.push(`<strong>Activity:</strong> ${activity} moderate intensity.`);
+                suggestions.push(`<strong>Diet:</strong> ${calSuggestion} kcal/day (Deficit 500-750kcal).`);
+                suggestions.push(`<strong>Activity:</strong> 200-300 mins/week moderate intensity.`);
             } else {
-                 suggestions.push(`<strong>Goal:</strong> Maintain healthy weight and lifestyle.`);
+                 suggestions.push(`<strong>Goal:</strong> Maintain healthy weight.`);
             }
 
             if (data.bmi >= 32.5 || (data.bmi >= 27.5 && comorbidText.length > 0)) {
-                suggestions.push(`<strong>Referral:</strong> Consider specialist assessment for Pharmacotherapy or Bariatric Surgery.`);
+                suggestions.push(`<strong>Referral:</strong> Consider Pharmacotherapy or Bariatric Surgery.`);
             } else if (data.bmi >= 27.5) {
-                suggestions.push(`<strong>Medical:</strong> Consider Pharmacotherapy if lifestyle intervention fails after 3-6 months.`);
+                suggestions.push(`<strong>Medical:</strong> Consider Pharmacotherapy.`);
             }
 
-            return { html: results, problems: problems, suggestions: suggestions };
+            return { html: outputHTML, problems: problems, suggestions: suggestions };
         }
 
         async function updateGraph(patientId) {
@@ -623,11 +548,8 @@
 
         analyzeBtn.addEventListener('click', async () => {
             if(!inputs.pId.value) { alert("Please enter Patient ID"); return; }
-            // Ensure BMI is calculated if user skipped it but entered height/weight
-            if(!inputs.bmi.value && inputs.height.value && inputs.weight.value) {
-                 calculateBMI();
-            }
-            if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age, Height and Weight (or BMI)"); return; }
+            if(!inputs.bmi.value && inputs.height.value && inputs.weight.value) calculateBMI();
+            if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age and BMI"); return; }
 
             const risks = {
                 t2dm: riskInputs.t2dm.checked,
