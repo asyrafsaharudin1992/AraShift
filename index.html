@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Body Analyzer</title>
+    <title>AraShift Body Analyzer (Clinic Mode)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- STANDARD STYLING --- */
@@ -274,7 +274,7 @@
         <div id="print-footer">Doctor's Signature / Stamp</div>
 
         <div class="history-section">
-            <h3>Recent History (Logged User Only)</h3>
+            <h3>Recent Clinic Records</h3>
             <ul id="historyList"><li>Loading...</li></ul>
         </div>
     </div>
@@ -335,7 +335,7 @@
                 currentUser = user;
                 loginScreen.classList.add('hidden');
                 appScreen.classList.remove('hidden');
-                loadUserData(user.uid);
+                loadRecentRecords(); // Changed function name
             } else {
                 currentUser = null;
                 loginScreen.classList.remove('hidden');
@@ -376,14 +376,11 @@
             else { bmiStatus = color('Obesity Class III', 'bad'); problems.push("Obesity Class III"); }
             results += `<p><strong>BMI:</strong> ${data.bmi} → ${bmiStatus}</p>`;
 
-            // Update Visual Marker
+            // Visual Marker
             const bmiVisual = document.getElementById('bmiVisual');
             const bmiMarker = document.getElementById('bmiMarker');
             bmiVisual.classList.remove('hidden');
-            // Scale: 0 to 40. 
-            // 18.5% is left edge of normal. 
-            // Calculation: (BMI / 40) * 100%. Cap at 100%.
-            let pos = (data.bmi / 45) * 100; // extended scale slightly
+            let pos = (data.bmi / 45) * 100;
             if(pos > 100) pos = 100;
             bmiMarker.style.left = pos + "%";
 
@@ -453,7 +450,8 @@
 
         async function updateGraph(patientId) {
             if (!patientId) return;
-            const q = query(collection(db, `users/${currentUser.uid}/records`), orderBy("timestamp", "asc"));
+            // CLINIC MODE: QUERY SHARED RECORDS
+            const q = query(collection(db, 'shared_records'), orderBy("timestamp", "asc"));
             const querySnapshot = await getDocs(q);
             const labels = [], weightData = [], fatData = [];
 
@@ -495,7 +493,7 @@
             if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age and BMI"); return; }
 
             const data = {
-                uid: currentUser.uid,
+                // Remove private uid logic, now saving generic clinic data
                 pId: inputs.pId.value,
                 pName: inputs.pName.value,
                 gender: inputs.gender.value,
@@ -534,10 +532,17 @@
             }
 
             try {
-                await addDoc(collection(db, `users/${currentUser.uid}/records`), {
-                    ...data, analysisProblems: analysis.problems, analysisSuggestions: analysis.suggestions
+                // CLINIC MODE: SAVE TO SHARED_RECORDS
+                await addDoc(collection(db, 'shared_records'), {
+                    ...data, 
+                    analysisProblems: analysis.problems, 
+                    analysisSuggestions: analysis.suggestions,
+                    doctorEmail: currentUser.email // Audit Trail
                 });
-                if(data.pId) updateGraph(data.pId);
+                if(data.pId) {
+                    updateGraph(data.pId);
+                    document.getElementById('chartWrapper').classList.remove('hidden'); // Show graph on new analysis
+                }
             } catch (e) { console.error("Error", e); alert("Error saving."); }
         });
 
@@ -563,8 +568,9 @@
             }
         });
 
-        function loadUserData(uid) {
-            const q = query(collection(db, `users/${uid}/records`), orderBy("timestamp", "desc"), limit(20));
+        function loadRecentRecords() {
+            // CLINIC MODE: READ SHARED_RECORDS
+            const q = query(collection(db, 'shared_records'), orderBy("timestamp", "desc"), limit(20));
             onSnapshot(q, (snapshot) => {
                 const list = document.getElementById('historyList');
                 list.innerHTML = "";
@@ -584,6 +590,7 @@
                             inputs.pId.value = d.pId || "";
                             inputs.pName.value = d.pName || "";
                             if(d.pId) updateGraph(d.pId);
+                            // Auto-show graph on history click
                             document.getElementById('chartWrapper').classList.remove('hidden');
                             document.querySelector('.chart-container').scrollIntoView({behavior: 'smooth'});
                         }
@@ -592,7 +599,7 @@
                 });
                 document.querySelectorAll('.delete-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
-                        if(confirm("Delete?")) await deleteDoc(doc(db, `users/${uid}/records`, e.target.dataset.id));
+                        if(confirm("Delete?")) await deleteDoc(doc(db, 'shared_records', e.target.dataset.id));
                     });
                 });
             });
