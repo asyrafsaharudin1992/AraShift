@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Body Analyzer (Clinic Mode)</title>
+    <title>AraShift Body Analyzer</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- STANDARD STYLING --- */
         :root { --primary: #2563eb; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .main-container { max-width: 850px; margin: 0 auto; }
+        .main-container { max-width: 900px; margin: 0 auto; } /* Widened slightly for new column */
         
         #login-screen { text-align: center; margin-top: 100px; }
         .login-btn { padding: 15px 30px; font-size: 1.2rem; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; }
@@ -20,16 +20,23 @@
         .header-content p { margin: 5px 0 0 0; color: #666; font-weight: 500; }
         .logout-btn { background: none; border: 1px solid #ccc; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; }
 
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        /* Grid Update: 3 Columns for Desktop to fit Comorbidities */
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        @media (max-width: 800px) { .grid-container { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
         
         .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: var(--primary); }
+        h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: var(--primary); font-size: 1.1rem; }
         
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
         textarea { resize: vertical; min-height: 80px; }
+
+        /* Checkbox Styling */
+        .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; }
+        .checkbox-item input { width: auto; margin: 0; }
 
         .btn-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-top: 20px; }
         .action-btn { padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
@@ -41,13 +48,11 @@
         .results { background: #dbeafe; border: 2px solid #2563eb; padding: 20px; border-radius: 12px; margin-top: 20px; }
         .hidden { display: none !important; }
         
-        /* Graph & Toggle */
         .chart-wrapper { margin-top: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
         .chart-container { height: 300px; }
         .toggle-btn { background: #fff; border: 1px solid #2563eb; color: #2563eb; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; font-size: 0.9rem; width: 100%; }
         .toggle-btn:hover { background: #eff6ff; }
 
-        /* BMI Visual Bar */
         .bmi-bar-container { margin: 15px 0; background: #fff; border-radius: 5px; height: 20px; position: relative; overflow: hidden; display: flex; border: 1px solid #ccc; }
         .bmi-segment { height: 100%; }
         .bmi-marker { position: absolute; top: -2px; width: 4px; height: 24px; background: #000; border: 1px solid #fff; z-index: 10; transform: translateX(-50%); }
@@ -66,7 +71,6 @@
         .delete-btn { position: absolute; top: 10px; right: 10px; color: #ff4444; cursor: pointer; font-weight: bold; border: none; background: none; }
         #print-footer { display: none; }
         
-        /* Hidden elements for print substitution */
         .print-only-text { display: none; }
 
         /* --- PRINT STYLING --- */
@@ -75,22 +79,19 @@
             .main-container { max-width: 100%; margin: 0; }
             #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box, .toggle-btn { display: none !important; }
             
-            /* Header */
             header { display: block; text-align: center; border-bottom: 2px solid #444; padding-bottom: 10px; margin-bottom: 20px; }
             .header-content h1 { font-size: 22pt; color: #000; }
             .header-content p { font-size: 12pt; color: #444; font-weight: bold; }
 
             #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
             
-            /* Reset Inputs */
             input, select { border: none; padding: 0; background: transparent; width: auto; font-weight: bold; font-family: inherit; color: #000; font-size: 11pt; }
             select { appearance: none; padding-right: 0; }
             
-            /* Hide Textarea, Show Print Div to fix scrolling */
             textarea { display: none !important; }
             .print-only-text { display: block; white-space: pre-wrap; font-family: inherit; border: 1px solid #ccc; padding: 10px; min-height: 100px; }
 
-            /* LAYOUT GRID */
+            /* LAYOUT GRID FOR PRINT */
             #app-screen {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr;
@@ -105,28 +106,35 @@
             }
             header { grid-area: header; }
             
-            /* Biometric Details - Rounded Grey Boxes, No Border */
+            /* Biometric Details + Comorbidities */
             .grid-container {
                 grid-area: top-params;
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* 5 cols for dense data */
                 gap: 10px;
             }
+            /* Combine Cards for Print */
             .grid-container .card {
-                background-color: #f3f4f6 !important; /* Light Grey */
-                border-radius: 12px !important;       /* Rounded Corners */
-                border: none !important;              /* Remove Border */
+                background-color: #f3f4f6 !important;
+                border-radius: 12px !important;
+                border: none !important;
                 box-shadow: none !important;
                 padding: 10px 15px;
-                -webkit-print-color-adjust: exact;    /* Force color print */
+                -webkit-print-color-adjust: exact;
             }
-            .grid-container h3 { 
-                font-size: 9pt; text-transform: uppercase; color: #666; margin-top: 0; border: none; padding-bottom: 5px; 
+            /* Specifically style the Comorbidities card for print */
+            .comorb-card {
+                grid-column: span 5; /* Full width for comorb list */
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
             }
+            .comorb-card .checkbox-item { margin-right: 15px; }
+            
+            .grid-container h3 { font-size: 9pt; text-transform: uppercase; color: #666; margin-top: 0; border: none; padding-bottom: 5px; }
             .form-group { margin-bottom: 0; }
             label { font-size: 8pt; color: #555; margin-bottom: 0; }
             
-            /* Results */
             #resultArea {
                 grid-area: mid-analysis;
                 border: 2px solid #444 !important;
@@ -136,14 +144,12 @@
             }
             #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
             
-            /* Show graph if visible, else hide */
             .chart-wrapper.hidden { display: none !important; }
             .chart-wrapper { border: 1px solid #ccc; height: 250px; page-break-inside: avoid; }
             .chart-container { height: 240px; }
 
             .auto-plan { border: none; border-top: 1px solid #444; padding: 10px 0 0 0; margin-top: 10px; background: none; }
             
-            /* Doctor Remarks - Full Width at Bottom */
             #doctor-inputs-card {
                 grid-area: mid-doctor;
                 border: 2px solid #444 !important;
@@ -182,7 +188,7 @@
                 <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Optional"></div>
             </div>
             <div class="card">
-                <h3>Bodyshape</h3>
+                <h3>Profile</h3>
                 <div class="form-group"><label>Age / Gender</label>
                     <div style="display:flex; gap:5px;">
                         <input type="number" id="age" placeholder="30" style="width:50px;">
@@ -192,23 +198,35 @@
                 <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="175"></div>
             </div>
             <div class="card">
-                <h3>Composition</h3>
+                <h3>Metrics</h3>
                 <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
                 <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist" placeholder="95"></div>
             </div>
-             <div class="card">
-                <h3>Analysis Data</h3>
-                <div class="form-group"><label>BMI / Visceral</label>
+            <div class="card">
+                <h3>Composition</h3>
+                <div class="form-group"><label>BMI / Visc.</label>
                     <div style="display:flex; gap:5px;">
                         <input type="number" step="0.1" id="bmi" placeholder="BMI">
                         <input type="number" id="vfat" placeholder="VFat">
                     </div>
                 </div>
-                <div class="form-group"><label>Fat % / Muscle %</label>
+                <div class="form-group"><label>Fat% / Mus%</label>
                     <div style="display:flex; gap:5px;">
                         <input type="number" step="0.1" id="fat" placeholder="Fat%">
                         <input type="number" step="0.1" id="muscle" placeholder="Mus%">
                     </div>
+                </div>
+            </div>
+            <div class="card comorb-card">
+                <h3>Comorbidities (CPG Risk)</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item"><input type="checkbox" id="risk_t2dm" value="T2DM"><label for="risk_t2dm">T2DM / Pre-Diabetes</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_htn" value="HTN"><label for="risk_htn">Hypertension</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_dys" value="DYS"><label for="risk_dys">Dyslipidaemia</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_pcos" value="PCOS"><label for="risk_pcos">PCOS</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_osa" value="OSA"><label for="risk_osa">Sleep Apnoea</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_mafld" value="MAFLD"><label for="risk_mafld">MAFLD (Fatty Liver)</label></div>
+                    <div class="checkbox-item"><input type="checkbox" id="risk_meta" value="META"><label for="risk_meta">Metabolic Syndrome</label></div>
                 </div>
             </div>
         </div>
@@ -246,7 +264,7 @@
             </div>
 
             <div class="auto-plan">
-                <h4>⚠️ Identified Problems & Recommendations</h4>
+                <h4>⚠️ Identified Problems & Clinical Targets</h4>
                 <div id="autoSuggestions"></div>
             </div>
         </div>
@@ -299,7 +317,6 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // UI Refs
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
         const analyzeBtn = document.getElementById('analyzeBtn');
@@ -319,15 +336,23 @@
             docRemarks: document.getElementById('docRemarks'),
             docPlan: document.getElementById('docPlan')
         };
+        const riskInputs = {
+            t2dm: document.getElementById('risk_t2dm'),
+            htn: document.getElementById('risk_htn'),
+            dys: document.getElementById('risk_dys'),
+            pcos: document.getElementById('risk_pcos'),
+            osa: document.getElementById('risk_osa'),
+            mafld: document.getElementById('risk_mafld'),
+            meta: document.getElementById('risk_meta')
+        };
+
         let currentUser = null;
         let trendChart = null;
 
-        // Sync Textarea to Print Div
         window.updatePrintText = (el, targetId) => {
             document.getElementById(targetId).innerText = el.value;
         };
 
-        // Auth
         document.getElementById('loginBtn').addEventListener('click', () => signInWithPopup(auth, provider));
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
         onAuthStateChanged(auth, (user) => {
@@ -335,7 +360,7 @@
                 currentUser = user;
                 loginScreen.classList.add('hidden');
                 appScreen.classList.remove('hidden');
-                loadRecentRecords(); // Changed function name
+                loadRecentRecords(); 
             } else {
                 currentUser = null;
                 loginScreen.classList.remove('hidden');
@@ -343,22 +368,21 @@
             }
         });
 
-        // Toggle Graph
         document.getElementById('toggleGraphBtn').addEventListener('click', () => {
             const wrapper = document.getElementById('chartWrapper');
             wrapper.classList.toggle('hidden');
         });
 
-        // Consent Logic
         pdpaConsent.addEventListener('change', (e) => {
             analyzeBtn.disabled = !e.target.checked;
         });
 
-        // Analysis Logic (MOH CPG 2023)
-        function generateAnalysis(data) {
+        // --- CPG ANALYSIS LOGIC ---
+        function generateAnalysis(data, risks) {
             let results = "";
             let problems = [];
             let suggestions = [];
+            
             const color = (text, type) => {
                 if(type === 'good') return `<strong>${text}</strong>`;
                 if(type === 'bad') return `<strong>${text} (High Risk)</strong>`;
@@ -426,20 +450,44 @@
             }
             results += `<p><strong>Muscle:</strong> ${data.muscle}% → ${muscleStatus}</p>`;
 
-            // Suggestions
-            if (data.bmi >= 23) {
-                const loss5 = (data.weight * 0.05).toFixed(1);
-                const loss10 = (data.weight * 0.10).toFixed(1);
-                suggestions.push(`<strong>Target:</strong> 5-10% weight loss (${loss5}-${loss10}kg) over 6 months.`);
-                let calSuggestion = data.gender === 'male' ? "1500-1800" : "1200-1500";
-                suggestions.push(`<strong>Diet:</strong> Recommended intake ${calSuggestion} kcal/day (500-750kcal deficit).`);
-                suggestions.push(`<strong>Activity:</strong> Aim for 200-300 mins/week moderate intensity.`);
-            } else {
-                 suggestions.push(`<strong>Goal:</strong> Maintain healthy weight and lifestyle.`);
-                 suggestions.push(`<strong>Activity:</strong> Maintain 150 mins/week moderate activity.`);
+            // --- SMART CPG TARGET LOGIC ---
+            // CPG Table 2-3 (Pg 28)
+            let targetLossLow = 5;
+            let targetLossHigh = 10;
+            let targetMsg = "";
+
+            // Check comorbidities to adjust target
+            let comorbidText = [];
+            if(risks.t2dm) { targetLossLow=5; targetLossHigh=15; comorbidText.push("T2DM (Target 5-15%)"); }
+            if(risks.htn) { targetLossLow=5; targetLossHigh=15; comorbidText.push("Hypertension (Target 5-15%)"); }
+            if(risks.dys) { targetLossLow=5; targetLossHigh=15; comorbidText.push("Dyslipidaemia (Target 5-15%)"); }
+            if(risks.pcos) { targetLossLow=5; targetLossHigh=15; comorbidText.push("PCOS (Target 5-15%)"); }
+            if(risks.osa) { targetLossLow=7; targetLossHigh=11; comorbidText.push("Sleep Apnoea (Target 7-11%)"); }
+            if(risks.meta) { targetLossLow=10; targetLossHigh=10; comorbidText.push("Metabolic Syn (Target 10%)"); }
+            if(risks.mafld) { targetLossLow=10; targetLossHigh=40; comorbidText.push("MAFLD (Target 10-40%)"); }
+
+            if(comorbidText.length > 0) {
+                results += `<p><strong>Comorbidities:</strong> ${comorbidText.join(", ")}</p>`;
             }
 
-            if (data.bmi >= 32.5) {
+            // Generate Suggestion Text
+            if (data.bmi >= 23) {
+                const wLow = (data.weight * (targetLossLow/100)).toFixed(1);
+                const wHigh = (data.weight * (targetLossHigh/100)).toFixed(1);
+                
+                suggestions.push(`<strong>Weight Target:</strong> Aim for ${targetLossLow}-${targetLossHigh}% loss (${wLow}-${wHigh}kg) based on risk profile.`);
+                
+                let calSuggestion = data.gender === 'male' ? "1500-1800" : "1200-1500";
+                suggestions.push(`<strong>Diet (MNT):</strong> Recommended ${calSuggestion} kcal/day (Deficit 500-750kcal).`);
+                
+                let activity = "200-300 mins/week";
+                if(data.bmi >= 35) activity = "Low impact (swimming/walking) initially";
+                suggestions.push(`<strong>Activity:</strong> ${activity} moderate intensity.`);
+            } else {
+                 suggestions.push(`<strong>Goal:</strong> Maintain healthy weight and lifestyle.`);
+            }
+
+            if (data.bmi >= 32.5 || (data.bmi >= 27.5 && comorbidText.length > 0)) {
                 suggestions.push(`<strong>Referral:</strong> Consider specialist assessment for Pharmacotherapy or Bariatric Surgery.`);
             } else if (data.bmi >= 27.5) {
                 suggestions.push(`<strong>Medical:</strong> Consider Pharmacotherapy if lifestyle intervention fails after 3-6 months.`);
@@ -450,7 +498,6 @@
 
         async function updateGraph(patientId) {
             if (!patientId) return;
-            // CLINIC MODE: QUERY SHARED RECORDS
             const q = query(collection(db, 'shared_records'), orderBy("timestamp", "asc"));
             const querySnapshot = await getDocs(q);
             const labels = [], weightData = [], fatData = [];
@@ -492,8 +539,18 @@
             if(!inputs.pId.value) { alert("Please enter Patient ID"); return; }
             if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age and BMI"); return; }
 
+            // Gather Comorbidities
+            const risks = {
+                t2dm: riskInputs.t2dm.checked,
+                htn: riskInputs.htn.checked,
+                dys: riskInputs.dys.checked,
+                pcos: riskInputs.pcos.checked,
+                osa: riskInputs.osa.checked,
+                mafld: riskInputs.mafld.checked,
+                meta: riskInputs.meta.checked
+            };
+
             const data = {
-                // Remove private uid logic, now saving generic clinic data
                 pId: inputs.pId.value,
                 pName: inputs.pName.value,
                 gender: inputs.gender.value,
@@ -505,12 +562,13 @@
                 vfat: Number(inputs.vfat.value),
                 muscle: Number(inputs.muscle.value),
                 fat: Number(inputs.fat.value),
+                risks: risks, // Save Checkboxes
                 remarks: inputs.docRemarks.value,
                 plan: inputs.docPlan.value,
                 timestamp: serverTimestamp()
             };
 
-            const analysis = generateAnalysis(data);
+            const analysis = generateAnalysis(data, risks);
             document.getElementById('resultArea').classList.remove('hidden');
             document.getElementById('doctor-inputs-card').classList.remove('hidden');
             document.getElementById('doctor-inputs-card').style.margin = "20px 0 0 0"; 
@@ -521,7 +579,6 @@
             planHTML += "</ul>";
             document.getElementById('autoSuggestions').innerHTML = planHTML;
 
-            // Prepare print text areas
             updatePrintText(inputs.docRemarks, 'printRemarks');
             updatePrintText(inputs.docPlan, 'printPlan');
 
@@ -532,16 +589,15 @@
             }
 
             try {
-                // CLINIC MODE: SAVE TO SHARED_RECORDS
                 await addDoc(collection(db, 'shared_records'), {
                     ...data, 
                     analysisProblems: analysis.problems, 
                     analysisSuggestions: analysis.suggestions,
-                    doctorEmail: currentUser.email // Audit Trail
+                    doctorEmail: currentUser.email
                 });
                 if(data.pId) {
                     updateGraph(data.pId);
-                    document.getElementById('chartWrapper').classList.remove('hidden'); // Show graph on new analysis
+                    document.getElementById('chartWrapper').classList.remove('hidden'); 
                 }
             } catch (e) { console.error("Error", e); alert("Error saving."); }
         });
@@ -553,6 +609,7 @@
         document.getElementById('resetBtn').addEventListener('click', () => {
             if(confirm("New Patient?")) {
                 Object.values(inputs).forEach(input => input.value = "");
+                Object.values(riskInputs).forEach(cb => cb.checked = false);
                 inputs.gender.value = "male";
                 pdpaConsent.checked = false;
                 analyzeBtn.disabled = true;
@@ -569,7 +626,6 @@
         });
 
         function loadRecentRecords() {
-            // CLINIC MODE: READ SHARED_RECORDS
             const q = query(collection(db, 'shared_records'), orderBy("timestamp", "desc"), limit(20));
             onSnapshot(q, (snapshot) => {
                 const list = document.getElementById('historyList');
@@ -590,7 +646,6 @@
                             inputs.pId.value = d.pId || "";
                             inputs.pName.value = d.pName || "";
                             if(d.pId) updateGraph(d.pId);
-                            // Auto-show graph on history click
                             document.getElementById('chartWrapper').classList.remove('hidden');
                             document.querySelector('.chart-container').scrollIntoView({behavior: 'smooth'});
                         }
