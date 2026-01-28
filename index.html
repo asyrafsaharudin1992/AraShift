@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Body Analyzer (PDPA Compliant)</title>
+    <title>AraShift Body Analyzer</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- STANDARD STYLING --- */
@@ -16,6 +16,8 @@
         
         header { text-align: center; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .header-content { flex-grow: 1; text-align: center; }
+        .header-content h1 { margin: 0; font-size: 2rem; color: var(--primary); }
+        .header-content p { margin: 5px 0 0 0; color: #666; font-weight: 500; }
         .logout-btn { background: none; border: 1px solid #ccc; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; }
 
         .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -39,11 +41,21 @@
         .results { background: #dbeafe; border: 2px solid #2563eb; padding: 20px; border-radius: 12px; margin-top: 20px; }
         .hidden { display: none !important; }
         
-        .chart-container { background: white; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ccc; height: 300px; }
+        /* Graph & Toggle */
+        .chart-wrapper { margin-top: 15px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #ccc; }
+        .chart-container { height: 300px; }
+        .toggle-btn { background: #fff; border: 1px solid #2563eb; color: #2563eb; padding: 8px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; font-size: 0.9rem; width: 100%; }
+        .toggle-btn:hover { background: #eff6ff; }
+
+        /* BMI Visual Bar */
+        .bmi-bar-container { margin: 15px 0; background: #fff; border-radius: 5px; height: 20px; position: relative; overflow: hidden; display: flex; border: 1px solid #ccc; }
+        .bmi-segment { height: 100%; }
+        .bmi-marker { position: absolute; top: -2px; width: 4px; height: 24px; background: #000; border: 1px solid #fff; z-index: 10; transform: translateX(-50%); }
+        .bmi-legend { display: flex; justify-content: space-between; font-size: 0.75rem; color: #666; margin-top: 2px; }
+
         .auto-plan { background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 15px; font-size: 0.95rem; }
         .auto-plan h4 { margin-top: 0; color: #d97706; margin-bottom: 10px; }
         
-        /* PDPA Consent Box */
         .pdpa-box { background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; border-radius: 8px; margin-top: 20px; font-size: 0.9rem; }
         .pdpa-check { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; }
         .pdpa-check input { width: 20px; height: 20px; margin-top: 2px; }
@@ -53,40 +65,95 @@
         #historyList li { background: white; margin-bottom: 10px; padding: 15px; border-radius: 8px; border-left: 5px solid var(--primary); font-size: 0.9rem; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .delete-btn { position: absolute; top: 10px; right: 10px; color: #ff4444; cursor: pointer; font-weight: bold; border: none; background: none; }
         #print-footer { display: none; }
+        
+        /* Hidden elements for print substitution */
+        .print-only-text { display: none; }
 
-        /* PRINT STYLING */
+        /* --- PRINT STYLING --- */
         @media print {
             body { background: white; padding: 10px; font-size: 10pt; color: #000; }
             .main-container { max-width: 100%; margin: 0; }
-            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box { display: none !important; }
-            header h1 { font-size: 24pt; margin: 0 0 15px 0; color: #000; text-align: left; }
-            #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
-            input, select, textarea { border: none; padding: 2px 0; background: transparent; width: auto; font-weight: bold; font-family: inherit; color: #000; }
-            select { appearance: none; padding-right: 0; }
-            textarea { resize: none; height: auto; overflow: visible; min-height: 30px; width: 100%; font-weight: normal; display: block; height: 100%; }
+            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box, .toggle-btn { display: none !important; }
             
+            /* Header */
+            header { display: block; text-align: center; border-bottom: 2px solid #444; padding-bottom: 10px; margin-bottom: 20px; }
+            .header-content h1 { font-size: 22pt; color: #000; }
+            .header-content p { font-size: 12pt; color: #444; font-weight: bold; }
+
+            #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
+            
+            /* Reset Inputs */
+            input, select { border: none; padding: 0; background: transparent; width: auto; font-weight: bold; font-family: inherit; color: #000; font-size: 11pt; }
+            select { appearance: none; padding-right: 0; }
+            
+            /* Hide Textarea, Show Print Div to fix scrolling */
+            textarea { display: none !important; }
+            .print-only-text { display: block; white-space: pre-wrap; font-family: inherit; border: 1px solid #ccc; padding: 10px; min-height: 100px; }
+
+            /* LAYOUT GRID */
             #app-screen {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr;
                 gap: 15px;
-                grid-template-areas: "header header" "top-params top-params" "mid-analysis mid-doctor" "chart chart" "footer footer";
+                grid-template-areas:
+                    "header header"
+                    "top-params top-params"
+                    "mid-analysis mid-analysis"
+                    "mid-doctor mid-doctor"
+                    "footer footer";
                 align-items: start;
             }
             header { grid-area: header; }
-            .grid-container { grid-area: top-params; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; border: 2px solid #444; padding: 15px; background: #fff; }
-            .grid-container .card { box-shadow: none; border: none; padding: 0; background: none; }
-            .grid-container h3 { display: none; }
-            .form-group { margin-bottom: 5px; }
-            label { font-size: 8pt; text-transform: uppercase; color: #666; margin-bottom: 0; }
-            input { font-size: 11pt; }
-            #resultArea { grid-area: mid-analysis; border: 2px solid #444 !important; background: #fff !important; padding: 15px; margin: 0 !important; }
+            
+            /* Biometric Details - Rounded Grey Boxes, No Border */
+            .grid-container {
+                grid-area: top-params;
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 10px;
+            }
+            .grid-container .card {
+                background-color: #f3f4f6 !important; /* Light Grey */
+                border-radius: 12px !important;       /* Rounded Corners */
+                border: none !important;              /* Remove Border */
+                box-shadow: none !important;
+                padding: 10px 15px;
+                -webkit-print-color-adjust: exact;    /* Force color print */
+            }
+            .grid-container h3 { 
+                font-size: 9pt; text-transform: uppercase; color: #666; margin-top: 0; border: none; padding-bottom: 5px; 
+            }
+            .form-group { margin-bottom: 0; }
+            label { font-size: 8pt; color: #555; margin-bottom: 0; }
+            
+            /* Results */
+            #resultArea {
+                grid-area: mid-analysis;
+                border: 2px solid #444 !important;
+                background: #fff !important;
+                padding: 15px;
+                margin: 0 !important;
+            }
             #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
-            .chart-container { grid-area: chart; border: 2px solid #444; height: 250px; page-break-inside: avoid; }
-            .auto-plan { border: none; border-top: 2px solid #444; padding: 15px 0 0 0; margin-top: 15px; background: none; }
-            #doctor-inputs-card { grid-area: mid-doctor; border: 2px solid #444 !important; padding: 15px; background: #fff; box-shadow: none; margin: 0 !important; }
+            
+            /* Show graph if visible, else hide */
+            .chart-wrapper.hidden { display: none !important; }
+            .chart-wrapper { border: 1px solid #ccc; height: 250px; page-break-inside: avoid; }
+            .chart-container { height: 240px; }
+
+            .auto-plan { border: none; border-top: 1px solid #444; padding: 10px 0 0 0; margin-top: 10px; background: none; }
+            
+            /* Doctor Remarks - Full Width at Bottom */
+            #doctor-inputs-card {
+                grid-area: mid-doctor;
+                border: 2px solid #444 !important;
+                padding: 15px;
+                background: #fff;
+                box-shadow: none;
+                margin: 0 !important;
+            }
             #doctor-inputs-card h3 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
-            #doctor-inputs-card label { background: #eee; padding: 5px; font-weight: bold; color: #000; font-size: 9pt; border: 1px solid #444; border-bottom: none; }
-            #doctor-inputs-card textarea { border: 1px solid #444; padding: 10px; font-weight: normal; }
+            
             #print-footer { grid-area: footer; }
         }
     </style>
@@ -103,7 +170,7 @@
         <header>
             <div class="header-content">
                 <h1>AraShift</h1>
-                <p>Medical Body Composition Analysis</p>
+                <p>Ara Specialised Weight Management System</p>
             </div>
             <button id="logoutBtn" class="logout-btn">Logout</button>
         </header>
@@ -112,25 +179,37 @@
             <div class="card">
                 <h3>Identity</h3>
                 <div class="form-group"><label>Patient ID</label><input type="number" id="pId" placeholder="e.g. 1001"></div>
-                <div class="form-group"><label>Name (Opt)</label><input type="text" id="pName" placeholder="Patient Name"></div>
+                <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Optional"></div>
             </div>
             <div class="card">
                 <h3>Bodyshape</h3>
-                <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
-                <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                <div class="form-group"><label>Age / Gender</label>
+                    <div style="display:flex; gap:5px;">
+                        <input type="number" id="age" placeholder="30" style="width:50px;">
+                        <select id="gender"><option value="male">Male</option><option value="female">Female</option></select>
+                    </div>
+                </div>
                 <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="175"></div>
             </div>
             <div class="card">
                 <h3>Composition</h3>
                 <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
                 <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist" placeholder="95"></div>
-                <div class="form-group"><label>BMI</label><input type="number" step="0.1" id="bmi" placeholder="28.5"></div>
             </div>
              <div class="card">
                 <h3>Analysis Data</h3>
-                <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="11"></div>
-                <div class="form-group"><label>Body Fat %</label><input type="number" step="0.1" id="fat" placeholder="32.0"></div>
-                <div class="form-group"><label>Muscle %</label><input type="number" step="0.1" id="muscle" placeholder="28.5"></div>
+                <div class="form-group"><label>BMI / Visceral</label>
+                    <div style="display:flex; gap:5px;">
+                        <input type="number" step="0.1" id="bmi" placeholder="BMI">
+                        <input type="number" id="vfat" placeholder="VFat">
+                    </div>
+                </div>
+                <div class="form-group"><label>Fat % / Muscle %</label>
+                    <div style="display:flex; gap:5px;">
+                        <input type="number" step="0.1" id="fat" placeholder="Fat%">
+                        <input type="number" step="0.1" id="muscle" placeholder="Mus%">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -146,7 +225,26 @@
         <div id="resultArea" class="results hidden">
             <h2>Analysis Summary (MOH CPG 2023)</h2>
             <div id="analysisOutput"></div>
-            <div class="chart-container"><canvas id="progressChart"></canvas></div>
+            
+            <div id="bmiVisual" class="hidden">
+                <div class="bmi-bar-container">
+                    <div class="bmi-segment" style="width: 18.5%; background: #fbbf24;" title="Underweight"></div>
+                    <div class="bmi-segment" style="width: 20%; background: #4ade80;" title="Normal"></div>
+                    <div class="bmi-segment" style="width: 20%; background: #fb923c;" title="Overweight"></div>
+                    <div class="bmi-segment" style="width: 20%; background: #ef4444;" title="Obese I"></div>
+                    <div class="bmi-segment" style="width: 21.5%; background: #991b1b;" title="Obese II/III"></div>
+                    <div id="bmiMarker" class="bmi-marker"></div>
+                </div>
+                <div class="bmi-legend">
+                    <span>0</span><span>18.5</span><span>23</span><span>27.5</span><span>32.5+</span>
+                </div>
+            </div>
+
+            <button id="toggleGraphBtn" class="toggle-btn">📈 Show/Hide Trend Graph</button>
+            <div id="chartWrapper" class="chart-wrapper hidden">
+                <div class="chart-container"><canvas id="progressChart"></canvas></div>
+            </div>
+
             <div class="auto-plan">
                 <h4>⚠️ Identified Problems & Recommendations</h4>
                 <div id="autoSuggestions"></div>
@@ -157,11 +255,13 @@
             <h3>Clinical Assessment</h3>
             <div class="form-group">
                 <label>Doctor's Diagnosis / Remarks</label>
-                <textarea id="docRemarks" placeholder="Enter diagnosis here..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
+                <textarea id="docRemarks" placeholder="Enter diagnosis here..." oninput="updatePrintText(this, 'printRemarks')"></textarea>
+                <div id="printRemarks" class="print-only-text"></div>
             </div>
             <div class="form-group" style="margin-bottom:0;">
                 <label>Management Plan</label>
-                <textarea id="docPlan" placeholder="Plan notes..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
+                <textarea id="docPlan" placeholder="Plan notes..." oninput="updatePrintText(this, 'printPlan')"></textarea>
+                <div id="printPlan" class="print-only-text"></div>
             </div>
         </div>
 
@@ -222,6 +322,11 @@
         let currentUser = null;
         let trendChart = null;
 
+        // Sync Textarea to Print Div
+        window.updatePrintText = (el, targetId) => {
+            document.getElementById(targetId).innerText = el.value;
+        };
+
         // Auth
         document.getElementById('loginBtn').addEventListener('click', () => signInWithPopup(auth, provider));
         document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
@@ -236,6 +341,12 @@
                 loginScreen.classList.remove('hidden');
                 appScreen.classList.add('hidden');
             }
+        });
+
+        // Toggle Graph
+        document.getElementById('toggleGraphBtn').addEventListener('click', () => {
+            const wrapper = document.getElementById('chartWrapper');
+            wrapper.classList.toggle('hidden');
         });
 
         // Consent Logic
@@ -264,6 +375,17 @@
             else if (data.bmi <= 37.4) { bmiStatus = color('Obesity Class II', 'bad'); problems.push("Obesity Class II"); }
             else { bmiStatus = color('Obesity Class III', 'bad'); problems.push("Obesity Class III"); }
             results += `<p><strong>BMI:</strong> ${data.bmi} → ${bmiStatus}</p>`;
+
+            // Update Visual Marker
+            const bmiVisual = document.getElementById('bmiVisual');
+            const bmiMarker = document.getElementById('bmiMarker');
+            bmiVisual.classList.remove('hidden');
+            // Scale: 0 to 40. 
+            // 18.5% is left edge of normal. 
+            // Calculation: (BMI / 40) * 100%. Cap at 100%.
+            let pos = (data.bmi / 45) * 100; // extended scale slightly
+            if(pos > 100) pos = 100;
+            bmiMarker.style.left = pos + "%";
 
             // Waist
             let waistRisk = false;
@@ -401,9 +523,14 @@
             planHTML += "</ul>";
             document.getElementById('autoSuggestions').innerHTML = planHTML;
 
+            // Prepare print text areas
+            updatePrintText(inputs.docRemarks, 'printRemarks');
+            updatePrintText(inputs.docPlan, 'printPlan');
+
             if(!inputs.docPlan.value && analysis.problems.length > 0) {
-               inputs.docPlan.value = "CPG Recommendations:\n" + analysis.suggestions.map(s => "- " + s.replace(/<[^>]*>?/gm, "")).join("\n");
-               inputs.docPlan.dispatchEvent(new Event('input'));
+               const autoPlan = "CPG Recommendations:\n" + analysis.suggestions.map(s => "- " + s.replace(/<[^>]*>?/gm, "")).join("\n");
+               inputs.docPlan.value = autoPlan;
+               updatePrintText(inputs.docPlan, 'printPlan');
             }
 
             try {
@@ -415,8 +542,6 @@
         });
 
         document.getElementById('printBtn').addEventListener('click', () => { 
-            inputs.docRemarks.dispatchEvent(new Event('input'));
-            inputs.docPlan.dispatchEvent(new Event('input'));
             window.print(); 
         });
 
@@ -429,6 +554,10 @@
                 document.getElementById('resultArea').classList.add('hidden');
                 document.getElementById('doctor-inputs-card').classList.add('hidden');
                 document.getElementById('analysisOutput').innerHTML = "";
+                document.getElementById('bmiVisual').classList.add('hidden');
+                document.getElementById('chartWrapper').classList.add('hidden');
+                document.getElementById('printRemarks').innerText = "";
+                document.getElementById('printPlan').innerText = "";
                 if(trendChart) { trendChart.destroy(); trendChart = null; }
                 window.scrollTo(0,0);
             }
@@ -455,6 +584,7 @@
                             inputs.pId.value = d.pId || "";
                             inputs.pName.value = d.pName || "";
                             if(d.pId) updateGraph(d.pId);
+                            document.getElementById('chartWrapper').classList.remove('hidden');
                             document.querySelector('.chart-container').scrollIntoView({behavior: 'smooth'});
                         }
                     });
