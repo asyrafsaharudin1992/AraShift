@@ -3,47 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Body Analyzer</title>
+    <title>AraShift Body Analyzer (PDPA Compliant)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- STANDARD WEB STYLING (Screen View) --- */
+        /* --- STANDARD STYLING --- */
         :root { --primary: #2563eb; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
         .main-container { max-width: 850px; margin: 0 auto; }
         
-        /* Login & Header */
         #login-screen { text-align: center; margin-top: 100px; }
         .login-btn { padding: 15px 30px; font-size: 1.2rem; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        
         header { text-align: center; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .header-content { flex-grow: 1; text-align: center; }
         .logout-btn { background: none; border: 1px solid #ccc; padding: 5px 10px; cursor: pointer; font-size: 0.8rem; }
 
-        /* Main Grid & Cards */
         .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
+        
         .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; color: var(--primary); }
         
-        /* Forms */
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
         textarea { resize: vertical; min-height: 80px; }
 
-        /* Buttons */
         .btn-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-top: 20px; }
         .action-btn { padding: 15px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         .action-btn:hover { background-color: #1d4ed8; }
+        .action-btn:disabled { background-color: #ccc; cursor: not-allowed; }
         .secondary-btn { padding: 15px; background-color: #64748b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .reset-btn { background-color: #ef4444; }
 
-        /* Results, Auto-Plan, History */
         .results { background: #dbeafe; border: 2px solid #2563eb; padding: 20px; border-radius: 12px; margin-top: 20px; }
         .hidden { display: none !important; }
-        .auto-plan { background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 15px; font-size: 0.95rem; }
+        
+        .chart-container { background: white; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px solid #ccc; height: 300px; }
+        .auto-plan { background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 15px; font-size: 0.95rem; }
         .auto-plan h4 { margin-top: 0; color: #d97706; margin-bottom: 10px; }
-        .problem-list { color: #dc2626; font-weight: bold; margin-bottom: 10px; display: block; }
-        .auto-plan ul { margin-top: 5px; padding-left: 20px; list-style: disc; }
-        .auto-plan li { margin-bottom: 5px; background: none; padding: 0; border: none; box-shadow: none; font-size: 0.95rem; }
+        
+        /* PDPA Consent Box */
+        .pdpa-box { background: #fff3cd; padding: 15px; border: 1px solid #ffeeba; border-radius: 8px; margin-top: 20px; font-size: 0.9rem; }
+        .pdpa-check { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; }
+        .pdpa-check input { width: 20px; height: 20px; margin-top: 2px; }
 
         .history-section { margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; }
         #historyList ul { list-style: none; padding: 0; }
@@ -51,104 +54,39 @@
         .delete-btn { position: absolute; top: 10px; right: 10px; color: #ff4444; cursor: pointer; font-weight: bold; border: none; background: none; }
         #print-footer { display: none; }
 
-
-        /* --- PDF / PRINT LAYOUT STYLING (Compact & Boxed) --- */
+        /* PRINT STYLING */
         @media print {
             body { background: white; padding: 10px; font-size: 10pt; color: #000; }
             .main-container { max-width: 100%; margin: 0; }
-
-            /* HIDE INTERFACE ELEMENTS */
-            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, header p { display: none !important; }
-            
-            /* HEADER & FOOTER */
+            #login-screen, .btn-grid, .history-section, .logout-btn, .delete-btn, .pdpa-box { display: none !important; }
             header h1 { font-size: 24pt; margin: 0 0 15px 0; color: #000; text-align: left; }
             #print-footer { display: block !important; margin-top: 20px; border-top: 2px solid #000; padding-top: 30px; width: 250px; float: right; text-align: center; font-weight: bold; }
-
-            /* RESET INPUT STYLES FOR PRINT */
             input, select, textarea { border: none; padding: 2px 0; background: transparent; width: auto; font-weight: bold; font-family: inherit; color: #000; }
             select { appearance: none; padding-right: 0; }
-            textarea { resize: none; height: auto; overflow: visible; min-height: 30px; width: 100%; font-weight: normal; }
-            /* Expand textareas to show content */
-            textarea { display: block; height: 100%; }
-
-            /* --- COMPACT GRID LAYOUT --- */
+            textarea { resize: none; height: auto; overflow: visible; min-height: 30px; width: 100%; font-weight: normal; display: block; height: 100%; }
+            
             #app-screen {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr;
                 gap: 15px;
-                grid-template-areas:
-                    "header header"
-                    "top-params top-params"
-                    "mid-analysis mid-doctor"
-                    "footer footer";
+                grid-template-areas: "header header" "top-params top-params" "mid-analysis mid-doctor" "chart chart" "footer footer";
                 align-items: start;
             }
-
             header { grid-area: header; }
-            
-            /* 1. TOP BOX: Patient Profile & Biometrics */
-            .grid-container {
-                grid-area: top-params;
-                display: grid;
-                grid-template-columns: 1fr 1fr 1fr 1fr;
-                gap: 10px;
-                border: 2px solid #444;
-                padding: 15px;
-                background: #fff;
-            }
-            .grid-container .card {
-                box-shadow: none; border: none; padding: 0; background: none;
-            }
+            .grid-container { grid-area: top-params; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; border: 2px solid #444; padding: 15px; background: #fff; }
+            .grid-container .card { box-shadow: none; border: none; padding: 0; background: none; }
             .grid-container h3 { display: none; }
             .form-group { margin-bottom: 5px; }
             label { font-size: 8pt; text-transform: uppercase; color: #666; margin-bottom: 0; }
             input { font-size: 11pt; }
-
-            /* 2. MIDDLE LEFT BOX: Automated Analysis & Plan */
-            #resultArea {
-                grid-area: mid-analysis;
-                border: 2px solid #444 !important;
-                background: #fff !important;
-                padding: 15px;
-                margin: 0 !important;
-                height: 100%;
-            }
+            #resultArea { grid-area: mid-analysis; border: 2px solid #444 !important; background: #fff !important; padding: 15px; margin: 0 !important; }
             #resultArea h2 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
-            #analysisOutput p { margin: 5px 0; border-bottom: 1px dotted #ccc; padding-bottom: 2px; }
-            
-            .auto-plan {
-                border: none; border-top: 2px solid #444;
-                padding: 15px 0 0 0; margin-top: 15px; background: none;
-            }
-            .auto-plan h4 { color: #000; text-decoration: underline; margin-bottom: 5px; }
-            .problem-list { color: #000; background: #eee; padding: 5px; }
-            .auto-plan ul { padding-left: 15px; margin-top: 5px; }
-            .auto-plan li { margin-bottom: 8px; line-height: 1.3; }
-
-            /* 3. MIDDLE RIGHT BOX: Doctor's Input */
-            #doctor-inputs-card {
-                grid-area: mid-doctor;
-                border: 2px solid #444 !important;
-                padding: 15px;
-                background: #fff;
-                box-shadow: none;
-                margin: 0 !important;
-                height: 100%;
-                display: flex; flex-direction: column;
-            }
-            #doctor-inputs-card h3 { 
-                font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; 
-            }
-            #doctor-inputs-card .form-group {
-                flex-grow: 1; display: flex; flex-direction: column; margin-bottom: 15px;
-            }
-            #doctor-inputs-card label {
-                background: #eee; padding: 5px; font-weight: bold; color: #000; font-size: 9pt; border: 1px solid #444; border-bottom: none;
-            }
-            #doctor-inputs-card textarea {
-                flex-grow: 1; border: 1px solid #444; padding: 10px; font-weight: normal; white-space: pre-wrap;
-            }
-
+            .chart-container { grid-area: chart; border: 2px solid #444; height: 250px; page-break-inside: avoid; }
+            .auto-plan { border: none; border-top: 2px solid #444; padding: 15px 0 0 0; margin-top: 15px; background: none; }
+            #doctor-inputs-card { grid-area: mid-doctor; border: 2px solid #444 !important; padding: 15px; background: #fff; box-shadow: none; margin: 0 !important; }
+            #doctor-inputs-card h3 { font-size: 14pt; margin-top: 0; color: #000; border-bottom: 2px solid #444; padding-bottom: 10px; }
+            #doctor-inputs-card label { background: #eee; padding: 5px; font-weight: bold; color: #000; font-size: 9pt; border: 1px solid #444; border-bottom: none; }
+            #doctor-inputs-card textarea { border: 1px solid #444; padding: 10px; font-weight: normal; }
             #print-footer { grid-area: footer; }
         }
     </style>
@@ -156,7 +94,7 @@
 <body>
 
     <div id="login-screen">
-        <h1>🩺 Medical Analysis Portal</h1>
+        <h1>🩺 AraShift Portal</h1>
         <p>Please sign in to access patient records.</p>
         <button id="loginBtn" class="login-btn">Sign in with Google</button>
     </div>
@@ -172,34 +110,43 @@
 
         <div class="grid-container">
             <div class="card">
-                <h3>Profile</h3>
-                <div class="form-group"><label>Name (Optional)</label><input type="text" id="pName" placeholder="Patient Name"></div>
-                <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                <h3>Identity</h3>
+                <div class="form-group"><label>Patient ID</label><input type="number" id="pId" placeholder="e.g. 1001"></div>
+                <div class="form-group"><label>Name (Opt)</label><input type="text" id="pName" placeholder="Patient Name"></div>
             </div>
             <div class="card">
                 <h3>Bodyshape</h3>
                 <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
+                <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
                 <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="175"></div>
-                <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
             </div>
-
             <div class="card">
                 <h3>Composition</h3>
+                <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
                 <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist" placeholder="95"></div>
                 <div class="form-group"><label>BMI</label><input type="number" step="0.1" id="bmi" placeholder="28.5"></div>
-                <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="11"></div>
             </div>
              <div class="card">
                 <h3>Analysis Data</h3>
+                <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="11"></div>
                 <div class="form-group"><label>Body Fat %</label><input type="number" step="0.1" id="fat" placeholder="32.0"></div>
                 <div class="form-group"><label>Muscle %</label><input type="number" step="0.1" id="muscle" placeholder="28.5"></div>
+            </div>
+        </div>
+
+        <div class="pdpa-box">
+            <strong>🔒 Privacy & Consent (PDPA Malaysia 2010)</strong>
+            <p style="margin: 5px 0;">I consent to the processing of my sensitive personal data (health information) for the purpose of medical analysis. I understand this data may be stored on secure cloud servers.</p>
+            <div class="pdpa-check">
+                <input type="checkbox" id="pdpaConsent">
+                <label for="pdpaConsent" style="font-weight:normal; cursor:pointer;">I have obtained verbal/written consent from the patient.</label>
             </div>
         </div>
 
         <div id="resultArea" class="results hidden">
             <h2>Analysis Summary (MOH CPG 2023)</h2>
             <div id="analysisOutput"></div>
-            
+            <div class="chart-container"><canvas id="progressChart"></canvas></div>
             <div class="auto-plan">
                 <h4>⚠️ Identified Problems & Recommendations</h4>
                 <div id="autoSuggestions"></div>
@@ -219,7 +166,7 @@
         </div>
 
         <div class="btn-grid">
-            <button id="analyzeBtn" class="action-btn">Analyze & Generate Plan</button>
+            <button id="analyzeBtn" class="action-btn" disabled>Analyze & Save</button>
             <button id="printBtn" class="secondary-btn">🖨️ Print Report</button>
             <button id="resetBtn" class="secondary-btn reset-btn">New Patient</button>
         </div>
@@ -234,7 +181,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, serverTimestamp, deleteDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // *** YOUR CONFIG ***
@@ -252,15 +199,13 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // Elements
+        // UI Refs
         const loginScreen = document.getElementById('login-screen');
         const appScreen = document.getElementById('app-screen');
-        const loginBtn = document.getElementById('loginBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const autoSuggestions = document.getElementById('autoSuggestions');
-        const docInputsCard = document.getElementById('doctor-inputs-card');
-        
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const pdpaConsent = document.getElementById('pdpaConsent');
         const inputs = {
+            pId: document.getElementById('pId'),
             pName: document.getElementById('pName'),
             gender: document.getElementById('gender'),
             age: document.getElementById('age'),
@@ -274,16 +219,12 @@
             docRemarks: document.getElementById('docRemarks'),
             docPlan: document.getElementById('docPlan')
         };
-        const resultArea = document.getElementById('resultArea');
-        const output = document.getElementById('analysisOutput');
-        const list = document.getElementById('historyList');
-        
-        let unsubscribe;
         let currentUser = null;
+        let trendChart = null;
 
         // Auth
-        loginBtn.addEventListener('click', () => signInWithPopup(auth, provider));
-        logoutBtn.addEventListener('click', () => signOut(auth));
+        document.getElementById('loginBtn').addEventListener('click', () => signInWithPopup(auth, provider));
+        document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -294,36 +235,37 @@
                 currentUser = null;
                 loginScreen.classList.remove('hidden');
                 appScreen.classList.add('hidden');
-                if(unsubscribe) unsubscribe();
             }
         });
 
-        // --- CORE ANALYSIS LOGIC (MOH CPG 2023) ---
+        // Consent Logic
+        pdpaConsent.addEventListener('change', (e) => {
+            analyzeBtn.disabled = !e.target.checked;
+        });
+
+        // Analysis Logic (MOH CPG 2023)
         function generateAnalysis(data) {
             let results = "";
             let problems = [];
             let suggestions = [];
-
-            // Color helper - uses dark text for print readability, bold colors for web
             const color = (text, type) => {
-                // We rely on print CSS to remove colors, but keep bold marks
                 if(type === 'good') return `<strong>${text}</strong>`;
                 if(type === 'bad') return `<strong>${text} (High Risk)</strong>`;
                 if(type === 'mid') return `<strong>${text} (Risk)</strong>`;
                 return `<span>${text}</span>`;
             }
 
-            // 1. BMI Analysis (Asian Cut-offs CPG 2023 pg.26)
+            // BMI
             let bmiStatus = "";
             if (data.bmi < 18.5) { bmiStatus = color('Underweight', 'mid'); problems.push("Underweight"); }
             else if (data.bmi <= 22.9) { bmiStatus = color('Normal', 'good'); }
-            else if (data.bmi <= 27.4) { bmiStatus = color('Overweight', 'mid'); problems.push("Pre-obesity (Overweight)"); }
+            else if (data.bmi <= 27.4) { bmiStatus = color('Overweight', 'mid'); problems.push("Pre-obesity"); }
             else if (data.bmi <= 32.4) { bmiStatus = color('Obesity Class I', 'bad'); problems.push("Obesity Class I"); }
             else if (data.bmi <= 37.4) { bmiStatus = color('Obesity Class II', 'bad'); problems.push("Obesity Class II"); }
             else { bmiStatus = color('Obesity Class III', 'bad'); problems.push("Obesity Class III"); }
             results += `<p><strong>BMI:</strong> ${data.bmi} → ${bmiStatus}</p>`;
 
-            // 2. Waist Circumference
+            // Waist
             let waistRisk = false;
             if (data.gender === 'male' && data.waist >= 90) waistRisk = true;
             if (data.gender === 'female' && data.waist >= 80) waistRisk = true;
@@ -334,11 +276,12 @@
                 results += `<p><strong>Waist:</strong> ${data.waist}cm → ${color('Normal', 'good')}</p>`;
             }
 
-            // 3. Visceral Fat & Body Fat
+            // Visceral
             let vfatStatus = data.vfat > 9 ? color('High', 'bad') : color('Normal', 'good');
             if(data.vfat > 9) problems.push(`High Visceral Fat (Lv ${data.vfat})`);
             results += `<p><strong>Visc. Fat:</strong> ${data.vfat} → ${vfatStatus}</p>`;
 
+            // Fat %
             let fatHigh = false;
             if(data.gender === 'male' && data.fat > 25) fatHigh = true;
             if(data.gender === 'female' && data.fat > 35) fatHigh = true;
@@ -349,14 +292,14 @@
                  results += `<p><strong>Body Fat:</strong> ${data.fat}% → ${color('Normal', 'good')}</p>`;
             }
 
-            // 4. Skeletal Muscle Analysis (Added Logic)
+            // Muscle
             let muscleStatus = "";
             if (data.gender === 'male') {
                 if (data.muscle < 32.9) muscleStatus = color('Low', 'mid');
                 else if (data.muscle <= 35.7) muscleStatus = color('Normal', 'good');
                 else if (data.muscle <= 37.3) muscleStatus = color('High', 'good');
                 else muscleStatus = color('Very High', 'good');
-            } else { // female
+            } else {
                 if (data.muscle < 25.9) muscleStatus = color('Low', 'mid');
                 else if (data.muscle <= 27.9) muscleStatus = color('Normal', 'good');
                 else if (data.muscle <= 29.0) muscleStatus = color('High', 'good');
@@ -364,8 +307,7 @@
             }
             results += `<p><strong>Muscle:</strong> ${data.muscle}% → ${muscleStatus}</p>`;
 
-
-            // --- CPG SUGGESTIONS ---
+            // Suggestions
             if (data.bmi >= 23) {
                 const loss5 = (data.weight * 0.05).toFixed(1);
                 const loss10 = (data.weight * 0.10).toFixed(1);
@@ -378,7 +320,6 @@
                  suggestions.push(`<strong>Activity:</strong> Maintain 150 mins/week moderate activity.`);
             }
 
-            // Advanced Therapy
             if (data.bmi >= 32.5) {
                 suggestions.push(`<strong>Referral:</strong> Consider specialist assessment for Pharmacotherapy or Bariatric Surgery.`);
             } else if (data.bmi >= 27.5) {
@@ -388,12 +329,52 @@
             return { html: results, problems: problems, suggestions: suggestions };
         }
 
-        // --- ACTIONS ---
-        document.getElementById('analyzeBtn').addEventListener('click', async () => {
+        async function updateGraph(patientId) {
+            if (!patientId) return;
+            const q = query(collection(db, `users/${currentUser.uid}/records`), orderBy("timestamp", "asc"));
+            const querySnapshot = await getDocs(q);
+            const labels = [], weightData = [], fatData = [];
+
+            querySnapshot.forEach((doc) => {
+                const d = doc.data();
+                if (d.pId && d.pId.toString() === patientId.toString()) {
+                    const date = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "N/A";
+                    labels.push(date);
+                    weightData.push(d.weight);
+                    fatData.push(d.fat);
+                }
+            });
+
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            if (trendChart) trendChart.destroy();
+
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Weight (kg)', data: weightData, borderColor: 'rgb(37, 99, 235)', backgroundColor: 'rgba(37, 99, 235, 0.1)', yAxisID: 'y', tension: 0.1 },
+                        { label: 'Body Fat (%)', data: fatData, borderColor: 'rgb(239, 68, 68)', backgroundColor: 'rgba(239, 68, 68, 0.1)', yAxisID: 'y1', tension: 0.1 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', title: {display: true, text: 'Weight (kg)'} },
+                        y1: { type: 'linear', display: true, position: 'right', title: {display: true, text: 'Body Fat (%)'}, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+        }
+
+        analyzeBtn.addEventListener('click', async () => {
+            if(!inputs.pId.value) { alert("Please enter Patient ID"); return; }
             if(!inputs.age.value || !inputs.bmi.value) { alert("Please fill Age and BMI"); return; }
 
             const data = {
                 uid: currentUser.uid,
+                pId: inputs.pId.value,
                 pName: inputs.pName.value,
                 gender: inputs.gender.value,
                 age: inputs.age.value,
@@ -410,36 +391,30 @@
             };
 
             const analysis = generateAnalysis(data);
-
-            // Show areas
-            resultArea.classList.remove('hidden');
-            docInputsCard.classList.remove('hidden');
-            docInputsCard.style.margin = "20px 0 0 0"; // reset margin for web view
-
-            output.innerHTML = analysis.html;
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('doctor-inputs-card').classList.remove('hidden');
+            document.getElementById('doctor-inputs-card').style.margin = "20px 0 0 0"; 
+            document.getElementById('analysisOutput').innerHTML = analysis.html;
 
             let planHTML = `<span class="problem-list">Problems: ${analysis.problems.join(", ") || "None significant"}</span><ul>`;
             analysis.suggestions.forEach(s => planHTML += `<li>${s}</li>`);
             planHTML += "</ul>";
-            autoSuggestions.innerHTML = planHTML;
+            document.getElementById('autoSuggestions').innerHTML = planHTML;
 
-            // Auto-fill Doctor plan if empty
             if(!inputs.docPlan.value && analysis.problems.length > 0) {
-               inputs.docPlan.value = "Based on CPG 2023 Guidelines:\n" + analysis.suggestions.map(s => "- " + s.replace(/<[^>]*>?/gm, "")).join("\n");
-               // Trigger auto-resize for the textarea
+               inputs.docPlan.value = "CPG Recommendations:\n" + analysis.suggestions.map(s => "- " + s.replace(/<[^>]*>?/gm, "")).join("\n");
                inputs.docPlan.dispatchEvent(new Event('input'));
             }
 
-            // Save
             try {
                 await addDoc(collection(db, `users/${currentUser.uid}/records`), {
                     ...data, analysisProblems: analysis.problems, analysisSuggestions: analysis.suggestions
                 });
+                if(data.pId) updateGraph(data.pId);
             } catch (e) { console.error("Error", e); alert("Error saving."); }
         });
 
         document.getElementById('printBtn').addEventListener('click', () => { 
-            // Ensure textareas are resized before print
             inputs.docRemarks.dispatchEvent(new Event('input'));
             inputs.docPlan.dispatchEvent(new Event('input'));
             window.print(); 
@@ -449,30 +424,40 @@
             if(confirm("New Patient?")) {
                 Object.values(inputs).forEach(input => input.value = "");
                 inputs.gender.value = "male";
-                resultArea.classList.add('hidden');
-                docInputsCard.classList.add('hidden');
-                output.innerHTML = "";
-                autoSuggestions.innerHTML = "";
+                pdpaConsent.checked = false;
+                analyzeBtn.disabled = true;
+                document.getElementById('resultArea').classList.add('hidden');
+                document.getElementById('doctor-inputs-card').classList.add('hidden');
+                document.getElementById('analysisOutput').innerHTML = "";
+                if(trendChart) { trendChart.destroy(); trendChart = null; }
                 window.scrollTo(0,0);
             }
         });
 
-        // Load History
         function loadUserData(uid) {
-            const q = query(collection(db, `users/${uid}/records`), orderBy("timestamp", "desc"), limit(10));
-            unsubscribe = onSnapshot(q, (snapshot) => {
+            const q = query(collection(db, `users/${uid}/records`), orderBy("timestamp", "desc"), limit(20));
+            onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('historyList');
                 list.innerHTML = "";
                 snapshot.forEach((docSnap) => {
                     const d = docSnap.data();
                     const dateStr = d.timestamp ? d.timestamp.toDate().toLocaleDateString() : "Just now";
-                    const pNameDisplay = d.pName ? `<strong>${d.pName}</strong> - ` : "";
+                    const idDisplay = d.pId ? `<strong>ID: ${d.pId}</strong>` : "No ID";
                     const li = document.createElement('li');
                     li.innerHTML = `
                         <button class="delete-btn" data-id="${docSnap.id}">X</button>
                         <div style="font-size: 0.8em; color: #666;">${dateStr}</div>
-                        ${pNameDisplay} ${d.gender.toUpperCase()}, ${d.age} yrs, BMI: ${d.bmi}<br>
-                        <small>${d.remarks ? "Has Remarks" : "No remarks"}</small>
+                        ${idDisplay} <br> ${d.gender.toUpperCase()}, ${d.age} yrs, BMI: ${d.bmi}
                     `;
+                    li.style.cursor = "pointer";
+                    li.addEventListener('click', (e) => {
+                        if(!e.target.classList.contains('delete-btn')) {
+                            inputs.pId.value = d.pId || "";
+                            inputs.pName.value = d.pName || "";
+                            if(d.pId) updateGraph(d.pId);
+                            document.querySelector('.chart-container').scrollIntoView({behavior: 'smooth'});
+                        }
+                    });
                     list.appendChild(li);
                 });
                 document.querySelectorAll('.delete-btn').forEach(btn => {
