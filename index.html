@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AraShift Medical Suite</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
         :root {
@@ -80,49 +81,42 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* VISUAL BARS */
-        .visual-row { margin-bottom: 25px; }
+        /* VISUAL BARS (CPG) */
+        .visual-row { margin-bottom: 30px; }
         .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; }
         .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
+        
+        .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
+        .bar-number-item { 
+            position: absolute; transform: translateX(-100%); 
+            font-size: 10px; color: #1D1D1F; font-weight: 700; 
+            border-right: 1px solid #ccc; padding-right: 2px; height: 6px; 
+        }
         .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
-        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
-        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
+        .bar-label-item { 
+            font-size: 9px; color: #666; text-align: center; overflow: hidden; 
+            text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; 
+        }
+        
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
-        /* --- SCREEN STRATEGY CARDS --- */
-        .apple-stat-grid { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px;
-        }
+        /* STRATEGY CARDS */
+        .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px; }
         .apple-stat-card {
             background: #fff; border-radius: 16px; padding: 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.04);
             display: flex; flex-direction: column; justify-content: space-between;
-            transition: transform 0.2s;
         }
-        .apple-stat-card:hover { transform: translateY(-2px); }
-        
-        .stat-header { 
-            font-size: 11px; text-transform: uppercase; color: var(--text-sec); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px; 
-        }
-        .stat-value { 
-            font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); line-height: 1.1; 
-        }
+        .stat-header { font-size: 11px; text-transform: uppercase; color: var(--text-sec); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .stat-value { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); line-height: 1.1; }
         .stat-unit { font-size: 14px; font-weight: 600; color: var(--text-sec); margin-left: 2px; }
-        
-        .stat-detail-box {
-            margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7;
-            font-size: 12px; font-weight: 600; color: var(--success);
-        }
+        .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 11px; font-weight: 600; color: var(--primary); }
 
-        /* TEXT RECOMMENDATIONS (Screen) */
-        .rec-container {
-            background: #F2F8FF; padding: 15px; border-radius: 12px; border: 1px solid #D6E4FF;
-            margin-bottom: 20px;
-        }
+        .rec-container { background: #F2F8FF; padding: 15px; border-radius: 12px; border: 1px solid #D6E4FF; margin-bottom: 20px; }
         .rec-container ul { margin: 0; padding-left: 20px; }
-        .rec-container li { font-size: 14px; margin-bottom: 5px; color: #1D1D1F; }
+        .rec-container li { font-size: 14px; margin-bottom: 5px; color: #1D1D1F; line-height: 1.5; }
 
         /* ACTION BAR */
         .action-bar {
@@ -155,7 +149,8 @@
             .pt-val { font-size: 11pt; font-weight: bold; color: #000; }
 
             .section-head { font-size: 11pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; margin-top: 25px; }
-            
+            .section-head:first-child { margin-top: 0; }
+
             /* Visuals Print */
             .visual-row { page-break-inside: avoid; margin-bottom: 25px; }
             .bar-complex { height: 12px; border: 1px solid #999; border-radius: 4px; }
@@ -167,19 +162,15 @@
             .metabolic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
             .meta-item strong { font-size: 14pt; display: block; }
 
-            /* --- PRINT STRATEGY CARDS --- */
-            .rec-box { border: 1px solid #000; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-            .rec-head { font-weight: 800; text-transform: uppercase; font-size: 9pt; border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 10px; }
-            
-            /* 4-Col Grid for Print */
+            /* Print Strategy Grid */
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-            .print-stat-card { 
-                border: 1px solid #000; border-radius: 6px; padding: 10px; text-align: center;
-                background: #F9F9F9 !important;
-            }
+            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 10px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 4px; }
             .p-stat-val { font-size: 14pt; font-weight: 900; display: block; }
             .p-stat-detail { font-size: 8pt; border-top: 1px solid #ddd; margin-top: 6px; padding-top: 4px; display: block; font-weight: 600; }
+
+            .rec-box { border: 1px solid #000; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+            .rec-head { font-weight: 800; text-transform: uppercase; font-size: 9pt; border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 10px; }
 
             .page-break { page-break-before: always; }
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
@@ -229,7 +220,7 @@
                     <div class="ios-item"><span class="ios-label">T2DM / Pre-Diabetes</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Sleep Apnea</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
+                    <div class="ios-item"><span class="ios-label">Sleep Apnea (OSA)</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Metabolic Syn.</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div>
                 </div>
@@ -242,14 +233,11 @@
             
             <div style="margin-top:30px;">
                 <h3>Clinical Strategy</h3>
-                
                 <div class="rec-container">
                     <div style="font-weight:700; margin-bottom:10px; color:var(--primary); text-transform:uppercase; font-size:11px;">Recommendations</div>
                     <div id="screenRecommendations"></div>
                 </div>
-
-                <div id="screenStatGrid">
-                    </div>
+                <div id="screenStatGrid"></div>
             </div>
 
             <div class="form-group" style="margin-top:20px;">
@@ -280,7 +268,7 @@
             <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="ppBMI">-</span></div>
         </div>
 
-        <div class="section-head" style="margin-top:0;">1. Clinical Analysis (CPG 2023)</div>
+        <div class="section-head" style="margin-top:0;">1. Clinical Analysis (CPG 2023 Guidelines)</div>
         <div class="metabolic-row">
             <div class="meta-item"><span>Basal Metabolic Rate</span><strong id="ppBMR">-</strong></div>
             <div class="meta-item"><span>Est. Daily Expenditure</span><strong id="ppTDEE">-</strong></div>
@@ -289,8 +277,7 @@
 
         <div class="section-head">2. Clinical Strategy</div>
         
-        <div class="print-stat-grid" id="printStatGrid">
-            </div>
+        <div class="print-stat-grid" id="printStatGrid"></div>
 
         <div class="rec-box">
             <div class="rec-head">Key Recommendations</div>
@@ -357,22 +344,15 @@
             </div>`;
         }
 
-        // --- STAT CARD GENERATOR (APPLE STYLE) ---
+        // --- STAT CARD GENERATORS ---
         function getStatCard(label, val, unit, detail, isPositive) {
             let detailClass = isPositive ? 'color:var(--success)' : 'color:var(--text-sec)';
             return `
             <div class="apple-stat-card">
-                <div>
-                    <div class="stat-header">${label}</div>
-                    <div style="display:flex; align-items:baseline;">
-                        <span class="stat-value">${val}</span>
-                        <span class="stat-unit">${unit}</span>
-                    </div>
-                </div>
+                <div><div class="stat-header">${label}</div><div style="display:flex; align-items:baseline;"><span class="stat-value">${val}</span><span class="stat-unit">${unit}</span></div></div>
                 <div class="stat-detail-box" style="${detailClass}">${detail}</div>
             </div>`;
         }
-
         function getPrintStatCard(label, val, unit, detail) {
             return `
             <div class="print-stat-card">
@@ -387,10 +367,10 @@
             
             const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
 
-            // 1. Bar Segments (CPG)
+            // CPG 2023 Classifications
             const bmiSegs = [{limit: 18.5, color: cU, label: "Under"},{limit: 22.9, color: cN, label: "Normal"},{limit: 27.4, color: cPre, label: "Pre-Ob"},{limit: 32.4, color: cO1, label: "Ob I"},{limit: 37.4, color: cO2, label: "Ob II"},{limit: 45.0, color: cO3, label: "Ob III"}];
             const wLimit = els.gender.value === 'male' ? 90 : 80;
-            const wSegs = [{limit: wLimit, color: cN, label: "Normal"}, {limit: 130, color: cO1, label: "High Risk"}];
+            const wSegs = [{limit: wLimit, color: cN, label: "Normal"}, {limit: 130, color: cO1, label: "Abdominal Obesity"}];
             let fSegs = els.gender.value === 'male' ? [{limit:9.9, color:cU, label:"Low"}, {limit:19.9, color:cN, label:"Normal"}, {limit:24.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}] : [{limit:19.9, color:cU, label:"Low"}, {limit:29.9, color:cN, label:"Normal"}, {limit:34.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}];
             const vSegs = [{limit:9, color:cN, label:"Normal"}, {limit:14, color:cO1, label:"High"}, {limit:20, color:cO2, label:"V.High"}];
             let mSegs = els.gender.value === 'male' ? [{limit:32.8, color:cO2, label:"Low"}, {limit:35.7, color:cN, label:"Normal"}, {limit:37.3, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}] : [{limit:25.8, color:cO2, label:"Low"}, {limit:27.9, color:cN, label:"Normal"}, {limit:29.0, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}];
@@ -405,44 +385,73 @@
             document.getElementById('printVisualsContainer').innerHTML = html;
             document.getElementById('screenAnalysis').innerHTML = html; 
 
-            // 2. Data Population
+            // Logic Calculation (CPG Table 2-3 & 4-1)
+            let riskFactors = {
+                t2dm: document.getElementById('risk_t2dm').checked,
+                htn: document.getElementById('risk_htn').checked,
+                dys: document.getElementById('risk_dys').checked,
+                osa: document.getElementById('risk_osa').checked,
+                mafld: document.getElementById('risk_mafld').checked,
+                meta: document.getElementById('risk_meta').checked
+            };
+
+            let minPct = 5; let maxPct = 10;
+            // T2DM, HTN, DYS, PCOS -> 5-15%
+            if(riskFactors.t2dm || riskFactors.htn || riskFactors.dys) { maxPct = Math.max(maxPct, 15); }
+            // OSA -> 7-11%
+            if(riskFactors.osa) { minPct = Math.max(minPct, 7); maxPct = Math.max(maxPct, 11); }
+            // Metabolic Syn -> 10%
+            if(riskFactors.meta) { minPct = Math.max(minPct, 10); }
+            // MAFLD -> 10-40%
+            if(riskFactors.mafld) { minPct = Math.max(minPct, 10); maxPct = Math.max(maxPct, 40); }
+
+            let targetW_Low = (els.weight.value * (1 - (minPct/100))).toFixed(1);
+            let targetW_High = (els.weight.value * (1 - (maxPct/100))).toFixed(1);
+            let lossKg = (els.weight.value * (minPct/100)).toFixed(1) + " - " + (els.weight.value * (maxPct/100)).toFixed(1);
+
+            let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
+            let tdee = bmr * 1.2;
+            let targetCal = Math.round(tdee - 500);
+
+            // Activity Logic (Table 4-1)
+            // If target loss > 5%, recommend 225-420 min
+            let activityRec = minPct >= 5 ? "225-420" : "150-200";
+            let activityDetail = minPct >= 5 ? "For Significant Loss" : "For Maintenance";
+
+            // Update UI Data
             document.getElementById('pDate').innerText = new Date().toLocaleDateString();
             document.getElementById('pRef').innerText = els.pId.value; document.getElementById('pRef2').innerText = els.pId.value;
             document.getElementById('ppId').innerText = els.pId.value; document.getElementById('ppName').innerText = els.pName.value;
             document.getElementById('ppDemo').innerText = `${els.age.value} / ${els.gender.value}`;
             document.getElementById('ppHeight').innerText = els.height.value + " cm"; document.getElementById('ppWeight').innerText = els.weight.value + " kg";
             document.getElementById('ppBMI').innerText = els.bmi.value;
-
-            let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
-            let tdee = bmr * 1.2;
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
 
-            let targetW = (els.weight.value * 0.9).toFixed(1);
-            let lossAmount = (els.weight.value - targetW).toFixed(1);
-            let targetC = Math.round(tdee-500);
-            let riskLvl = els.bmi.value > 25 ? "High" : "Moderate";
-
-            // 3. Generate Apple Stats (Screen)
+            // Generate Screen Stats
             let statHTML = `
-            <div class="apple-stat-grid">
-                ${getStatCard("Target Weight", targetW, "kg", `Total Loss: -${lossAmount} kg`, true)}
-                ${getStatCard("Calorie Goal", targetC, "kcal", "Daily Deficit: -500 kcal", true)}
-                ${getStatCard("Activity Goal", "200", "min", "Moderate Intensity / Wk", false)}
-                ${getStatCard("Risk Level", riskLvl, "", "Clinical Management", false)}
-            </div>`;
+                ${getStatCard("Target Weight", `${targetW_Low}-${targetW_High}`, "kg", `Loss Target: ${minPct}-${maxPct}%`, true)}
+                ${getStatCard("Calorie Prescription", targetCal, "kcal", "Daily Deficit: -500 kcal", true)}
+                ${getStatCard("Activity Goal", activityRec, "min/wk", activityDetail, false)}
+                ${getStatCard("Risk Stratification", els.bmi.value > 25 ? "Elevated" : "Normal", "", "Based on BMI & Risks", false)}
+            `;
             document.getElementById('screenStatGrid').innerHTML = statHTML;
 
-            // 4. Generate Print Stats
+            // Generate Print Stats
             let printStatHTML = `
-                ${getPrintStatCard("Target Weight", targetW, "kg", `Loss: -${lossAmount} kg`)}
-                ${getPrintStatCard("Calorie Goal", targetC, "kcal", "Deficit: -500 kcal")}
-                ${getPrintStatCard("Activity Goal", "200", "min", "Moderate Intensity")}
-                ${getPrintStatCard("Risk Level", riskLvl, "", "Based on BMI & Risks")}
+                ${getPrintStatCard("Target Weight Range", `${targetW_Low}-${targetW_High}`, "kg", `Loss: ${lossKg} kg (${minPct}-${maxPct}%)`)}
+                ${getPrintStatCard("Calorie Prescription", targetCal, "kcal", "Daily Deficit: -500 kcal")}
+                ${getPrintStatCard("Activity Duration", activityRec, "min/wk", "Mod-Vigorous Intensity")}
+                ${getPrintStatCard("Risk Level", els.bmi.value > 25 ? "Elevated" : "Normal", "", "Clinical Assessment")}
             `;
             document.getElementById('printStatGrid').innerHTML = printStatHTML;
 
-            // 5. Recommendations
-            let recs = `<ul><li>Achieve 5-10% weight loss within 6 months.</li><li>Adhere to a 500 kcal daily deficit diet.</li><li>Gradually increase physical activity to 150-300 mins/week.</li></ul>`;
+            // Recommendations Text
+            let recs = `<ul>
+                <li>Aim for <b>${minPct}-${maxPct}% weight loss</b> (${lossKg} kg) to improve metabolic health.</li>
+                <li>Adhere to a hypocaloric diet of <b>${targetCal} kcal/day</b>.</li>
+                <li>Gradually increase aerobic activity to <b>${activityRec} minutes/week</b> as per CPG guidelines.</li>
+                <li>Monitor for medication adjustments if relevant (T2DM/HTN).</li>
+            </ul>`;
             document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
 
