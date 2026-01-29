@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AraShift Medical Suite</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
         :root {
@@ -53,7 +52,6 @@
         }
 
         /* COMPACT INPUTS */
-        .input-row { display: flex; gap: 15px; margin-bottom: 12px; }
         .input-grid-profile { display: grid; grid-template-columns: 0.8fr 1.5fr 0.8fr 1fr; gap: 12px; margin-bottom: 15px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0; }
@@ -93,12 +91,9 @@
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
-        /* ---  NEW CLINICAL STRATEGY CARDS --- */
-        .strategy-container { margin-top: 30px; }
-        
-        /* Grid for Screen */
+        /* --- SCREEN STRATEGY CARDS --- */
         .apple-stat-grid { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; 
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px;
         }
         .apple-stat-card {
             background: #fff; border-radius: 16px; padding: 16px;
@@ -118,20 +113,16 @@
         
         .stat-detail-box {
             margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7;
-            font-size: 12px; font-weight: 600;
+            font-size: 12px; font-weight: 600; color: var(--success);
         }
-        .stat-detail-positive { color: var(--success); }
-        .stat-detail-neutral { color: var(--text-sec); }
-        .stat-detail-alert { color: var(--c-ob2); }
 
-        /* Text Recommendations */
-        .recommendation-card { 
-            background: #F8FAFC; border-radius: 12px; padding: 20px; 
-            border-left: 4px solid var(--primary); margin-bottom: 20px;
+        /* TEXT RECOMMENDATIONS (Screen) */
+        .rec-container {
+            background: #F2F8FF; padding: 15px; border-radius: 12px; border: 1px solid #D6E4FF;
+            margin-bottom: 20px;
         }
-        .rec-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; text-transform: uppercase; }
-        .rec-list ul { padding-left: 20px; margin: 0; }
-        .rec-list li { margin-bottom: 6px; font-size: 14px; color: var(--text); line-height: 1.5; }
+        .rec-container ul { margin: 0; padding-left: 20px; }
+        .rec-container li { font-size: 14px; margin-bottom: 5px; color: #1D1D1F; }
 
         /* ACTION BAR */
         .action-bar {
@@ -163,7 +154,7 @@
             .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; }
             .pt-val { font-size: 11pt; font-weight: bold; color: #000; }
 
-            .section-head { font-size: 11pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; }
+            .section-head { font-size: 11pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; margin-top: 25px; }
             
             /* Visuals Print */
             .visual-row { page-break-inside: avoid; margin-bottom: 25px; }
@@ -173,12 +164,9 @@
             .bar-marker { background: #000; border: 1px solid #fff; height: 18px; top: -3px; width: 3px; }
             .bar-marker-wrapper { top: -28px; }
 
-            /* Metabolic */
             .metabolic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
             .meta-item strong { font-size: 14pt; display: block; }
 
-            .page-break { page-break-before: always; }
-            
             /* --- PRINT STRATEGY CARDS --- */
             .rec-box { border: 1px solid #000; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
             .rec-head { font-weight: 800; text-transform: uppercase; font-size: 9pt; border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 10px; }
@@ -193,7 +181,8 @@
             .p-stat-val { font-size: 14pt; font-weight: 900; display: block; }
             .p-stat-detail { font-size: 8pt; border-top: 1px solid #ddd; margin-top: 6px; padding-top: 4px; display: block; font-weight: 600; }
 
-            .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 100px; font-family: "Courier New", monospace; white-space: pre-wrap; }
+            .page-break { page-break-before: always; }
+            .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
             .report-footer { position: fixed; bottom: 10mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
         }
     </style>
@@ -251,6 +240,18 @@
             <h3>Clinical Analysis</h3>
             <div id="screenAnalysis"></div>
             
+            <div style="margin-top:30px;">
+                <h3>Clinical Strategy</h3>
+                
+                <div class="rec-container">
+                    <div style="font-weight:700; margin-bottom:10px; color:var(--primary); text-transform:uppercase; font-size:11px;">Recommendations</div>
+                    <div id="screenRecommendations"></div>
+                </div>
+
+                <div id="screenStatGrid">
+                    </div>
+            </div>
+
             <div class="form-group" style="margin-top:20px;">
                 <label>Doctor's Remarks</label>
                 <textarea id="docRemarks" rows="3"></textarea>
@@ -279,38 +280,30 @@
             <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="ppBMI">-</span></div>
         </div>
 
-        <div class="report-section">
-            <div class="section-head">1. Clinical Analysis (CPG 2023 Guidelines)</div>
-            <div class="metabolic-row">
-                <div class="meta-item"><span>Basal Metabolic Rate</span><strong id="ppBMR">-</strong></div>
-                <div class="meta-item"><span>Est. Daily Expenditure</span><strong id="ppTDEE">-</strong></div>
+        <div class="section-head" style="margin-top:0;">1. Clinical Analysis (CPG 2023)</div>
+        <div class="metabolic-row">
+            <div class="meta-item"><span>Basal Metabolic Rate</span><strong id="ppBMR">-</strong></div>
+            <div class="meta-item"><span>Est. Daily Expenditure</span><strong id="ppTDEE">-</strong></div>
+        </div>
+        <div id="printVisualsContainer"></div>
+
+        <div class="section-head">2. Clinical Strategy</div>
+        
+        <div class="print-stat-grid" id="printStatGrid">
             </div>
-            <div id="printVisualsContainer"></div>
-            <div style="margin-top:25px; border:1px solid #ccc; height:220px; padding:10px; border-radius:6px;">
-                <div style="font-size:8pt; font-weight:bold; margin-bottom:10px; text-transform:uppercase;">Weight Trend History</div>
-                <img id="printGraphImg" style="width:100%; height:190px; object-fit:contain;">
-            </div>
+
+        <div class="rec-box">
+            <div class="rec-head">Key Recommendations</div>
+            <div id="ppRecommendations" style="line-height:1.6; font-size:10pt;"></div>
         </div>
 
         <div class="report-footer"><span>AraShift System v2.0</span><span>Page 1 of 2</span></div>
         <div class="page-break"></div>
 
-        <div class="report-header"><div class="report-title"><p>Management Plan</p></div><div class="report-meta">ID: <span id="pRef2"></span></div></div>
-
-        <div class="report-section">
-            <div class="section-head">2. Clinical Strategy</div>
-            
-            <div class="rec-box">
-                <div class="rec-head">Key Recommendations</div>
-                <div id="ppRecommendations" style="line-height:1.6; font-size:10pt;"></div>
-            </div>
-
-            <div class="print-stat-grid" id="printStatGrid">
-                </div>
-
-            <div class="section-head" style="margin-top:30px;">3. Doctor's Remarks</div>
-            <div class="remarks-box" id="ppRemarks"></div>
-        </div>
+        <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div><div class="report-meta">ID: <span id="pRef2"></span></div></div>
+        
+        <div class="section-head" style="margin-top:0;">3. Doctor's Remarks & Plan</div>
+        <div class="remarks-box" id="ppRemarks"></div>
 
         <div class="report-footer"><span>Generated by AraShift</span><span>Page 2 of 2</span></div>
     </div>
@@ -366,7 +359,7 @@
 
         // --- STAT CARD GENERATOR (APPLE STYLE) ---
         function getStatCard(label, val, unit, detail, isPositive) {
-            let detailClass = isPositive ? 'stat-detail-positive' : 'stat-detail-neutral';
+            let detailClass = isPositive ? 'color:var(--success)' : 'color:var(--text-sec)';
             return `
             <div class="apple-stat-card">
                 <div>
@@ -376,7 +369,7 @@
                         <span class="stat-unit">${unit}</span>
                     </div>
                 </div>
-                <div class="stat-detail-box ${detailClass}">${detail}</div>
+                <div class="stat-detail-box" style="${detailClass}">${detail}</div>
             </div>`;
         }
 
@@ -387,16 +380,6 @@
                 <span class="p-stat-val">${val} <small style="font-size:10pt; font-weight:normal;">${unit}</small></span>
                 <span class="p-stat-detail">${detail}</span>
             </div>`;
-        }
-
-        async function renderGraph(pid) {
-            const ctx = document.createElement('canvas'); 
-            const q = query(collection(db, 'shared_records'), orderBy("timestamp", "asc"));
-            const snap = await getDocs(q);
-            const labels=[], dataW=[];
-            snap.forEach(d => { if(d.data().pId == pid) { labels.push("-"); dataW.push(d.data().weight); } });
-            new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ data: dataW, borderColor: '#000', borderWidth: 2, pointRadius:2, tension:0.1 }] }, options:{animation:false} });
-            setTimeout(() => { document.getElementById('printGraphImg').src = ctx.toDataURL(); }, 500);
         }
 
         document.getElementById('analyzeBtn').addEventListener('click', async () => {
@@ -447,9 +430,7 @@
                 ${getStatCard("Activity Goal", "200", "min", "Moderate Intensity / Wk", false)}
                 ${getStatCard("Risk Level", riskLvl, "", "Clinical Management", false)}
             </div>`;
-            
-            // Append Stats to Screen Analysis
-            document.getElementById('screenAnalysis').innerHTML += statHTML;
+            document.getElementById('screenStatGrid').innerHTML = statHTML;
 
             // 4. Generate Print Stats
             let printStatHTML = `
@@ -462,9 +443,9 @@
 
             // 5. Recommendations
             let recs = `<ul><li>Achieve 5-10% weight loss within 6 months.</li><li>Adhere to a 500 kcal daily deficit diet.</li><li>Gradually increase physical activity to 150-300 mins/week.</li></ul>`;
+            document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
 
-            renderGraph(els.pId.value);
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
 
