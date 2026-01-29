@@ -86,9 +86,10 @@
         .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; }
         .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
+        .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
+        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
         .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
         .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
-        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
@@ -108,11 +109,13 @@
         .rec-container ul { margin: 0; padding-left: 20px; }
         .rec-container li { font-size: 14px; margin-bottom: 6px; color: #1D1D1F; line-height: 1.5; }
         
+        .strategy-toolbar { display: flex; gap: 10px; margin-bottom: 10px; justify-content: space-between; align-items: center; }
         .pref-select { 
-            padding: 6px 12px; border: 1px solid var(--primary); border-radius: 15px; 
-            font-size: 12px; font-weight: 600; color: var(--primary); background: transparent; 
-            float: right; margin-top: -5px; cursor: pointer;
+            padding: 6px 12px; border: 1px solid var(--border); border-radius: 15px; 
+            font-size: 12px; font-weight: 600; color: var(--text); background: white; 
+            cursor: pointer; transition: 0.2s;
         }
+        .pref-select:hover { border-color: var(--primary); color: var(--primary); }
 
         /* ACTION BAR */
         .action-bar {
@@ -228,13 +231,20 @@
             <div id="screenAnalysis"></div>
             
             <div style="margin-top:30px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div class="strategy-toolbar">
                     <h3 style="margin:0;">E. Clinical Strategy</h3>
-                    <select id="exPref" class="pref-select">
-                        <option value="standard">Standard Regime</option>
-                        <option value="light">Lighter / Beginner</option>
-                        <option value="intense">Intensive / High Volume</option>
-                    </select>
+                    <div style="display:flex; gap:10px;">
+                        <select id="dietPref" class="pref-select">
+                            <option value="standard">Std: Calorie Counting</option>
+                            <option value="mrp">Meal Replacement (LCD)</option>
+                            <option value="plate">Plate Method (Visual)</option>
+                        </select>
+                        <select id="exPref" class="pref-select">
+                            <option value="standard">Std: CPG (225m/wk)</option>
+                            <option value="light">Light: Beginner (150m)</option>
+                            <option value="intense">Intense: High Vol (300m+)</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="rec-container">
@@ -367,7 +377,6 @@
 
         // --- MAIN CALCULATION FUNCTION ---
         function performAnalysis() {
-            // Colors & Limits (Same as before)
             const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
             const bmiSegs = [{limit: 18.5, color: cU, label: "Under"},{limit: 22.9, color: cN, label: "Normal"},{limit: 27.4, color: cPre, label: "Pre-Ob"},{limit: 32.4, color: cO1, label: "Ob I"},{limit: 37.4, color: cO2, label: "Ob II"},{limit: 45.0, color: cO3, label: "Ob III"}];
             const wLimit = els.gender.value === 'male' ? 90 : 80;
@@ -386,7 +395,6 @@
             document.getElementById('printVisualsContainer').innerHTML = html;
             document.getElementById('screenAnalysis').innerHTML = html; 
 
-            // Basic Data
             document.getElementById('pDate').innerText = new Date().toLocaleDateString();
             document.getElementById('pRef').innerText = els.pId.value; document.getElementById('pRef2').innerText = els.pId.value;
             document.getElementById('ppId').innerText = els.pId.value; document.getElementById('ppName').innerText = els.pName.value;
@@ -432,27 +440,35 @@
 
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
 
-            // --- SMART RECOMMENDATIONS ---
+            // --- SMART DIET & EXERCISE LOGIC ---
             let exPref = document.getElementById('exPref').value;
+            let dietPref = document.getElementById('dietPref').value;
             let activityRec = "150-200";
-            let activityText = "Start with moderate walking (30 mins, 5 days/week).";
-            
-            // Customizable Exercise Logic
+            let activityText = "";
+            let dietText = "";
+
+            // Exercise Logic
             if(exPref === 'light') {
                 activityRec = "150";
                 activityText = "<b>Beginner Regime:</b> Low-impact walking/swimming, 30 mins/day, 5x/week. Focus on consistency.";
             } else if (exPref === 'intense') {
-                activityRec = "250-420";
-                activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training. Target >250 mins/week for max weight loss.";
-            } else { // Standard
+                activityRec = "300+";
+                activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training/wk.";
+            } else { 
                 activityRec = minPct >= 5 ? "225-300" : "150-200";
                 activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance bands.`;
             }
 
             // Diet Logic
-            let dietText = "";
-            if(targetCal < 1400) dietText = `<b>3 Meals/Day:</b> ~450 kcal each. Focus on nutrient density. Avoid snacking.`;
-            else dietText = `<b>3 Meals + 1 Snack:</b> Balanced plates (Suku-Suku Separuh).`;
+            if(dietPref === 'mrp') {
+                dietText = `<b>Meal Replacement (LCD):</b> Replace Breakfast & Lunch with Formula (200kcal x 2). Dinner: Balanced meal (~${targetCal-400} kcal).`;
+            } else if (dietPref === 'plate') {
+                dietText = `<b>Plate Method:</b> 'Suku-Suku Separuh' (1/4 Carbs, 1/4 Protein, 1/2 Veg/Fiber) at every meal. No counting required.`;
+            } else {
+                // Standard Calorie Counting
+                if(targetCal < 1400) dietText = `<b>Calorie Counting:</b> 3 Meals/Day (~450 kcal each). Avoid snacking. Focus on nutrient density.`;
+                else dietText = `<b>Calorie Counting:</b> 3 Meals + 1 Snack. Monitor portion sizes to hit ${targetCal} kcal.`;
+            }
 
             // Protein Logic
             let proteinText = "";
@@ -461,14 +477,14 @@
             
             if(lowMuscle) {
                 let pTarget = (els.weight.value * 1.2).toFixed(0);
-                proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b>. Intake: Chicken breast, fish, tofu, greek yogurt.</li>`;
+                proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b>. Sources: Chicken breast, fish, tofu, whey protein.</li>`;
             }
 
             // Generate UI
             let statHTML = `
                 ${getStatCard("Target Weight", `${targetW_Low}-${targetW_High}`, "kg", `Loss Target: ${minPct}-${maxPct}%`, true)}
                 ${getStatCard("Calorie Prescription", targetCal, "kcal", "Safety Adjusted Deficit", true)}
-                ${getStatCard("Activity Goal", activityRec, "min/wk", "Mod-Vigorous Intensity", false)}
+                ${getStatCard("Activity Goal", activityRec, "min/wk", "Target Duration", false)}
                 ${getStatCard("Risk Stratification", riskStr, "", "Based on CPG Matrix", false)}
             `;
             document.getElementById('screenStatGrid').innerHTML = statHTML;
@@ -483,7 +499,7 @@
 
             let recs = `<ul>
                 <li>Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.</li>
-                <li>${dietText} (Target: ${targetCal} kcal/day).</li>
+                <li>${dietText}</li>
                 <li>${activityText}</li>
                 ${proteinText}
             </ul>`;
@@ -498,8 +514,9 @@
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
 
-        // Re-run analysis if exercise preference changes
+        // Re-run analysis if preferences change
         document.getElementById('exPref').addEventListener('change', performAnalysis);
+        document.getElementById('dietPref').addEventListener('change', performAnalysis);
 
         document.getElementById('printBtn').addEventListener('click', () => {
             document.getElementById('ppRemarks').innerText = els.docRemarks.value;
