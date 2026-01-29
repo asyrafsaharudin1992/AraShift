@@ -49,7 +49,7 @@
             height: 100%; box-sizing: border-box;
         }
         .card h3 { 
-            font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; 
+            font-size: 13px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; 
         }
 
         /* COMPACT INPUTS */
@@ -81,28 +81,19 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* VISUAL BARS (CPG) */
+        /* VISUAL BARS */
         .visual-row { margin-bottom: 30px; }
         .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; }
         .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
-        
         .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
-        .bar-number-item { 
-            position: absolute; transform: translateX(-100%); 
-            font-size: 10px; color: #1D1D1F; font-weight: 700; 
-            border-right: 1px solid #ccc; padding-right: 2px; height: 6px; 
-        }
+        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
         .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
-        .bar-label-item { 
-            font-size: 9px; color: #666; text-align: center; overflow: hidden; 
-            text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; 
-        }
-        
+        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
-        /* STRATEGY CARDS */
+        /* SCREEN STRATEGY CARDS */
         .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px; }
         .apple-stat-card {
             background: #fff; border-radius: 16px; padding: 16px;
@@ -110,9 +101,9 @@
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .stat-header { font-size: 11px; text-transform: uppercase; color: var(--text-sec); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px; }
-        .stat-value { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); line-height: 1.1; }
+        .stat-value { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); line-height: 1.1; }
         .stat-unit { font-size: 14px; font-weight: 600; color: var(--text-sec); margin-left: 2px; }
-        .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 11px; font-weight: 600; color: var(--primary); }
+        .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 12px; font-weight: 600; color: var(--success); }
 
         .rec-container { background: #F2F8FF; padding: 15px; border-radius: 12px; border: 1px solid #D6E4FF; margin-bottom: 20px; }
         .rec-container ul { margin: 0; padding-left: 20px; }
@@ -189,7 +180,7 @@
         <div class="main-grid">
             <div style="display: flex; flex-direction: column; gap: 20px;">
                 <div class="card">
-                    <h3>Patient Profile</h3>
+                    <h3>A. Patient Profile</h3>
                     <div class="input-grid-profile">
                         <div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div>
                         <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Full Name"></div>
@@ -199,7 +190,7 @@
                 </div>
 
                 <div class="card">
-                    <h3>Measurements & Composition</h3>
+                    <h3>B. Measurements & Composition</h3>
                     <div class="input-grid-4">
                         <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="175"></div>
                         <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
@@ -215,7 +206,7 @@
             </div>
 
             <div class="card">
-                <h3>Risk Factors</h3>
+                <h3>C. Risk Factors</h3>
                 <div class="ios-list">
                     <div class="ios-item"><span class="ios-label">T2DM / Pre-Diabetes</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div>
@@ -228,11 +219,11 @@
         </div>
 
         <div class="card hidden" id="resultCard" style="margin-bottom:100px;">
-            <h3>Clinical Analysis</h3>
+            <h3>D. Clinical Analysis</h3>
             <div id="screenAnalysis"></div>
             
             <div style="margin-top:30px;">
-                <h3>Clinical Strategy</h3>
+                <h3>E. Clinical Strategy</h3>
                 <div class="rec-container">
                     <div style="font-weight:700; margin-bottom:10px; color:var(--primary); text-transform:uppercase; font-size:11px;">Recommendations</div>
                     <div id="screenRecommendations"></div>
@@ -240,9 +231,9 @@
                 <div id="screenStatGrid"></div>
             </div>
 
-            <div class="form-group" style="margin-top:20px;">
-                <label>Doctor's Remarks</label>
-                <textarea id="docRemarks" rows="3"></textarea>
+            <div class="form-group" style="margin-top:30px;">
+                <h3>F. Clinical Remarks</h3>
+                <textarea id="docRemarks" rows="3" placeholder="Doctor's notes..."></textarea>
             </div>
         </div>
 
@@ -268,14 +259,14 @@
             <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="ppBMI">-</span></div>
         </div>
 
-        <div class="section-head" style="margin-top:0;">1. Clinical Analysis (CPG 2023 Guidelines)</div>
+        <div class="section-head" style="margin-top:0;">D. Clinical Analysis (CPG 2023 Guidelines)</div>
         <div class="metabolic-row">
             <div class="meta-item"><span>Basal Metabolic Rate</span><strong id="ppBMR">-</strong></div>
             <div class="meta-item"><span>Est. Daily Expenditure</span><strong id="ppTDEE">-</strong></div>
         </div>
         <div id="printVisualsContainer"></div>
 
-        <div class="section-head">2. Clinical Strategy</div>
+        <div class="section-head">E. Clinical Strategy</div>
         
         <div class="print-stat-grid" id="printStatGrid"></div>
 
@@ -289,7 +280,7 @@
 
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div><div class="report-meta">ID: <span id="pRef2"></span></div></div>
         
-        <div class="section-head" style="margin-top:0;">3. Doctor's Remarks & Plan</div>
+        <div class="section-head" style="margin-top:0;">F. Clinical Remarks & Plan</div>
         <div class="remarks-box" id="ppRemarks"></div>
 
         <div class="report-footer"><span>Generated by AraShift</span><span>Page 2 of 2</span></div>
@@ -385,8 +376,17 @@
             document.getElementById('printVisualsContainer').innerHTML = html;
             document.getElementById('screenAnalysis').innerHTML = html; 
 
-            // Logic Calculation (CPG Table 2-3 & 4-1)
-            let riskFactors = {
+            // 2. Data Population
+            document.getElementById('pDate').innerText = new Date().toLocaleDateString();
+            document.getElementById('pRef').innerText = els.pId.value; document.getElementById('pRef2').innerText = els.pId.value;
+            document.getElementById('ppId').innerText = els.pId.value; document.getElementById('ppName').innerText = els.pName.value;
+            document.getElementById('ppDemo').innerText = `${els.age.value} / ${els.gender.value}`;
+            document.getElementById('ppHeight').innerText = els.height.value + " cm"; document.getElementById('ppWeight').innerText = els.weight.value + " kg";
+            document.getElementById('ppBMI').innerText = els.bmi.value;
+
+            // INTELLIGENT LOGIC
+            // 1. Risks
+            let risks = {
                 t2dm: document.getElementById('risk_t2dm').checked,
                 htn: document.getElementById('risk_htn').checked,
                 dys: document.getElementById('risk_dys').checked,
@@ -394,64 +394,77 @@
                 mafld: document.getElementById('risk_mafld').checked,
                 meta: document.getElementById('risk_meta').checked
             };
+            
+            // 2. Risk Stratification (Matrix)
+            let riskStr = "Low";
+            let bmi = parseFloat(els.bmi.value);
+            let wc = parseFloat(els.waist.value);
+            let hasComorb = Object.values(risks).some(v => v);
+            let wcHigh = (els.gender.value === 'male' && wc >= 90) || (els.gender.value === 'female' && wc >= 80);
 
-            let minPct = 5; let maxPct = 10;
-            // T2DM, HTN, DYS, PCOS -> 5-15%
-            if(riskFactors.t2dm || riskFactors.htn || riskFactors.dys) { maxPct = Math.max(maxPct, 15); }
-            // OSA -> 7-11%
-            if(riskFactors.osa) { minPct = Math.max(minPct, 7); maxPct = Math.max(maxPct, 11); }
-            // Metabolic Syn -> 10%
-            if(riskFactors.meta) { minPct = Math.max(minPct, 10); }
-            // MAFLD -> 10-40%
-            if(riskFactors.mafld) { minPct = Math.max(minPct, 10); maxPct = Math.max(maxPct, 40); }
+            if (bmi >= 37.5) riskStr = "Extremely High";
+            else if (bmi >= 32.5) riskStr = "Very High";
+            else if (bmi >= 27.5) riskStr = hasComorb || wcHigh ? "Very High" : "High";
+            else if (bmi >= 23.0) riskStr = hasComorb || wcHigh ? "High" : "Moderate";
+            else if (wcHigh) riskStr = "Moderate"; // Normal BMI but abdominal obesity
+
+            // 3. Weight Loss Targets (Table 2-3)
+            let minPct = 5, maxPct = 10;
+            if(risks.t2dm || risks.htn || risks.dys) { minPct=5; maxPct=15; }
+            if(risks.osa) { minPct=Math.max(minPct, 7); maxPct=Math.max(maxPct, 11); }
+            if(risks.mafld) { minPct=Math.max(minPct, 10); maxPct=Math.max(maxPct, 40); }
 
             let targetW_Low = (els.weight.value * (1 - (minPct/100))).toFixed(1);
             let targetW_High = (els.weight.value * (1 - (maxPct/100))).toFixed(1);
-            let lossKg = (els.weight.value * (minPct/100)).toFixed(1) + " - " + (els.weight.value * (maxPct/100)).toFixed(1);
+            let lossRange = `${(els.weight.value*minPct/100).toFixed(1)} - ${(els.weight.value*maxPct/100).toFixed(1)}`;
 
+            // 4. Metabolic & Calories
             let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
             let tdee = bmr * 1.2;
             let targetCal = Math.round(tdee - 500);
+            // Safety Floor
+            let safetyFloor = els.gender.value === 'male' ? 1500 : 1200;
+            if(targetCal < safetyFloor) targetCal = safetyFloor; 
 
-            // Activity Logic (Table 4-1)
-            // If target loss > 5%, recommend 225-420 min
-            let activityRec = minPct >= 5 ? "225-420" : "150-200";
-            let activityDetail = minPct >= 5 ? "For Significant Loss" : "For Maintenance";
-
-            // Update UI Data
-            document.getElementById('pDate').innerText = new Date().toLocaleDateString();
-            document.getElementById('pRef').innerText = els.pId.value; document.getElementById('pRef2').innerText = els.pId.value;
-            document.getElementById('ppId').innerText = els.pId.value; document.getElementById('ppName').innerText = els.pName.value;
-            document.getElementById('ppDemo').innerText = `${els.age.value} / ${els.gender.value}`;
-            document.getElementById('ppHeight').innerText = els.height.value + " cm"; document.getElementById('ppWeight').innerText = els.weight.value + " kg";
-            document.getElementById('ppBMI').innerText = els.bmi.value;
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
 
-            // Generate Screen Stats
+            // 5. Activity (Table 4-1)
+            let activityRec = "150-200";
+            if(minPct >= 5) activityRec = "225-420"; // Required for meaningful loss
+
+            // 6. Generate UI
             let statHTML = `
-                ${getStatCard("Target Weight", `${targetW_Low}-${targetW_High}`, "kg", `Loss Target: ${minPct}-${maxPct}%`, true)}
-                ${getStatCard("Calorie Prescription", targetCal, "kcal", "Daily Deficit: -500 kcal", true)}
-                ${getStatCard("Activity Goal", activityRec, "min/wk", activityDetail, false)}
-                ${getStatCard("Risk Stratification", els.bmi.value > 25 ? "Elevated" : "Normal", "", "Based on BMI & Risks", false)}
+                ${getStatCard("Target Weight", `${targetW_Low}-${targetW_High}`, "kg", `Target Loss: ${minPct}-${maxPct}%`, true)}
+                ${getStatCard("Calorie Prescription", targetCal, "kcal", "Safety Adjusted Deficit", true)}
+                ${getStatCard("Activity Goal", activityRec, "min/wk", "Mod-Vigorous Intensity", false)}
+                ${getStatCard("Risk Stratification", riskStr, "", "Based on CPG Matrix", false)}
             `;
             document.getElementById('screenStatGrid').innerHTML = statHTML;
 
-            // Generate Print Stats
             let printStatHTML = `
-                ${getPrintStatCard("Target Weight Range", `${targetW_Low}-${targetW_High}`, "kg", `Loss: ${lossKg} kg (${minPct}-${maxPct}%)`)}
-                ${getPrintStatCard("Calorie Prescription", targetCal, "kcal", "Daily Deficit: -500 kcal")}
-                ${getPrintStatCard("Activity Duration", activityRec, "min/wk", "Mod-Vigorous Intensity")}
-                ${getPrintStatCard("Risk Level", els.bmi.value > 25 ? "Elevated" : "Normal", "", "Clinical Assessment")}
+                ${getPrintStatCard("Target Weight Range", `${targetW_Low}-${targetW_High}`, "kg", `Loss: ${lossRange} kg (${minPct}-${maxPct}%)`)}
+                ${getPrintStatCard("Calorie Prescription", targetCal, "kcal", "Daily Intake Target")}
+                ${getPrintStatCard("Activity Duration", activityRec, "min/wk", "For Weight Loss Phase")}
+                ${getPrintStatCard("Risk Stratification", riskStr, "", "Clinical Assessment")}
             `;
             document.getElementById('printStatGrid').innerHTML = printStatHTML;
 
-            // Recommendations Text
-            let recs = `<ul>
-                <li>Aim for <b>${minPct}-${maxPct}% weight loss</b> (${lossKg} kg) to improve metabolic health.</li>
-                <li>Adhere to a hypocaloric diet of <b>${targetCal} kcal/day</b>.</li>
-                <li>Gradually increase aerobic activity to <b>${activityRec} minutes/week</b> as per CPG guidelines.</li>
-                <li>Monitor for medication adjustments if relevant (T2DM/HTN).</li>
-            </ul>`;
+            // Recommendations
+            let recList = [
+                `Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.`,
+                `Prescribed hypocaloric diet of <b>${targetCal} kcal/day</b>.`,
+                `Aerobic activity target: <b>${activityRec} mins/week</b>.`
+            ];
+            if(risks.t2dm) recList.push("Monitor HbA1c; prioritization of low-GI carbohydrates.");
+            if(risks.htn) recList.push("Sodium restriction advised (DASH approach).");
+            if(parseFloat(els.muscle.value) < 30) recList.push("<b>Sarcopenia Alert:</b> Increase protein intake to 1.2-1.5g/kg.");
+            
+            // Meds Flag
+            if((bmi >= 27.5 && hasComorb) || bmi >= 32.5) {
+                recList.push("<b>Pharmacotherapy:</b> Patient is eligible for anti-obesity medication.");
+            }
+
+            let recs = "<ul>" + recList.map(r => `<li>${r}</li>`).join("") + "</ul>";
             document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
 
