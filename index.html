@@ -341,7 +341,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- GEMINI KEY ---
+        // --- HARDCODED GEMINI API KEY ---
         const geminiApiKey = "AIzaSyCnLi3p3W6hgHY7dmWiKZ20wQAkYqVCFHE";
 
         const ids = ['pId','pName','age','gender','height','weight','waist','bmi','vfat','fat','muscle','docRemarks'];
@@ -385,11 +385,12 @@
                 Do not use asterisks or markdown formatting too heavily. Keep it clean text.
             `;
 
-            // List of models to try in order
+            // List of models to try in order (Auto-Fallback)
             const modelsToTry = [
                 "gemini-1.5-flash", 
                 "gemini-1.5-pro",
-                "gemini-1.0-pro"
+                "gemini-1.0-pro",
+                "gemini-1.5-flash-latest" // Sometimes helps with versioning
             ];
 
             let text = "";
@@ -431,7 +432,7 @@
                 }
                 typeWriter();
             } else {
-                alert("AI Error: Could not generate report. All models failed. " + errorMsg);
+                alert("AI Error: All models failed. Your region may block API access. Try a VPN (USA). Details: " + errorMsg);
             }
             
             btn.classList.remove('ai-loading');
