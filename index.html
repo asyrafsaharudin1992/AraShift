@@ -341,7 +341,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- HARDCODED GEMINI API KEY ---
+        // --- HARDCODED GEMINI API KEY (UPDATED) ---
         const geminiApiKey = "AIzaSyCnLi3p3W6hgHY7dmWiKZ20wQAkYqVCFHE";
 
         const ids = ['pId','pName','age','gender','height','weight','waist','bmi','vfat','fat','muscle','docRemarks'];
@@ -380,6 +380,14 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
                 const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+                if (!data.candidates || !data.candidates[0]) {
+                    throw new Error("No response generated. Safety filter might have triggered.");
+                }
+
                 const text = data.candidates[0].content.parts[0].text;
                 
                 els.docRemarks.value = "";
