@@ -6,13 +6,20 @@
     <title>AraShift Medical Suite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- SCREEN VARIABLES (Modern UI) --- */
+        /* ---  SYSTEM VARIABLES --- */
         :root {
             --primary: #007AFF;
             --bg: #F5F5F7;
             --card-bg: #FFFFFF;
             --text: #1D1D1F;
             --border: #D2D2D7;
+            /* Clinical Colors */
+            --c-under: #F59E0B; /* Yellow */
+            --c-norm: #10B981;  /* Green */
+            --c-over: #F97316;  /* Orange */
+            --c-ob1: #EF4444;   /* Red */
+            --c-ob2: #B91C1C;   /* Dark Red */
+            --c-ob3: #7F1D1D;   /* Very Dark Red */
         }
 
         body { 
@@ -20,7 +27,6 @@
             background-color: var(--bg); color: var(--text); margin: 0; padding: 20px;
         }
 
-        /* --- SCREEN UTILITIES --- */
         .container { max-width: 1100px; margin: 0 auto; padding-bottom: 80px; }
         .hidden { display: none !important; }
         
@@ -29,7 +35,7 @@
         .brand { font-size: 24px; font-weight: 800; } .brand span { color: var(--primary); }
         .logout { color: var(--primary); cursor: pointer; font-weight: 500; }
 
-        /* CARDS & GRID */
+        /* GRID SYSTEM */
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         
@@ -50,10 +56,22 @@
         }
         input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
 
-        /* VISUALS */
-        .visual-bar-track { height: 10px; background: #E5E5EA; border-radius: 5px; position: relative; overflow: hidden; margin-top: 5px; }
-        .visual-bar-fill { height: 100%; border-radius: 5px; transition: width 0.5s; }
-        .val-display { float: right; font-weight: 700; color: var(--primary); }
+        /* --- ADVANCED VISUAL BARS --- */
+        .visual-row { margin-bottom: 25px; }
+        .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+        .bar-complex { position: relative; height: 14px; border-radius: 7px; overflow: hidden; display: flex; width: 100%; }
+        .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; }
+        
+        .bar-labels-row { display: flex; margin-top: 4px; width: 100%; }
+        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; white-space: nowrap; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
+        .bar-label-item:last-child { border-right: none; }
+
+        .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -14px; }
+        .bar-marker { 
+            position: absolute; width: 4px; height: 18px; background: #1D1D1F; 
+            border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); top: -2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10;
+        }
 
         /* ACTION BAR */
         .action-bar {
@@ -66,114 +84,66 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-sec { background: transparent; border: 1px solid var(--border); }
 
-        /* --- 🖨️ THE "BRILLIANT" PRINT DOM (Hidden on Screen) --- */
+        /* --- 🖨️ PRINT DOM --- */
         #clinical-report { display: none; }
 
         @media print {
-            @page { size: A4; margin: 0; } /* Zero margin to control bleed */
-            
+            @page { size: A4; margin: 0; }
             body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            
-            /* HIDE SCREEN UI */
             .container, .action-bar, #login-screen { display: none !important; }
 
-            /* SHOW PRINT DOM */
             #clinical-report { 
                 display: block !important; 
-                width: 210mm; min-height: 297mm; /* A4 Dimensions */
-                padding: 15mm 15mm; 
+                width: 210mm; min-height: 297mm; 
+                padding: 15mm; 
                 box-sizing: border-box;
                 font-family: "Helvetica Neue", Arial, sans-serif;
-                color: #111;
-                font-size: 10pt;
-                position: relative;
+                color: #111; font-size: 10pt;
             }
 
-            /* --- REPORT LAYOUT --- */
-            .report-header {
-                display: flex; justify-content: space-between; align-items: flex-end;
-                border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px;
-            }
-            .report-title h1 { font-size: 24pt; margin: 0; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; }
-            .report-title p { font-size: 9pt; margin: 2px 0 0 0; text-transform: uppercase; font-weight: 600; color: #555; letter-spacing: 1px; }
-            .report-meta { text-align: right; font-size: 9pt; color: #444; }
-
-            /* Patient Strip */
+            /* Report Layout */
+            .report-header { display: flex; justify-content: space-between; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px; }
+            .report-title h1 { font-size: 24pt; margin: 0; font-weight: 900; text-transform: uppercase; }
+            .report-title p { font-size: 9pt; margin: 2px 0 0 0; text-transform: uppercase; font-weight: 600; color: #555; }
+            
             .patient-strip {
                 display: flex; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 6px;
                 padding: 12px; margin-bottom: 25px; justify-content: space-between;
             }
             .pt-field { display: flex; flex-direction: column; }
-            .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; margin-bottom: 2px; }
+            .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; }
             .pt-val { font-size: 11pt; font-weight: bold; color: #000; }
 
-            /* Analysis Grid */
-            .report-section { margin-bottom: 30px; page-break-inside: avoid; }
-            .section-head { 
-                font-size: 11pt; font-weight: 800; text-transform: uppercase; 
-                border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; 
-            }
-
-            /* The "Lab Report" Table Look */
-            .analysis-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-            .analysis-table th { text-align: left; font-size: 8pt; text-transform: uppercase; color: #555; padding: 5px 0; border-bottom: 1px solid #ddd; width: 30%; }
-            .analysis-table td { padding: 8px 0; border-bottom: 1px solid #eee; vertical-align: middle; }
-            .res-val { font-weight: bold; font-size: 11pt; }
-            .res-unit { font-size: 8pt; color: #666; margin-left: 2px; }
+            /* Analysis */
+            .section-head { font-size: 11pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; }
             
-            /* Visual Bar in Table */
-            .print-bar-track { 
-                width: 100%; height: 12px; background: #E5E7EB; border: 1px solid #ccc; position: relative; 
-            }
-            .print-bar-fill { height: 100%; background: #000; } /* Dynamic Color via JS */
-            .print-marker { 
-                position: absolute; top: -3px; width: 3px; height: 18px; background: #000; 
-                border: 1px solid #fff; z-index: 10; 
-            }
+            .visual-row { page-break-inside: avoid; margin-bottom: 20px; }
+            /* Print Bar Adjustments */
+            .bar-complex { height: 12px; border: 1px solid #999; border-radius: 4px; }
+            .bar-label-item { font-size: 7pt; color: #444; margin-top: 2px; }
+            .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -2px; width: 3px; }
 
-            /* Metabolic Box */
-            .metabolic-row { 
-                display: grid; grid-template-columns: 1fr 1fr; gap: 15px; 
-                background: #F9FAFB; border: 1px solid #ddd; padding: 15px; border-radius: 6px;
-            }
+            /* Metabolic */
+            .metabolic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
             .meta-item strong { font-size: 14pt; display: block; }
-            .meta-item span { font-size: 8pt; text-transform: uppercase; color: #666; }
 
-            /* Page 2 Break */
             .page-break { page-break-before: always; }
-
-            /* Action Plan Box */
-            .plan-box { 
-                border: 2px solid #000; padding: 20px; border-radius: 8px; margin-bottom: 25px; 
-                background: #fff;
-            }
-            .target-grid {
-                display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;
-            }
+            
+            /* Plan */
+            .plan-box { border: 2px solid #000; padding: 20px; border-radius: 8px; margin-bottom: 25px; background: #fff; }
+            .target-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
             .t-item { text-align: center; }
-            .t-label { font-size: 7pt; text-transform: uppercase; display: block; color: #666; }
             .t-val { font-size: 12pt; font-weight: bold; }
 
-            /* Remarks Area */
-            .remarks-box {
-                background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 100px;
-                font-family: "Courier New", monospace; font-size: 10pt; line-height: 1.4;
-                white-space: pre-wrap; border: 1px solid #E5E7EB;
-            }
-
-            /* Footer */
-            .report-footer {
-                position: fixed; bottom: 10mm; left: 15mm; right: 15mm;
-                border-top: 1px solid #000; padding-top: 5px;
-                font-size: 7pt; display: flex; justify-content: space-between;
-            }
+            .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 100px; font-family: "Courier New", monospace; white-space: pre-wrap; }
+            
+            .report-footer { position: fixed; bottom: 10mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
         }
     </style>
 </head>
 <body>
 
     <div class="container" id="app-ui">
-        
         <header>
             <div class="brand">Ara<span>Shift</span></div>
             <div class="logout">Logout</div>
@@ -221,7 +191,7 @@
 
         <div class="card hidden" id="resultCard" style="margin-bottom:100px;">
             <h3>Analysis Preview</h3>
-            <div id="screenAnalysisText"></div>
+            <div id="screenAnalysis"></div>
             <div class="form-group" style="margin-top:20px;">
                 <label>Doctor's Remarks</label>
                 <textarea id="docRemarks" rows="4"></textarea>
@@ -243,43 +213,36 @@
                 <p>Clinical Body Composition Report</p>
             </div>
             <div class="report-meta">
-                Date: <span id="pDate"></span><br>
-                Ref: <span id="pRef"></span>
+                Date: <span id="pDate"></span><br>Ref: <span id="pRef"></span>
             </div>
         </div>
 
         <div class="patient-strip">
-            <div class="pt-field"><span class="pt-label">Patient ID</span><span class="pt-val" id="ppId">-</span></div>
+            <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="ppId">-</span></div>
             <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="ppName">-</span></div>
-            <div class="pt-field"><span class="pt-label">Age / Sex</span><span class="pt-val" id="ppDemo">-</span></div>
+            <div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="ppDemo">-</span></div>
             <div class="pt-field"><span class="pt-label">Height</span><span class="pt-val" id="ppHeight">-</span></div>
             <div class="pt-field"><span class="pt-label">Weight</span><span class="pt-val" id="ppWeight">-</span></div>
             <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="ppBMI">-</span></div>
         </div>
 
         <div class="report-section">
-            <div class="section-head">1. Anthropometric & Metabolic Analysis</div>
+            <div class="section-head">1. Clinical Analysis (CPG 2023 Guidelines)</div>
             
             <div class="metabolic-row">
                 <div class="meta-item"><span>Basal Metabolic Rate</span><strong id="ppBMR">-</strong></div>
                 <div class="meta-item"><span>Est. Daily Expenditure</span><strong id="ppTDEE">-</strong></div>
             </div>
 
-            <table class="analysis-table">
-                <tbody id="printVisualTable">
-                    </tbody>
-            </table>
+            <div id="printVisualsContainer"></div>
 
-            <div style="margin-top:20px; border:1px solid #ccc; height:220px; padding:10px; border-radius:6px;">
-                <div style="font-size:8pt; font-weight:bold; margin-bottom:10px;">WEIGHT TREND</div>
+            <div style="margin-top:25px; border:1px solid #ccc; height:220px; padding:10px; border-radius:6px;">
+                <div style="font-size:8pt; font-weight:bold; margin-bottom:10px; text-transform:uppercase;">Weight Trend History</div>
                 <img id="printGraphImg" style="width:100%; height:190px; object-fit:contain;">
             </div>
         </div>
 
-        <div class="report-footer">
-            <span>AraShift System v2.0</span>
-            <span>Page 1 of 2</span>
-        </div>
+        <div class="report-footer"><span>AraShift System v2.0</span><span>Page 1 of 2</span></div>
 
         <div class="page-break"></div>
 
@@ -290,11 +253,9 @@
 
         <div class="report-section">
             <div class="section-head">2. Clinical Strategy</div>
-            
             <div class="plan-box">
                 <div style="font-weight:bold; margin-bottom:10px; text-transform:uppercase; font-size:9pt;">Recommendations</div>
                 <div id="ppRecommendations" style="line-height:1.6; margin-bottom:15px;"></div>
-                
                 <div class="target-grid">
                     <div class="t-item"><span class="t-label">Target Weight</span><span class="t-val" id="ppTargetW">-</span></div>
                     <div class="t-item"><span class="t-label">Calorie Goal</span><span class="t-val" id="ppTargetC">-</span></div>
@@ -307,17 +268,14 @@
             <div class="remarks-box" id="ppRemarks"></div>
         </div>
 
-        <div class="report-footer">
-            <span>Generated by AraShift</span>
-            <span>Page 2 of 2</span>
-        </div>
-
+        <div class="report-footer"><span>Generated by AraShift</span><span>Page 2 of 2</span></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyCnL8Lv6iPN7c_j6vuygjifMIbmU7Fr0Ew",
             authDomain: "arashift-8a3cc.firebaseapp.com",
@@ -328,14 +286,12 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // Inputs
         const ids = ['pId','pName','age','gender','height','weight','waist','bmi','vfat','fat','muscle','docRemarks'];
         const els = {}; ids.forEach(id => els[id] = document.getElementById(id));
-        const risks = ['t2dm','htn','dys','osa','mafld','meta','pcos'];
+        const risks = ['t2dm','htn','dys','osa','mafld','meta'];
         
-        let trendChart = null;
-
         // Auto BMI
         function calcBMI() {
             const h = els.height.value/100; const w = els.weight.value;
@@ -344,69 +300,110 @@
         els.height.addEventListener('input', calcBMI);
         els.weight.addEventListener('input', calcBMI);
 
-        // Graph
-        async function renderGraph(pid) {
-            const ctx = document.createElement('canvas'); // Invisible canvas
-            const q = query(collection(db, 'shared_records'), orderBy("timestamp", "asc"));
-            const snap = await getDocs(q);
-            const labels=[], dataW=[], dataF=[];
-            
-            snap.forEach(d => {
-                const val = d.data();
-                if(val.pId == pid) {
-                    labels.push(val.timestamp?.toDate().toLocaleDateString() || '-');
-                    dataW.push(val.weight);
-                    dataF.push(val.fat);
-                }
+        // --- NEW: DETAILED BAR GENERATOR (CPG 2023) ---
+        function getDetailedBar(label, value, unit, totalMax, segments) {
+            // Segments = [{limit, color, label}]
+            let barsHTML = "";
+            let labelsHTML = "";
+            let prevLimit = 0;
+
+            segments.forEach(seg => {
+                let width = ((seg.limit - prevLimit) / totalMax) * 100;
+                barsHTML += `<div class="bar-seg" style="width:${width}%; background:${seg.color};"></div>`;
+                labelsHTML += `<div class="bar-label-item" style="width:${width}%;">${seg.label}</div>`;
+                prevLimit = seg.limit;
             });
 
-            // Create temporary chart to generate image
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'Weight', data: dataW, borderColor: '#000', borderWidth: 2, tension:0.1 },
-                        { label: 'Fat %', data: dataF, borderColor: '#999', borderWidth: 1, borderDash:[5,5] }
-                    ]
-                },
-                options: { animation: false }
-            });
-            
-            // Wait brief moment for render then export
-            setTimeout(() => {
-                document.getElementById('printGraphImg').src = ctx.toDataURL();
-            }, 500);
-        }
-
-        // GENERATE REPORT ROW
-        function getPrintRow(label, val, unit, max, reverse=false) {
-            let pct = (val/max)*100; if(pct>100) pct=100;
-            // Colors based on ranges (Simplified for print: Grey/Black scale)
-            // Ideally, we use color for PDF export, but clean styles.
-            // Let's use CSS Gradients for the bar track to show zones
-            
-            let color = "#34C759"; // Green
-            if(!reverse && pct > 60) color = "#FF3B30"; // Red if high
-            if(reverse && pct < 40) color = "#FF3B30"; // Red if low (muscle)
+            // Calculate Marker Position
+            let markerPos = (value / totalMax) * 100;
+            if(markerPos > 100) markerPos = 100; if(markerPos < 0) markerPos = 0;
 
             return `
-            <tr>
-                <th>${label}</th>
-                <td width="15%"><span class="res-val">${val}</span><span class="res-unit">${unit}</span></td>
-                <td>
-                    <div class="print-bar-track">
-                        <div class="print-bar-fill" style="width:${pct}%; background:${color};"></div>
-                        <div class="print-marker" style="left:${pct}%;"></div>
+            <div class="visual-row">
+                <div class="visual-header">
+                    <span>${label}</span>
+                    <span style="color:#007AFF;">${value} ${unit}</span>
+                </div>
+                <div style="position:relative;">
+                    <div class="bar-complex">${barsHTML}</div>
+                    <div class="bar-labels-row">${labelsHTML}</div>
+                    <div class="bar-marker-wrapper">
+                        <div class="bar-marker" style="left: ${markerPos}%;"></div>
                     </div>
-                </td>
-            </tr>`;
+                </div>
+            </div>`;
         }
 
-        document.getElementById('analyzeBtn').addEventListener('click', () => {
+        // --- GRAPH LOGIC ---
+        async function renderGraph(pid) {
+            const ctx = document.createElement('canvas'); 
+            const q = query(collection(db, 'shared_records'), orderBy("timestamp", "asc"));
+            const snap = await getDocs(q);
+            const labels=[], dataW=[];
+            snap.forEach(d => { if(d.data().pId == pid) { labels.push("-"); dataW.push(d.data().weight); } });
+            
+            new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ data: dataW, borderColor: '#000', borderWidth: 2, pointRadius:2, tension:0.1 }] }, options:{animation:false} });
+            setTimeout(() => { document.getElementById('printGraphImg').src = ctx.toDataURL(); }, 500);
+        }
+
+        // --- MAIN LOGIC ---
+        document.getElementById('analyzeBtn').addEventListener('click', async () => {
             document.getElementById('resultCard').classList.remove('hidden');
             
-            // 1. Map to Print DOM
+            // 1. Define CPG 2023 Segments 
+            // Colors: Green(Norm), Yellow(Under/Pre), Orange(Ob1), Red(Ob2), DarkRed(Ob3)
+            const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
+
+            // BMI (Total 45 for scale)
+            const bmiSegs = [
+                {limit: 18.5, color: cU, label: "Under"},
+                {limit: 23.0, color: cN, label: "Normal"},
+                {limit: 27.5, color: cPre, label: "Pre-Ob"},
+                {limit: 32.5, color: cO1, label: "Obese I"},
+                {limit: 37.5, color: cO2, label: "Obese II"},
+                {limit: 45.0, color: cO3, label: "Obese III"}
+            ];
+
+            // Waist (Total 130)
+            const wLimit = els.gender.value === 'male' ? 90 : 80;
+            const wSegs = [
+                {limit: wLimit, color: cN, label: "Normal"},
+                {limit: 130, color: cO1, label: "Abdominal Obesity"}
+            ];
+
+            // Body Fat (Total 60)
+            let fSegs = [];
+            if(els.gender.value === 'male') {
+                fSegs = [{limit:20, color:cN, label:"Normal"}, {limit:25, color:cPre, label:"High"}, {limit:60, color:cO1, label:"Very High"}];
+            } else {
+                fSegs = [{limit:30, color:cN, label:"Normal"}, {limit:35, color:cPre, label:"High"}, {limit:60, color:cO1, label:"Very High"}];
+            }
+
+            // Visceral (Total 20)
+            const vSegs = [{limit:9, color:cN, label:"Normal"}, {limit:14, color:cPre, label:"High"}, {limit:20, color:cO1, label:"V.High"}];
+
+            // Muscle (Total 60 - Higher is better)
+            // Flip colors: Red -> Green
+            let mSegs = [];
+            if(els.gender.value === 'male') {
+                mSegs = [{limit:33, color:cO1, label:"Low"}, {limit:36, color:cN, label:"Normal"}, {limit:60, color:"#059669", label:"High"}];
+            } else {
+                mSegs = [{limit:26, color:cO1, label:"Low"}, {limit:28, color:cN, label:"Normal"}, {limit:60, color:"#059669", label:"High"}];
+            }
+
+            // 2. Generate Print HTML
+            let html = "";
+            html += getDetailedBar("BMI (Body Mass Index)", els.bmi.value, "", 45, bmiSegs);
+            html += getDetailedBar("Waist Circumference", els.waist.value, "cm", 130, wSegs);
+            html += getDetailedBar("Body Fat Percentage", els.fat.value, "%", 60, fSegs);
+            html += getDetailedBar("Visceral Fat Level", els.vfat.value, "", 20, vSegs);
+            html += getDetailedBar("Skeletal Muscle Mass", els.muscle.value, "%", 60, mSegs);
+            
+            document.getElementById('printVisualsContainer').innerHTML = html;
+            // Also show simplified view on screen
+            document.getElementById('screenAnalysis').innerHTML = html; 
+
+            // 3. Populate Data
             document.getElementById('pDate').innerText = new Date().toLocaleDateString();
             document.getElementById('pRef').innerText = els.pId.value;
             document.getElementById('pRef2').innerText = els.pId.value;
@@ -418,58 +415,37 @@
             document.getElementById('ppWeight').innerText = els.weight.value + " kg";
             document.getElementById('ppBMI').innerText = els.bmi.value;
 
-            // 2. Visual Table
-            let html = "";
-            html += getPrintRow("BMI", els.bmi.value, "", 40);
-            html += getPrintRow("Waist Circ.", els.waist.value, "cm", 130);
-            html += getPrintRow("Visceral Fat", els.vfat.value, "Lvl", 20);
-            html += getPrintRow("Body Fat", els.fat.value, "%", 50);
-            html += getPrintRow("Skeletal Muscle", els.muscle.value, "%", 60, true);
-            document.getElementById('printVisualTable').innerHTML = html;
-
-            // 3. Metabolic
+            // 4. Metabolic
             let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
             let tdee = bmr * 1.2;
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal";
             document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
 
-            // 4. Plan Logic
+            // 5. Plan Logic
             let targetW = (els.weight.value * 0.9).toFixed(1);
-            let riskCount = 0;
-            risks.forEach(r => { if(document.getElementById('risk_'+r).checked) riskCount++; });
-            
             let recs = `<ul>
                 <li>Target 5-10% weight loss (${els.weight.value}kg → ${targetW}kg).</li>
                 <li>Calorie deficit of 500 kcal/day (Target: ${Math.round(tdee-500)} kcal).</li>
                 <li>Increase activity to 150-300 mins/week.</li>
-                ${riskCount > 0 ? '<li><b>Manage identified comorbidities closely.</b></li>' : ''}
             </ul>`;
             
             document.getElementById('ppRecommendations').innerHTML = recs;
             document.getElementById('ppTargetW').innerText = targetW + " kg";
             document.getElementById('ppTargetC').innerText = Math.round(tdee-500);
             document.getElementById('ppTargetA').innerText = "200m";
-            document.getElementById('ppRisk').innerText = riskCount > 0 || els.bmi.value > 30 ? "High" : "Mod";
+            document.getElementById('ppRisk').innerText = els.bmi.value > 25 ? "High" : "Mod";
 
-            // 5. Remarks
-            document.getElementById('ppRemarks').innerText = els.docRemarks.value;
-
-            // 6. Generate Graph
+            // 6. Graph & Save
             renderGraph(els.pId.value);
-
-            // Save
-            addDoc(collection(db, 'shared_records'), {
-                pId: els.pId.value, timestamp: serverTimestamp(),
-                weight: els.weight.value, fat: els.fat.value, bmi: els.bmi.value
-            });
+            addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
 
         document.getElementById('printBtn').addEventListener('click', () => {
-            // Force update remarks before printing
             document.getElementById('ppRemarks').innerText = els.docRemarks.value;
             window.print();
         });
 
+        document.getElementById('loginBtn').addEventListener('click', () => signInWithPopup(auth, new GoogleAuthProvider()));
     </script>
 </body>
 </html>
