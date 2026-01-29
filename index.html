@@ -117,6 +117,19 @@
         }
         .pref-select:hover { border-color: var(--primary); color: var(--primary); }
 
+        /* --- NEW: MILESTONE TABLE --- */
+        .milestone-table { 
+            width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 20px; 
+            background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA;
+        }
+        .milestone-table th { 
+            text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; 
+            text-transform: uppercase; color: var(--text-sec); font-weight: 700;
+        }
+        .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; }
+        .milestone-table tr:last-child td { border-bottom: none; }
+        .target-hl { color: var(--primary); font-weight: 700; }
+
         /* ACTION BAR */
         .action-bar {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -167,6 +180,11 @@
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 4px; }
             .p-stat-val { font-size: 14pt; font-weight: 900; display: block; }
             .p-stat-detail { font-size: 8pt; border-top: 1px solid #ddd; margin-top: 6px; padding-top: 4px; display: block; font-weight: 600; }
+
+            /* Milestone Table Print */
+            .milestone-table { border: 1px solid #000; }
+            .milestone-table th { background: #eee; border-bottom: 1px solid #000; color: #000; }
+            .milestone-table td { border-bottom: 1px solid #ccc; color: #000; }
 
             .rec-box { border: 1px solid #000; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
             .rec-head { font-weight: 800; text-transform: uppercase; font-size: 9pt; border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 10px; }
@@ -247,10 +265,10 @@
                     </div>
                 </div>
                 
-                <div class="rec-container">
+                <div id="screenStatGrid"></div>
+                <div id="screenMilestones"></div> <div class="rec-container">
                     <div id="screenRecommendations"></div>
                 </div>
-                <div id="screenStatGrid"></div>
             </div>
 
             <div class="form-group" style="margin-top:30px;">
@@ -291,8 +309,7 @@
         <div class="section-head">E. Clinical Strategy</div>
         
         <div class="print-stat-grid" id="printStatGrid"></div>
-
-        <div class="rec-box">
+        <div id="printMilestones"></div> <div class="rec-box">
             <div class="rec-head">Nutritional & Exercise Prescription</div>
             <div id="ppRecommendations" style="line-height:1.6; font-size:10pt;"></div>
         </div>
@@ -375,7 +392,7 @@
             </div>`;
         }
 
-        // --- MAIN CALCULATION FUNCTION ---
+        // --- MAIN CALCULATION ---
         function performAnalysis() {
             const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
             const bmiSegs = [{limit: 18.5, color: cU, label: "Under"},{limit: 22.9, color: cN, label: "Normal"},{limit: 27.4, color: cPre, label: "Pre-Ob"},{limit: 32.4, color: cO1, label: "Ob I"},{limit: 37.4, color: cO2, label: "Ob II"},{limit: 45.0, color: cO3, label: "Ob III"}];
@@ -429,9 +446,63 @@
             if(riskFactors.osa) { minPct=Math.max(minPct, 7); maxPct=Math.max(maxPct, 11); }
             if(riskFactors.mafld) { minPct=Math.max(minPct, 10); maxPct=Math.max(maxPct, 40); }
 
+            // MILESTONE CALCULATIONS
+            let hM = els.height.value / 100;
+            let currentW = parseFloat(els.weight.value);
+            let wPreOb = (27.4 * hM * hM).toFixed(1);
+            let wNorm = (22.9 * hM * hM).toFixed(1);
+            let wTargetLimit = els.gender.value === 'male' ? 90 : 80;
+            
+            // 6-Month Loss
+            let lossKgMin = (currentW * (minPct/100)).toFixed(1);
+            let lossKgMax = (currentW * (maxPct/100)).toFixed(1);
+            
+            // Time Estimation (Assuming 6-month pace is consistent)
+            let avgMonthlyLoss = (currentW * 0.075) / 6; // Average of 5-10% is 7.5% in 6 mo
+            let monthsToNorm = (currentW - wNorm) / avgMonthlyLoss;
+            let timeStr = monthsToNorm <= 6 ? "Within 6 Months" : `~${(monthsToNorm/12).toFixed(1)} Years`;
+
+            // Milestone Table Data
+            let milestonesHTML = `
+                <table class="milestone-table">
+                    <tr>
+                        <th>Milestone</th>
+                        <th>Target Weight</th>
+                        <th>Est. Timeframe</th>
+                        <th>Risk Reduction</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Phase 1: ${minPct}-${maxPct}% Loss</strong></td>
+                        <td class="target-hl">${(currentW - lossKgMax).toFixed(1)} - ${(currentW - lossKgMin).toFixed(1)} kg</td>
+                        <td>6 Months</td>
+                        <td>Initial Metabolic Improvement</td>
+                    </tr>`;
+            
+            if(currentW > wPreOb) {
+                milestonesHTML += `<tr>
+                    <td><strong>Reach Pre-Obese (BMI <27.5)</strong></td>
+                    <td class="target-hl">${wPreOb} kg</td>
+                    <td>Mid-Term</td>
+                    <td>Significant Risk Reduction</td>
+                </tr>`;
+            }
+            if(currentW > wNorm) {
+                milestonesHTML += `<tr>
+                    <td><strong>Reach Normal (BMI <23.0)</strong></td>
+                    <td class="target-hl">${wNorm} kg</td>
+                    <td>${timeStr}</td>
+                    <td>Optimal Health (Waist <${wTargetLimit}cm)</td>
+                </tr>`;
+            }
+            milestonesHTML += `</table>`;
+            
+            document.getElementById('screenMilestones').innerHTML = milestonesHTML;
+            document.getElementById('printMilestones').innerHTML = milestonesHTML;
+
+            // Rest of Logic
             let targetW_Low = (els.weight.value * (1 - (minPct/100))).toFixed(1);
             let targetW_High = (els.weight.value * (1 - (maxPct/100))).toFixed(1);
-            let lossRange = `${(els.weight.value*minPct/100).toFixed(1)} - ${(els.weight.value*maxPct/100).toFixed(1)}`;
+            let lossRange = `${lossKgMin} - ${lossKgMax}`;
 
             let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
             let tdee = bmr * 1.2;
@@ -440,47 +511,24 @@
 
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
 
-            // --- SMART DIET & EXERCISE LOGIC ---
             let exPref = document.getElementById('exPref').value;
             let dietPref = document.getElementById('dietPref').value;
             let activityRec = "150-200";
-            let activityText = "";
-            let dietText = "";
+            let activityText = "", dietText = "";
 
-            // Exercise Logic
-            if(exPref === 'light') {
-                activityRec = "150";
-                activityText = "<b>Beginner Regime:</b> Low-impact walking/swimming, 30 mins/day, 5x/week. Focus on consistency.";
-            } else if (exPref === 'intense') {
-                activityRec = "300+";
-                activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training/wk.";
-            } else { 
-                activityRec = minPct >= 5 ? "225-300" : "150-200";
-                activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance bands.`;
-            }
+            if(exPref === 'light') { activityRec = "150"; activityText = "<b>Beginner Regime:</b> Low-impact walking/swimming, 30 mins/day, 5x/week."; }
+            else if (exPref === 'intense') { activityRec = "300+"; activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training/wk."; }
+            else { activityRec = minPct >= 5 ? "225-300" : "150-200"; activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance bands.`; }
 
-            // Diet Logic
-            if(dietPref === 'mrp') {
-                dietText = `<b>Meal Replacement (LCD):</b> Replace Breakfast & Lunch with Formula (200kcal x 2). Dinner: Balanced meal (~${targetCal-400} kcal).`;
-            } else if (dietPref === 'plate') {
-                dietText = `<b>Plate Method:</b> 'Suku-Suku Separuh' (1/4 Carbs, 1/4 Protein, 1/2 Veg/Fiber) at every meal. No counting required.`;
-            } else {
-                // Standard Calorie Counting
-                if(targetCal < 1400) dietText = `<b>Calorie Counting:</b> 3 Meals/Day (~450 kcal each). Avoid snacking. Focus on nutrient density.`;
-                else dietText = `<b>Calorie Counting:</b> 3 Meals + 1 Snack. Monitor portion sizes to hit ${targetCal} kcal.`;
-            }
+            if(dietPref === 'mrp') dietText = `<b>Meal Replacement (LCD):</b> Replace Breakfast & Lunch with Formula (200kcal x 2). Dinner: Balanced meal (~${targetCal-400} kcal).`;
+            else if (dietPref === 'plate') dietText = `<b>Plate Method:</b> 'Suku-Suku Separuh' (1/4 Carbs, 1/4 Protein, 1/2 Veg/Fiber) at every meal.`;
+            else dietText = targetCal < 1400 ? `<b>Calorie Counting:</b> 3 Meals/Day (~450 kcal each). Avoid snacking.` : `<b>Calorie Counting:</b> 3 Meals + 1 Snack.`;
 
-            // Protein Logic
             let proteinText = "";
             let muscleVal = parseFloat(els.muscle.value);
             let lowMuscle = (els.gender.value === 'male' && muscleVal < 32.8) || (els.gender.value === 'female' && muscleVal < 25.8);
-            
-            if(lowMuscle) {
-                let pTarget = (els.weight.value * 1.2).toFixed(0);
-                proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b>. Sources: Chicken breast, fish, tofu, whey protein.</li>`;
-            }
+            if(lowMuscle) { let pTarget = (els.weight.value * 1.2).toFixed(0); proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b>. Sources: Chicken breast, fish, tofu, whey protein.</li>`; }
 
-            // Generate UI
             let statHTML = `
                 ${getStatCard("Target Weight", `${targetW_Low}-${targetW_High}`, "kg", `Loss Target: ${minPct}-${maxPct}%`, true)}
                 ${getStatCard("Calorie Prescription", targetCal, "kcal", "Safety Adjusted Deficit", true)}
@@ -497,13 +545,7 @@
             `;
             document.getElementById('printStatGrid').innerHTML = printStatHTML;
 
-            let recs = `<ul>
-                <li>Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.</li>
-                <li>${dietText}</li>
-                <li>${activityText}</li>
-                ${proteinText}
-            </ul>`;
-            
+            let recs = `<ul><li>Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.</li><li>${dietText}</li><li>${activityText}</li>${proteinText}</ul>`;
             document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
         }
@@ -514,7 +556,6 @@
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
 
-        // Re-run analysis if preferences change
         document.getElementById('exPref').addEventListener('change', performAnalysis);
         document.getElementById('dietPref').addEventListener('change', performAnalysis);
 
