@@ -9,17 +9,19 @@
         /* ---  SYSTEM VARIABLES --- */
         :root {
             --primary: #007AFF;
+            --success: #34C759; /* iOS Green */
             --bg: #F5F5F7;
             --card-bg: #FFFFFF;
             --text: #1D1D1F;
             --border: #D2D2D7;
+            
             /* Clinical Colors */
-            --c-low: #F59E0B;   /* Yellow (Underweight/Low) */
-            --c-norm: #10B981;  /* Green (Normal) */
-            --c-high: #F97316;  /* Orange (Overweight/High) */
-            --c-vhigh: #EF4444; /* Red (Obese I/Very High) */
-            --c-ext: #B91C1C;   /* Dark Red (Obese II) */
-            --c-ext2: #7F1D1D;  /* Deep Red (Obese III) */
+            --c-under: #F59E0B;
+            --c-norm: #10B981;
+            --c-pre: #FBBF24;
+            --c-ob1: #F97316;
+            --c-ob2: #EF4444;
+            --c-ob3: #991B1B;
         }
 
         body { 
@@ -56,35 +58,47 @@
         }
         input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
 
-        /* --- ADVANCED VISUAL BARS (CPG STYLE) --- */
-        .visual-row { margin-bottom: 35px; } /* More space for labels */
-        .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+        /* ---  iOS TOGGLE SWITCHES --- */
+        .ios-list {
+            display: flex; flex-direction: column;
+        }
+        .ios-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 0; border-bottom: 1px solid #E5E5EA;
+        }
+        .ios-item:last-child { border-bottom: none; }
+        .ios-label { font-size: 15px; font-weight: 500; color: #1D1D1F; }
+
+        /* The Switch */
+        .switch { position: relative; display: inline-block; width: 51px; height: 31px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
         
+        /* The Slider */
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #E9E9EA; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 27px; width: 27px; left: 2px; bottom: 2px;
+            background-color: white; transition: .4s; border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        /* Checked State */
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* --- VISUAL BARS (CPG) --- */
+        .visual-row { margin-bottom: 25px; }
+        .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; }
         .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
-        
-        /* Numeric Cut-offs Row */
         .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
-        .bar-number-item { 
-            position: absolute; transform: translateX(-100%); 
-            font-size: 10px; color: #1D1D1F; font-weight: 700; 
-            border-right: 1px solid #ccc; padding-right: 2px; height: 6px;
-        }
-
-        /* Classification Labels Row */
+        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: #1D1D1F; font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
         .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
-        .bar-label-item { 
-            font-size: 9px; color: #666; text-align: center; overflow: hidden; 
-            white-space: nowrap; text-transform: uppercase; font-weight: 600; 
-            border-left: 1px solid transparent; 
-        }
-
+        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; white-space: nowrap; text-transform: uppercase; font-weight: 600; }
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
-        .bar-marker { 
-            position: absolute; width: 4px; height: 24px; background: #1D1D1F; 
-            border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10;
-        }
+        .bar-marker { position: absolute; width: 4px; height: 24px; background: #1D1D1F; border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
         /* ACTION BAR */
         .action-bar {
@@ -106,52 +120,39 @@
             .container, .action-bar, #login-screen { display: none !important; }
 
             #clinical-report { 
-                display: block !important; 
-                width: 210mm; min-height: 297mm; 
-                padding: 15mm 15mm; 
-                box-sizing: border-box;
-                font-family: "Helvetica Neue", Arial, sans-serif;
-                color: #111; font-size: 10pt;
+                display: block !important; width: 210mm; min-height: 297mm; padding: 15mm 15mm; 
+                box-sizing: border-box; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt;
             }
 
-            /* Report Layout */
             .report-header { display: flex; justify-content: space-between; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px; }
             .report-title h1 { font-size: 24pt; margin: 0; font-weight: 900; text-transform: uppercase; }
             .report-title p { font-size: 9pt; margin: 2px 0 0 0; text-transform: uppercase; font-weight: 600; color: #555; }
             
-            .patient-strip {
-                display: flex; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 6px;
-                padding: 12px; margin-bottom: 25px; justify-content: space-between;
-            }
+            .patient-strip { display: flex; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px; margin-bottom: 25px; justify-content: space-between; }
             .pt-field { display: flex; flex-direction: column; }
             .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; }
             .pt-val { font-size: 11pt; font-weight: bold; color: #000; }
 
-            /* Analysis */
             .section-head { font-size: 11pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; }
             
             .visual-row { page-break-inside: avoid; margin-bottom: 25px; }
-            /* Print Bar Adjustments */
             .bar-complex { height: 12px; border: 1px solid #999; border-radius: 4px; }
             .bar-label-item { font-size: 7pt; color: #444; margin-top: 4px; }
             .bar-number-item { font-size: 7pt; color: #000; font-weight: bold; border-color: #666; }
             .bar-marker { background: #000; border: 1px solid #fff; height: 18px; top: -3px; width: 3px; }
             .bar-marker-wrapper { top: -28px; }
 
-            /* Metabolic */
             .metabolic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
             .meta-item strong { font-size: 14pt; display: block; }
 
             .page-break { page-break-before: always; }
             
-            /* Plan */
             .plan-box { border: 2px solid #000; padding: 20px; border-radius: 8px; margin-bottom: 25px; background: #fff; }
             .target-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
             .t-item { text-align: center; }
             .t-val { font-size: 12pt; font-weight: bold; }
 
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 100px; font-family: "Courier New", monospace; white-space: pre-wrap; }
-            
             .report-footer { position: fixed; bottom: 10mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
         }
     </style>
@@ -190,16 +191,40 @@
                 <div class="form-group"><label>Body Fat %</label><input type="number" id="fat"></div>
                 <div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div>
             </div>
+            
             <div class="card">
-                <h3>Risk Factors & BMI</h3>
-                <div class="form-group"><label>BMI (Auto)</label><input type="number" id="bmi" readonly></div>
-                <label>Comorbidities</label>
-                <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
-                    <input type="checkbox" id="risk_t2dm"> T2DM
-                    <input type="checkbox" id="risk_htn"> HTN
-                    <input type="checkbox" id="risk_dys"> DYS
-                    <input type="checkbox" id="risk_osa"> OSA
-                    <input type="checkbox" id="risk_mafld"> MAFLD
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <h3>Risk Factors</h3>
+                    <div class="form-group" style="margin-bottom:0; width:100px;">
+                        <input type="text" id="bmi" readonly placeholder="BMI" style="text-align:center; font-weight:bold; color:var(--primary); border:none; background:#F2F2F7;">
+                    </div>
+                </div>
+                
+                <div class="ios-list">
+                    <div class="ios-item">
+                        <span class="ios-label">Type 2 Diabetes (T2DM)</span>
+                        <label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider"></span></label>
+                    </div>
+                    <div class="ios-item">
+                        <span class="ios-label">Hypertension (HTN)</span>
+                        <label class="switch"><input type="checkbox" id="risk_htn"><span class="slider"></span></label>
+                    </div>
+                    <div class="ios-item">
+                        <span class="ios-label">Dyslipidaemia (DYS)</span>
+                        <label class="switch"><input type="checkbox" id="risk_dys"><span class="slider"></span></label>
+                    </div>
+                    <div class="ios-item">
+                        <span class="ios-label">Obstructive Sleep Apnoea</span>
+                        <label class="switch"><input type="checkbox" id="risk_osa"><span class="slider"></span></label>
+                    </div>
+                    <div class="ios-item">
+                        <span class="ios-label">MAFLD (Fatty Liver)</span>
+                        <label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider"></span></label>
+                    </div>
+                    <div class="ios-item">
+                        <span class="ios-label">Metabolic Syndrome</span>
+                        <label class="switch"><input type="checkbox" id="risk_meta"><span class="slider"></span></label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -306,7 +331,7 @@
         els.height.addEventListener('input', calcBMI);
         els.weight.addEventListener('input', calcBMI);
 
-        // --- NEW: DETAILED BAR GENERATOR WITH LABELS & NUMBERS ---
+        // --- DETAILED BAR GENERATOR ---
         function getDetailedBar(label, value, unit, totalMax, segments) {
             let barsHTML = "";
             let numbersHTML = "";
@@ -316,11 +341,8 @@
             segments.forEach(seg => {
                 let width = ((seg.limit - prevLimit) / totalMax) * 100;
                 barsHTML += `<div class="bar-seg" style="width:${width}%; background:${seg.color};"></div>`;
-                
-                // Position number at the end of the segment
                 let cumulativePos = (seg.limit / totalMax) * 100;
                 numbersHTML += `<div class="bar-number-item" style="left:${cumulativePos}%;">${seg.limit}</div>`;
-                
                 labelsHTML += `<div class="bar-label-item" style="width:${width}%;">${seg.label}</div>`;
                 prevLimit = seg.limit;
             });
@@ -359,15 +381,9 @@
         document.getElementById('analyzeBtn').addEventListener('click', async () => {
             document.getElementById('resultCard').classList.remove('hidden');
             
-            // COLORS: CPG 2023 Style
-            const cU="#F59E0B";  // Underweight (Yellow)
-            const cN="#10B981";  // Normal (Green)
-            const cPre="#FBBF24"; // Pre-Obese (Light Orange/Yellow)
-            const cO1="#F97316"; // Obese I (Orange)
-            const cO2="#EF4444"; // Obese II (Red)
-            const cO3="#991B1B"; // Obese III (Dark Red)
+            const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
 
-            // 1. BMI (Table 2-1)
+            // BMI (Total 45)
             const bmiSegs = [
                 {limit: 18.5, color: cU, label: "Under"},
                 {limit: 22.9, color: cN, label: "Normal"},
@@ -377,56 +393,28 @@
                 {limit: 45.0, color: cO3, label: "Ob III"}
             ];
 
-            // 2. Visceral Fat (1-9 Normal, 10-14 High, 15-30 V.High)
-            const vSegs = [
-                {limit: 9, color: cN, label: "Normal"},
-                {limit: 14, color: cO1, label: "High"},
-                {limit: 20, color: cO2, label: "V.High"}
-            ];
+            // Waist (Total 130)
+            const wLimit = els.gender.value === 'male' ? 90 : 80;
+            const wSegs = [{limit: wLimit, color: cN, label: "Normal"}, {limit: 130, color: cO1, label: "Abdominal Obesity"}];
 
-            // 3. Body Fat (Table)
+            // Body Fat (Total 60)
             let fSegs = [];
             if(els.gender.value === 'male') {
-                fSegs = [
-                    {limit: 9.9, color: cU, label: "Low"},
-                    {limit: 19.9, color: cN, label: "Normal"},
-                    {limit: 24.9, color: cO1, label: "High"},
-                    {limit: 50.0, color: cO2, label: "V.High"}
-                ];
+                fSegs = [{limit:9.9, color:cU, label:"Low"}, {limit:19.9, color:cN, label:"Normal"}, {limit:24.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}];
             } else {
-                fSegs = [
-                    {limit: 19.9, color: cU, label: "Low"},
-                    {limit: 29.9, color: cN, label: "Normal"},
-                    {limit: 34.9, color: cO1, label: "High"},
-                    {limit: 50.0, color: cO2, label: "V.High"}
-                ];
+                fSegs = [{limit:19.9, color:cU, label:"Low"}, {limit:29.9, color:cN, label:"Normal"}, {limit:34.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}];
             }
 
-            // 4. Skeletal Muscle (Table)
+            // Visceral (Total 20)
+            const vSegs = [{limit:9, color:cN, label:"Normal"}, {limit:14, color:cO1, label:"High"}, {limit:20, color:cO2, label:"V.High"}];
+
+            // Muscle (Total 60)
             let mSegs = [];
-            // Note: Higher muscle is better (Green at right)
             if(els.gender.value === 'male') {
-                mSegs = [
-                    {limit: 32.8, color: cO2, label: "Low"},
-                    {limit: 35.7, color: cN, label: "Normal"},
-                    {limit: 37.3, color: cN, label: "High"},
-                    {limit: 60.0, color: "#059669", label: "V.High"}
-                ];
+                mSegs = [{limit:32.8, color:cO2, label:"Low"}, {limit:35.7, color:cN, label:"Normal"}, {limit:37.3, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}];
             } else {
-                mSegs = [
-                    {limit: 25.8, color: cO2, label: "Low"},
-                    {limit: 27.9, color: cN, label: "Normal"},
-                    {limit: 29.0, color: cN, label: "High"},
-                    {limit: 60.0, color: "#059669", label: "V.High"}
-                ];
+                mSegs = [{limit:25.8, color:cO2, label:"Low"}, {limit:27.9, color:cN, label:"Normal"}, {limit:29.0, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}];
             }
-
-            // 5. Waist (Approx CPG)
-            let wLimit = els.gender.value === 'male' ? 90 : 80;
-            const wSegs = [
-                {limit: wLimit, color: cN, label: "Normal"},
-                {limit: 130, color: cO1, label: "Abdominal Obesity"}
-            ];
 
             let html = "";
             html += getDetailedBar("BMI (Body Mass Index)", els.bmi.value, "", 45, bmiSegs);
@@ -438,7 +426,6 @@
             document.getElementById('printVisualsContainer').innerHTML = html;
             document.getElementById('screenAnalysis').innerHTML = html; 
 
-            // Populate Text Data
             document.getElementById('pDate').innerText = new Date().toLocaleDateString();
             document.getElementById('pRef').innerText = els.pId.value;
             document.getElementById('pRef2').innerText = els.pId.value;
@@ -455,11 +442,25 @@
             document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
 
             let targetW = (els.weight.value * 0.9).toFixed(1);
+            
+            // Risk Logic for Recommendations
+            let riskList = [];
+            if(document.getElementById('risk_t2dm').checked) riskList.push("T2DM");
+            if(document.getElementById('risk_htn').checked) riskList.push("HTN");
+            if(document.getElementById('risk_dys').checked) riskList.push("DYS");
+            if(document.getElementById('risk_osa').checked) riskList.push("OSA");
+            if(document.getElementById('risk_mafld').checked) riskList.push("MAFLD");
+            if(document.getElementById('risk_meta').checked) riskList.push("Meta Syn");
+
             let recs = `<ul>
                 <li>Target 5-10% weight loss (${els.weight.value}kg → ${targetW}kg).</li>
                 <li>Calorie deficit of 500 kcal/day (Target: ${Math.round(tdee-500)} kcal).</li>
                 <li>Increase activity to 150-300 mins/week.</li>
             </ul>`;
+            
+            if(riskList.length > 0) {
+                recs += `<p style="margin-top:5px; font-weight:bold; font-size:9pt;">Identified Risks: ${riskList.join(", ")}</p>`;
+            }
             
             document.getElementById('ppRecommendations').innerHTML = recs;
             document.getElementById('ppTargetW').innerText = targetW + " kg";
