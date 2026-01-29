@@ -49,7 +49,7 @@
             height: 100%; box-sizing: border-box;
         }
         .card h3 { 
-            font-size: 13px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; 
+            font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; 
         }
 
         /* COMPACT INPUTS */
@@ -65,7 +65,7 @@
             font-size: 14px; font-weight: 500; color: var(--text); background: #fff; appearance: none;
             box-sizing: border-box; transition: 0.2s;
         }
-        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
         input[readonly] { background-color: #F2F2F7; color: var(--primary); font-weight: 700; border-color: transparent; }
 
         /* TOGGLES */
@@ -82,14 +82,13 @@
         input:checked + .slider:before { transform: translateX(16px); }
 
         /* VISUAL BARS */
-        .visual-row { margin-bottom: 30px; }
+        .visual-row { margin-bottom: 25px; }
         .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; }
         .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
-        .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
-        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
         .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
         .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
+        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
@@ -107,7 +106,13 @@
 
         .rec-container { background: #F2F8FF; padding: 15px; border-radius: 12px; border: 1px solid #D6E4FF; margin-bottom: 20px; }
         .rec-container ul { margin: 0; padding-left: 20px; }
-        .rec-container li { font-size: 14px; margin-bottom: 5px; color: #1D1D1F; line-height: 1.5; }
+        .rec-container li { font-size: 14px; margin-bottom: 6px; color: #1D1D1F; line-height: 1.5; }
+        
+        .pref-select { 
+            padding: 6px 12px; border: 1px solid var(--primary); border-radius: 15px; 
+            font-size: 12px; font-weight: 600; color: var(--primary); background: transparent; 
+            float: right; margin-top: -5px; cursor: pointer;
+        }
 
         /* ACTION BAR */
         .action-bar {
@@ -223,9 +228,16 @@
             <div id="screenAnalysis"></div>
             
             <div style="margin-top:30px;">
-                <h3>E. Clinical Strategy</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h3 style="margin:0;">E. Clinical Strategy</h3>
+                    <select id="exPref" class="pref-select">
+                        <option value="standard">Standard Regime</option>
+                        <option value="light">Lighter / Beginner</option>
+                        <option value="intense">Intensive / High Volume</option>
+                    </select>
+                </div>
+                
                 <div class="rec-container">
-                    <div style="font-weight:700; margin-bottom:10px; color:var(--primary); text-transform:uppercase; font-size:11px;">Recommendations</div>
                     <div id="screenRecommendations"></div>
                 </div>
                 <div id="screenStatGrid"></div>
@@ -271,7 +283,7 @@
         <div class="print-stat-grid" id="printStatGrid"></div>
 
         <div class="rec-box">
-            <div class="rec-head">Key Recommendations</div>
+            <div class="rec-head">Nutritional & Exercise Prescription</div>
             <div id="ppRecommendations" style="line-height:1.6; font-size:10pt;"></div>
         </div>
 
@@ -353,15 +365,13 @@
             </div>`;
         }
 
-        document.getElementById('analyzeBtn').addEventListener('click', async () => {
-            document.getElementById('resultCard').classList.remove('hidden');
-            
+        // --- MAIN CALCULATION FUNCTION ---
+        function performAnalysis() {
+            // Colors & Limits (Same as before)
             const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
-
-            // CPG 2023 Classifications
             const bmiSegs = [{limit: 18.5, color: cU, label: "Under"},{limit: 22.9, color: cN, label: "Normal"},{limit: 27.4, color: cPre, label: "Pre-Ob"},{limit: 32.4, color: cO1, label: "Ob I"},{limit: 37.4, color: cO2, label: "Ob II"},{limit: 45.0, color: cO3, label: "Ob III"}];
             const wLimit = els.gender.value === 'male' ? 90 : 80;
-            const wSegs = [{limit: wLimit, color: cN, label: "Normal"}, {limit: 130, color: cO1, label: "Abdominal Obesity"}];
+            const wSegs = [{limit: wLimit, color: cN, label: "Normal"}, {limit: 130, color: cO1, label: "High Risk"}];
             let fSegs = els.gender.value === 'male' ? [{limit:9.9, color:cU, label:"Low"}, {limit:19.9, color:cN, label:"Normal"}, {limit:24.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}] : [{limit:19.9, color:cU, label:"Low"}, {limit:29.9, color:cN, label:"Normal"}, {limit:34.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}];
             const vSegs = [{limit:9, color:cN, label:"Normal"}, {limit:14, color:cO1, label:"High"}, {limit:20, color:cO2, label:"V.High"}];
             let mSegs = els.gender.value === 'male' ? [{limit:32.8, color:cO2, label:"Low"}, {limit:35.7, color:cN, label:"Normal"}, {limit:37.3, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}] : [{limit:25.8, color:cO2, label:"Low"}, {limit:27.9, color:cN, label:"Normal"}, {limit:29.0, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}];
@@ -376,7 +386,7 @@
             document.getElementById('printVisualsContainer').innerHTML = html;
             document.getElementById('screenAnalysis').innerHTML = html; 
 
-            // 2. Data Population
+            // Basic Data
             document.getElementById('pDate').innerText = new Date().toLocaleDateString();
             document.getElementById('pRef').innerText = els.pId.value; document.getElementById('pRef2').innerText = els.pId.value;
             document.getElementById('ppId').innerText = els.pId.value; document.getElementById('ppName').innerText = els.pName.value;
@@ -385,8 +395,7 @@
             document.getElementById('ppBMI').innerText = els.bmi.value;
 
             // INTELLIGENT LOGIC
-            // 1. Risks
-            let risks = {
+            let riskFactors = {
                 t2dm: document.getElementById('risk_t2dm').checked,
                 htn: document.getElementById('risk_htn').checked,
                 dys: document.getElementById('risk_dys').checked,
@@ -395,46 +404,69 @@
                 meta: document.getElementById('risk_meta').checked
             };
             
-            // 2. Risk Stratification (Matrix)
             let riskStr = "Low";
             let bmi = parseFloat(els.bmi.value);
             let wc = parseFloat(els.waist.value);
-            let hasComorb = Object.values(risks).some(v => v);
+            let hasComorb = Object.values(riskFactors).some(v => v);
             let wcHigh = (els.gender.value === 'male' && wc >= 90) || (els.gender.value === 'female' && wc >= 80);
 
             if (bmi >= 37.5) riskStr = "Extremely High";
             else if (bmi >= 32.5) riskStr = "Very High";
             else if (bmi >= 27.5) riskStr = hasComorb || wcHigh ? "Very High" : "High";
             else if (bmi >= 23.0) riskStr = hasComorb || wcHigh ? "High" : "Moderate";
-            else if (wcHigh) riskStr = "Moderate"; // Normal BMI but abdominal obesity
+            else if (wcHigh) riskStr = "Moderate"; 
 
-            // 3. Weight Loss Targets (Table 2-3)
             let minPct = 5, maxPct = 10;
-            if(risks.t2dm || risks.htn || risks.dys) { minPct=5; maxPct=15; }
-            if(risks.osa) { minPct=Math.max(minPct, 7); maxPct=Math.max(maxPct, 11); }
-            if(risks.mafld) { minPct=Math.max(minPct, 10); maxPct=Math.max(maxPct, 40); }
+            if(riskFactors.t2dm || riskFactors.htn || riskFactors.dys) { minPct=5; maxPct=15; }
+            if(riskFactors.osa) { minPct=Math.max(minPct, 7); maxPct=Math.max(maxPct, 11); }
+            if(riskFactors.mafld) { minPct=Math.max(minPct, 10); maxPct=Math.max(maxPct, 40); }
 
             let targetW_Low = (els.weight.value * (1 - (minPct/100))).toFixed(1);
             let targetW_High = (els.weight.value * (1 - (maxPct/100))).toFixed(1);
             let lossRange = `${(els.weight.value*minPct/100).toFixed(1)} - ${(els.weight.value*maxPct/100).toFixed(1)}`;
 
-            // 4. Metabolic & Calories
             let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
             let tdee = bmr * 1.2;
             let targetCal = Math.round(tdee - 500);
-            // Safety Floor
-            let safetyFloor = els.gender.value === 'male' ? 1500 : 1200;
-            if(targetCal < safetyFloor) targetCal = safetyFloor; 
+            if(targetCal < (els.gender.value === 'male' ? 1500 : 1200)) targetCal = (els.gender.value === 'male' ? 1500 : 1200);
 
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
 
-            // 5. Activity (Table 4-1)
+            // --- SMART RECOMMENDATIONS ---
+            let exPref = document.getElementById('exPref').value;
             let activityRec = "150-200";
-            if(minPct >= 5) activityRec = "225-420"; // Required for meaningful loss
+            let activityText = "Start with moderate walking (30 mins, 5 days/week).";
+            
+            // Customizable Exercise Logic
+            if(exPref === 'light') {
+                activityRec = "150";
+                activityText = "<b>Beginner Regime:</b> Low-impact walking/swimming, 30 mins/day, 5x/week. Focus on consistency.";
+            } else if (exPref === 'intense') {
+                activityRec = "250-420";
+                activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training. Target >250 mins/week for max weight loss.";
+            } else { // Standard
+                activityRec = minPct >= 5 ? "225-300" : "150-200";
+                activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance bands.`;
+            }
 
-            // 6. Generate UI
+            // Diet Logic
+            let dietText = "";
+            if(targetCal < 1400) dietText = `<b>3 Meals/Day:</b> ~450 kcal each. Focus on nutrient density. Avoid snacking.`;
+            else dietText = `<b>3 Meals + 1 Snack:</b> Balanced plates (Suku-Suku Separuh).`;
+
+            // Protein Logic
+            let proteinText = "";
+            let muscleVal = parseFloat(els.muscle.value);
+            let lowMuscle = (els.gender.value === 'male' && muscleVal < 32.8) || (els.gender.value === 'female' && muscleVal < 25.8);
+            
+            if(lowMuscle) {
+                let pTarget = (els.weight.value * 1.2).toFixed(0);
+                proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b>. Intake: Chicken breast, fish, tofu, greek yogurt.</li>`;
+            }
+
+            // Generate UI
             let statHTML = `
-                ${getStatCard("Target Weight", `${targetW_Low}-${targetW_High}`, "kg", `Target Loss: ${minPct}-${maxPct}%`, true)}
+                ${getStatCard("Target Weight", `${targetW_Low}-${targetW_High}`, "kg", `Loss Target: ${minPct}-${maxPct}%`, true)}
                 ${getStatCard("Calorie Prescription", targetCal, "kcal", "Safety Adjusted Deficit", true)}
                 ${getStatCard("Activity Goal", activityRec, "min/wk", "Mod-Vigorous Intensity", false)}
                 ${getStatCard("Risk Stratification", riskStr, "", "Based on CPG Matrix", false)}
@@ -444,32 +476,30 @@
             let printStatHTML = `
                 ${getPrintStatCard("Target Weight Range", `${targetW_Low}-${targetW_High}`, "kg", `Loss: ${lossRange} kg (${minPct}-${maxPct}%)`)}
                 ${getPrintStatCard("Calorie Prescription", targetCal, "kcal", "Daily Intake Target")}
-                ${getPrintStatCard("Activity Duration", activityRec, "min/wk", "For Weight Loss Phase")}
+                ${getPrintStatCard("Activity Duration", activityRec, "min/wk", "Prescribed Regime")}
                 ${getPrintStatCard("Risk Stratification", riskStr, "", "Clinical Assessment")}
             `;
             document.getElementById('printStatGrid').innerHTML = printStatHTML;
 
-            // Recommendations
-            let recList = [
-                `Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.`,
-                `Prescribed hypocaloric diet of <b>${targetCal} kcal/day</b>.`,
-                `Aerobic activity target: <b>${activityRec} mins/week</b>.`
-            ];
-            if(risks.t2dm) recList.push("Monitor HbA1c; prioritization of low-GI carbohydrates.");
-            if(risks.htn) recList.push("Sodium restriction advised (DASH approach).");
-            if(parseFloat(els.muscle.value) < 30) recList.push("<b>Sarcopenia Alert:</b> Increase protein intake to 1.2-1.5g/kg.");
+            let recs = `<ul>
+                <li>Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.</li>
+                <li>${dietText} (Target: ${targetCal} kcal/day).</li>
+                <li>${activityText}</li>
+                ${proteinText}
+            </ul>`;
             
-            // Meds Flag
-            if((bmi >= 27.5 && hasComorb) || bmi >= 32.5) {
-                recList.push("<b>Pharmacotherapy:</b> Patient is eligible for anti-obesity medication.");
-            }
-
-            let recs = "<ul>" + recList.map(r => `<li>${r}</li>`).join("") + "</ul>";
             document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
+        }
 
+        document.getElementById('analyzeBtn').addEventListener('click', async () => {
+            document.getElementById('resultCard').classList.remove('hidden');
+            performAnalysis();
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
+
+        // Re-run analysis if exercise preference changes
+        document.getElementById('exPref').addEventListener('change', performAnalysis);
 
         document.getElementById('printBtn').addEventListener('click', () => {
             document.getElementById('ppRemarks').innerText = els.docRemarks.value;
