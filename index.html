@@ -112,6 +112,7 @@
             cursor: pointer; transition: 0.2s;
         }
         
+        /* MILESTONE TABLE */
         .milestone-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; }
         .milestone-table th { text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; color: var(--text-sec); font-weight: 700; }
         .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; }
@@ -129,54 +130,64 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-sec { background: transparent; border: 1px solid var(--border); }
 
-        /* --- 🖨️ PRINT DOM --- */
+        /* --- 🖨️ PRINT DOM (OPTIMIZED) --- */
         #clinical-report { display: none; }
 
         @media print {
-            @page { size: A4; margin: 0; }
+            @page { size: A4; margin: 10mm 15mm; } /* Tighter margins */
+            
             body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .container, .action-bar, #login-screen { display: none !important; }
 
-            #clinical-report { display: block !important; width: 210mm; min-height: 297mm; padding: 15mm 15mm; box-sizing: border-box; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
+            /* Allow report to flow naturally without fixed huge height */
+            #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
             
-            .report-header { display: flex; justify-content: space-between; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 25px; }
-            .report-title h1 { font-size: 24pt; margin: 0; font-weight: 900; text-transform: uppercase; }
+            /* Header Compacted */
+            .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+            .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
             .report-title p { font-size: 9pt; margin: 2px 0 0 0; text-transform: uppercase; font-weight: 600; color: #555; }
             
-            .patient-strip { display: flex; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 6px; padding: 12px; margin-bottom: 25px; justify-content: space-between; }
+            /* Strip Compacted */
+            .patient-strip { display: flex; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 12px; margin-bottom: 15px; justify-content: space-between; }
             .pt-field { display: flex; flex-direction: column; }
             .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; }
-            .pt-val { font-size: 11pt; font-weight: bold; color: #000; }
+            .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
 
-            .section-head { font-size: 11pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; margin-top: 25px; }
+            /* Headers */
+            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 20px; }
             .section-head:first-child { margin-top: 0; }
 
-            .visual-row { page-break-inside: avoid; margin-bottom: 25px; }
-            .bar-complex { height: 12px; border: 1px solid #999; border-radius: 4px; }
-            .bar-label-item { font-size: 7pt; color: #444; margin-top: 4px; }
+            /* VISUALS - COMPACTED */
+            .visual-row { page-break-inside: avoid; margin-bottom: 12px; } /* Reduced margin */
+            .bar-complex { height: 10px; border: 1px solid #999; border-radius: 4px; } /* Thinner bars */
+            .bar-label-item { font-size: 7pt; color: #444; margin-top: 2px; }
             .bar-number-item { font-size: 7pt; color: #000; font-weight: bold; border-color: #666; }
-            .bar-marker { background: #000; border: 1px solid #fff; height: 18px; top: -3px; width: 3px; }
-            .bar-marker-wrapper { top: -28px; }
+            .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; width: 3px; }
+            .bar-marker-wrapper { top: -26px; }
 
-            .metabolic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-            .meta-item strong { font-size: 14pt; display: block; }
+            .metabolic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+            .meta-item strong { font-size: 12pt; display: block; }
 
-            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 10px; text-align: center; background: #F9F9F9 !important; }
-            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 4px; }
-            .p-stat-val { font-size: 14pt; font-weight: 900; display: block; }
-            .p-stat-detail { font-size: 8pt; border-top: 1px solid #ddd; margin-top: 6px; padding-top: 4px; display: block; font-weight: 600; }
+            /* PART E - PREVENT SPLIT */
+            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; page-break-inside: avoid; }
+            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
+            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; }
+            .p-stat-val { font-size: 12pt; font-weight: 900; display: block; }
+            .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
 
-            .milestone-table { border: 1px solid #000; }
-            .milestone-table th { background: #eee; border-bottom: 1px solid #000; color: #000; }
-            .milestone-table td { border-bottom: 1px solid #ccc; color: #000; }
+            .milestone-table { border: 1px solid #000; width: 100%; margin-bottom: 15px; page-break-inside: avoid; }
+            .milestone-table th { background: #eee; border-bottom: 1px solid #000; color: #000; font-size: 8pt; padding: 6px; }
+            .milestone-table td { border-bottom: 1px solid #ccc; color: #000; font-size: 9pt; padding: 6px; }
 
-            .rec-box { border: 1px solid #000; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
-            .rec-head { font-weight: 800; text-transform: uppercase; font-size: 9pt; border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 10px; }
+            .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
+            .rec-head { font-weight: 800; text-transform: uppercase; font-size: 9pt; border-bottom: 1px dashed #ccc; padding-bottom: 5px; margin-bottom: 8px; }
 
             .page-break { page-break-before: always; }
+            
+            /* REMARKS - Start on new page only if necessary */
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
-            .report-footer { position: fixed; bottom: 10mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
+            
+            .report-footer { position: fixed; bottom: 5mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
         }
     </style>
 </head>
@@ -264,7 +275,7 @@
         <div class="action-bar">
             <button class="btn btn-sec" onclick="location.reload()">Reset</button>
             <button class="btn btn-primary" id="analyzeBtn">Analyze & Save</button>
-            <button class="btn btn-sec" id="printBtn">🖨️ Print</button>
+            <button class="btn btn-sec" id="printBtn">🖨️ Print Report</button>
         </div>
     </div>
 
@@ -295,7 +306,7 @@
         <div id="printMilestones"></div>
         <div class="rec-box">
             <div class="rec-head">Nutritional & Exercise Prescription</div>
-            <div id="ppRecommendations" style="line-height:1.6; font-size:10pt;"></div>
+            <div id="ppRecommendations" style="line-height:1.4; font-size:9pt;"></div>
         </div>
 
         <div class="report-footer"><span>AraShift System v2.0</span><span>Page 1 of 2</span></div>
@@ -373,7 +384,6 @@
             </div>`;
         }
 
-        // --- CORE LOGIC ENGINE (NO AI) ---
         function performAnalysis() {
             const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
             const bmiSegs = [{limit: 18.5, color: cU, label: "Under"},{limit: 22.9, color: cN, label: "Normal"},{limit: 27.4, color: cPre, label: "Pre-Ob"},{limit: 32.4, color: cO1, label: "Ob I"},{limit: 37.4, color: cO2, label: "Ob II"},{limit: 45.0, color: cO3, label: "Ob III"}];
@@ -418,7 +428,6 @@
             if(riskFactors.osa) { minPct=Math.max(minPct, 7); maxPct=Math.max(maxPct, 11); }
             if(riskFactors.mafld) { minPct=Math.max(minPct, 10); maxPct=Math.max(maxPct, 40); }
 
-            // --- TRAJECTORY LOGIC ---
             let hM = els.height.value / 100;
             let currentW = parseFloat(els.weight.value);
             let wPreOb = (27.4 * hM * hM).toFixed(1);
@@ -457,21 +466,21 @@
 
             let exPref = document.getElementById('exPref').value;
             let dietPref = document.getElementById('dietPref').value;
-            let activityRec = minPct >= 5 ? "225-300" : "150-200";
+            let activityRec = "150-200";
             let activityText = "", dietText = "";
 
-            if(exPref === 'light') { activityRec = "150"; activityText = "<b>Beginner Regime:</b> Low-impact walking, 30 mins/day, 5x/week."; }
-            else if (exPref === 'intense') { activityRec = "300+"; activityText = "<b>High Volume:</b> 60 mins cardio/day + Resistance."; }
-            else { activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance.`; }
+            if(exPref === 'light') { activityRec = "150"; activityText = "<b>Beginner Regime:</b> Low-impact walking/swimming, 30 mins/day, 5x/week."; }
+            else if (exPref === 'intense') { activityRec = "300+"; activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training/wk."; }
+            else { activityRec = minPct >= 5 ? "225-300" : "150-200"; activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance bands.`; }
 
             if(dietPref === 'mrp') dietText = `<b>Meal Replacement (LCD):</b> Replace Breakfast & Lunch with Formula (200kcal x 2). Dinner: Balanced meal (~${targetCal-400} kcal).`;
-            else if (dietPref === 'plate') dietText = `<b>Plate Method:</b> 'Suku-Suku Separuh' at every meal.`;
-            else dietText = targetCal < 1400 ? `<b>Calorie Counting:</b> 3 Meals/Day (~450 kcal each).` : `<b>Calorie Counting:</b> 3 Meals + 1 Snack.`;
+            else if (dietPref === 'plate') dietText = `<b>Plate Method:</b> 'Suku-Suku Separuh' (1/4 Carbs, 1/4 Protein, 1/2 Veg/Fiber) at every meal.`;
+            else dietText = targetCal < 1400 ? `<b>Calorie Counting:</b> 3 Meals/Day (~450 kcal each). Avoid snacking.` : `<b>Calorie Counting:</b> 3 Meals + 1 Snack.`;
 
             let proteinText = "";
             let muscleVal = parseFloat(els.muscle.value);
             let lowMuscle = (els.gender.value === 'male' && muscleVal < 32.8) || (els.gender.value === 'female' && muscleVal < 25.8);
-            if(lowMuscle) { let pTarget = (els.weight.value * 1.2).toFixed(0); proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b> (Chicken, fish, tofu).</li>`; }
+            if(lowMuscle) { let pTarget = (els.weight.value * 1.2).toFixed(0); proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b>. Sources: Chicken breast, fish, tofu, whey protein.</li>`; }
 
             let statHTML = `
                 ${getStatCard("Target Weight", `${(currentW - lossKgMin).toFixed(1)}`, "kg", `Loss Target: ${minPct}-${maxPct}%`, true)}
