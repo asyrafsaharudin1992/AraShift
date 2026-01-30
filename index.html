@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (Bio-Age)</title>
+    <title>AraShift Medical Suite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
         :root {
             --primary: #007AFF;
             --success: #34C759;
-            --purple: #AF52DE;
             --bg: #F5F5F7;
             --card-bg: #FFFFFF;
             --text: #1D1D1F;
@@ -50,7 +49,7 @@
         }
 
         /* COMPACT INPUTS */
-        .input-grid-profile { display: grid; grid-template-columns: 0.8fr 1.5fr 0.8fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .input-grid-profile { display: grid; grid-template-columns: 0.6fr 1.2fr 0.5fr 0.8fr 1.2fr; gap: 10px; margin-bottom: 15px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0; }
 
@@ -59,7 +58,7 @@
         
         input, select, textarea {
             width: 100%; padding: 9px 10px; border: 1px solid #D1D1D6; border-radius: 9px;
-            font-size: 14px; font-weight: 500; color: var(--text); background: #fff; appearance: none;
+            font-size: 13px; font-weight: 500; color: var(--text); background: #fff; appearance: none;
             box-sizing: border-box; transition: 0.2s; font-family: inherit;
         }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
@@ -89,6 +88,13 @@
         .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
+
+        /* METABOLIC SCREEN DISPLAY (NEW) */
+        .metabolic-screen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; margin-bottom: 25px; }
+        .meta-card { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; text-align: center; }
+        .meta-label { font-size: 11px; text-transform: uppercase; color: #666; font-weight: 700; display: block; margin-bottom: 5px; }
+        .meta-val { font-size: 22px; font-weight: 800; color: #007AFF; display: block; }
+        .meta-desc { font-size: 10px; color: #888; font-weight: 500; margin-top: 4px; }
 
         /* STRATEGY & MILESTONES */
         .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px; }
@@ -228,6 +234,15 @@
                         <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Full Name"></div>
                         <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
                         <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                        <div class="form-group">
+                            <label>Activity Level</label>
+                            <select id="activity">
+                                <option value="1.2">Sedentary (1.2x)</option>
+                                <option value="1.375">Light (1.375x)</option>
+                                <option value="1.55">Moderate (1.55x)</option>
+                                <option value="1.725">Active (1.725x)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -264,6 +279,19 @@
             <h3>D. Clinical Analysis</h3>
             <div id="screenAnalysis"></div>
             
+            <div class="metabolic-screen-row">
+                <div class="meta-card">
+                    <span class="meta-label">Basal Metabolic Rate (BMR)</span>
+                    <span class="meta-val" id="screenBMR">-</span>
+                    <span class="meta-desc">Energy burned at complete rest</span>
+                </div>
+                <div class="meta-card">
+                    <span class="meta-label">Daily Expenditure (TDEE)</span>
+                    <span class="meta-val" id="screenTDEE">-</span>
+                    <span class="meta-desc">Total output with activity</span>
+                </div>
+            </div>
+
             <div style="margin-top:30px;">
                 <div class="strategy-toolbar">
                     <h3 style="margin:0;">E. Clinical Strategy</h3>
@@ -275,6 +303,7 @@
                         </select>
                         <select id="exPref" class="pref-select">
                             <option value="standard">Std: CPG (225m/wk)</option>
+                            <option value="hypertrophy">BMR Boost: Resistance Focus</option>
                             <option value="light">Light: Beginner (150m)</option>
                             <option value="intense">Intense: High Vol (300m+)</option>
                         </select>
@@ -608,21 +637,38 @@
             document.getElementById('screenMilestones').innerHTML = milestonesHTML;
             document.getElementById('printMilestones').innerHTML = milestonesHTML;
 
+            // --- TDEE CALCULATION (WITH ACTIVITY LEVEL) ---
             let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
-            let tdee = bmr * 1.2;
+            let actLevel = parseFloat(document.getElementById('activity').value) || 1.2;
+            let tdee = bmr * actLevel;
+            
             let targetCal = Math.round(tdee - 500);
             if(targetCal < (els.gender.value === 'male' ? 1500 : 1200)) targetCal = (els.gender.value === 'male' ? 1500 : 1200);
 
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
+            
+            // UPDATE SCREEN METABOLIC DISPLAY
+            document.getElementById('screenBMR').innerText = Math.round(bmr) + " kcal";
+            document.getElementById('screenTDEE').innerText = Math.round(tdee) + " kcal";
 
             let exPref = document.getElementById('exPref').value;
             let dietPref = document.getElementById('dietPref').value;
             let activityRec = "150-200";
             let activityText = "", dietText = "";
 
-            if(exPref === 'light') { activityRec = "150"; activityText = "<b>Beginner Regime:</b> Low-impact walking/swimming, 30 mins/day, 5x/week."; }
-            else if (exPref === 'intense') { activityRec = "300+"; activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training/wk."; }
-            else { activityRec = minPct >= 5 ? "225-300" : "150-200"; activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance bands.`; }
+            if(exPref === 'light') { 
+                activityRec = "150"; 
+                activityText = "<b>Beginner Regime:</b> Low-impact walking/swimming, 30 mins/day, 5x/week. Focus on consistency."; 
+            } else if (exPref === 'intense') { 
+                activityRec = "300+"; 
+                activityText = "<b>High Volume:</b> 60 mins cardio/day + 3x Resistance Training/wk for maximum burn."; 
+            } else if (exPref === 'hypertrophy') {
+                activityRec = "3x/wk Resistance";
+                activityText = "<b>BMR Boost Protocol:</b> 3 days/week Full Body Resistance Training to stimulate muscle protein synthesis and raise Resting Metabolic Rate.";
+            } else { 
+                activityRec = minPct >= 5 ? "225-300" : "150-200"; 
+                activityText = `<b>Standard CPG:</b> ${activityRec} mins/week. Mix of brisk walking and resistance bands.`; 
+            }
 
             if(dietPref === 'mrp') dietText = `<b>Meal Replacement (LCD):</b> Replace Breakfast & Lunch with Formula (200kcal x 2). Dinner: Balanced meal (~${targetCal-400} kcal).`;
             else if (dietPref === 'plate') dietText = `<b>Plate Method:</b> 'Suku-Suku Separuh' (1/4 Carbs, 1/4 Protein, 1/2 Veg/Fiber) at every meal.`;
@@ -631,7 +677,12 @@
             let proteinText = "";
             let muscleVal = parseFloat(els.muscle.value);
             let lowMuscle = (els.gender.value === 'male' && muscleVal < 32.8) || (els.gender.value === 'female' && muscleVal < 25.8);
-            if(lowMuscle) { let pTarget = (els.weight.value * 1.2).toFixed(0); proteinText = `<li><b>Sarcopenia Risk:</b> Target <b>${pTarget}g Protein/day</b>. Sources: Chicken breast, fish, tofu, whey protein.</li>`; }
+            
+            // PROTEIN LOGIC UPDATE
+            if(exPref === 'hypertrophy' || lowMuscle) { 
+                let pTarget = (els.weight.value * 1.5).toFixed(0); 
+                proteinText = `<li><b>Anabolic Support:</b> Target <b>${pTarget}g Protein/day</b> to fuel muscle growth and BMR increase.</li>`; 
+            }
 
             // --- BIO AGE CALCULATION ---
             let chronAge = parseFloat(els.age.value);
@@ -693,6 +744,8 @@
 
         document.getElementById('exPref').addEventListener('change', performAnalysis);
         document.getElementById('dietPref').addEventListener('change', performAnalysis);
+        // Recalculate when activity level changes
+        document.getElementById('activity').addEventListener('change', performAnalysis);
 
         document.getElementById('printBtn').addEventListener('click', () => {
             document.getElementById('ppRemarks').innerText = els.docRemarks.value;
