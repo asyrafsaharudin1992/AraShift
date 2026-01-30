@@ -43,6 +43,7 @@
             background: var(--card-bg); border-radius: 18px; padding: 22px; 
             box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.02);
             height: 100%; box-sizing: border-box;
+            margin-bottom: 20px; /* Added spacing between stacked cards */
         }
         .card h3 { 
             font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; 
@@ -52,6 +53,9 @@
         .input-grid-profile { display: grid; grid-template-columns: 0.6fr 1.2fr 0.5fr 0.8fr 1.2fr; gap: 10px; margin-bottom: 15px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0; }
+        
+        /* NEW: INTAKE GRID */
+        .input-grid-intake { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 12px; }
 
         .form-group { margin-bottom: 0; width: 100%; }
         label { display: block; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; white-space: nowrap; overflow: hidden; }
@@ -89,12 +93,18 @@
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
-        /* METABOLIC SCREEN DISPLAY (NEW) */
-        .metabolic-screen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; margin-bottom: 25px; }
-        .meta-card { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; text-align: center; }
-        .meta-label { font-size: 11px; text-transform: uppercase; color: #666; font-weight: 700; display: block; margin-bottom: 5px; }
-        .meta-val { font-size: 22px; font-weight: 800; color: #007AFF; display: block; }
-        .meta-desc { font-size: 10px; color: #888; font-weight: 500; margin-top: 4px; }
+        /* METABOLIC DASHBOARD (UPDATED) */
+        .metabolic-screen-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 10px; margin-top: 20px; margin-bottom: 25px; }
+        .meta-card { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 12px; text-align: center; }
+        .meta-label { font-size: 10px; text-transform: uppercase; color: #666; font-weight: 700; display: block; margin-bottom: 4px; }
+        .meta-val { font-size: 18px; font-weight: 800; color: #007AFF; display: block; }
+        .meta-desc { font-size: 9px; color: #888; font-weight: 500; margin-top: 4px; }
+        
+        /* Balance Card Colors */
+        .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; }
+        .meta-card.surplus .meta-val { color: #EA580C; }
+        .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; }
+        .meta-card.deficit .meta-val { color: #059669; }
 
         /* STRATEGY & MILESTONES */
         .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px; }
@@ -185,7 +195,8 @@
             .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; width: 3px; }
             .bar-marker-wrapper { top: -26px; }
 
-            .metabolic-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+            /* Updated Metabolic Row for Print to include Intake */
+            .metabolic-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
             .meta-item strong { font-size: 12pt; display: block; }
 
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; page-break-inside: avoid; }
@@ -260,10 +271,27 @@
                         <div class="form-group"><label>Muscle %</label><input type="number" id="muscle" placeholder="%"></div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <h3>C. Dietary Intake Estimator</h3>
+                    <div class="input-grid-intake">
+                        <div class="form-group">
+                            <label>Avg Meal Size</label>
+                            <select id="mealSize">
+                                <option value="400">Light (400kcal)</option>
+                                <option value="600" selected>Medium (600kcal)</option>
+                                <option value="900">Heavy (900kcal)</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Meals/Day</label><input type="number" id="mealFreq" value="3"></div>
+                        <div class="form-group"><label>Snacks/Day</label><input type="number" id="snackFreq" value="0"></div>
+                        <div class="form-group"><label>Sugary Drinks</label><input type="number" id="drinkFreq" value="0"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="card">
-                <h3>C. Risk Factors</h3>
+                <h3>D. Risk Factors</h3>
                 <div class="ios-list">
                     <div class="ios-item"><span class="ios-label">T2DM / Pre-Diabetes</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div>
@@ -276,25 +304,35 @@
         </div>
 
         <div class="card hidden" id="resultCard" style="margin-bottom:100px;">
-            <h3>D. Clinical Analysis</h3>
+            <h3>E. Clinical Analysis</h3>
             <div id="screenAnalysis"></div>
             
             <div class="metabolic-screen-row">
                 <div class="meta-card">
-                    <span class="meta-label">Basal Metabolic Rate (BMR)</span>
-                    <span class="meta-val" id="screenBMR">-</span>
-                    <span class="meta-desc">Energy burned at complete rest</span>
+                    <span class="meta-label">Current Intake (Est)</span>
+                    <span class="meta-val" id="screenIntake" style="color:#1D1D1F;">-</span>
+                    <span class="meta-desc">Based on Recall</span>
                 </div>
                 <div class="meta-card">
-                    <span class="meta-label">Daily Expenditure (TDEE)</span>
+                    <span class="meta-label">BMR (Resting)</span>
+                    <span class="meta-val" id="screenBMR">-</span>
+                    <span class="meta-desc">Coma State</span>
+                </div>
+                <div class="meta-card">
+                    <span class="meta-label">TDEE (Output)</span>
                     <span class="meta-val" id="screenTDEE">-</span>
-                    <span class="meta-desc">Total output with activity</span>
+                    <span class="meta-desc">Maintenance</span>
+                </div>
+                <div class="meta-card" id="balanceCard">
+                    <span class="meta-label">Net Balance</span>
+                    <span class="meta-val" id="screenBalance">-</span>
+                    <span class="meta-desc">Daily caloric gap</span>
                 </div>
             </div>
 
             <div style="margin-top:30px;">
                 <div class="strategy-toolbar">
-                    <h3 style="margin:0;">E. Clinical Strategy</h3>
+                    <h3 style="margin:0;">F. Clinical Strategy</h3>
                     <div style="display:flex; gap:10px;">
                         <select id="dietPref" class="pref-select">
                             <option value="standard">Std: Calorie Counting</option>
@@ -317,7 +355,7 @@
 
             <div class="form-group" style="margin-top:30px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h3 style="margin:0;">F. Clinical Remarks</h3>
+                    <h3 style="margin:0;">G. Clinical Remarks</h3>
                     <button class="btn-ai" id="aiBtn" onclick="generateAIReport()">✨ Auto-Draft Analysis</button>
                 </div>
                 <textarea id="docRemarks" rows="5" placeholder="Doctor's notes... or click AI Draft to generate."></textarea>
@@ -349,8 +387,9 @@
 
         <div class="section-head" style="margin-top:0;">D. Clinical Analysis (CPG 2023 Guidelines)</div>
         <div class="metabolic-row">
-            <div class="meta-item"><span>Basal Metabolic Rate</span><strong id="ppBMR">-</strong></div>
-            <div class="meta-item"><span>Est. Daily Expenditure</span><strong id="ppTDEE">-</strong></div>
+            <div class="meta-item"><span>Current Intake (Est)</span><strong id="ppIntake">-</strong></div>
+            <div class="meta-item"><span>Daily Expenditure (TDEE)</span><strong id="ppTDEE">-</strong></div>
+            <div class="meta-item"><span>Net Caloric Balance</span><strong id="ppBalance">-</strong></div>
         </div>
         <div id="printVisualsContainer"></div>
 
@@ -433,6 +472,10 @@
             const bioAgeCard = document.getElementById('screenStatGrid').children[3];
             const bioAgeText = bioAgeCard ? bioAgeCard.querySelector('.stat-value').innerText : "N/A";
 
+            // INTAKE in AI Context
+            const intakeVal = document.getElementById('screenIntake').innerText;
+            const balanceVal = document.getElementById('screenBalance').innerText;
+
             const prompt = `
                 Act as a specialist bariatric physician. Based on CPG 2023 Guidelines, write a concise professional medical summary and management plan.
                 
@@ -442,6 +485,7 @@
                 - Composition: Visceral Fat ${els.vfat.value}, Body Fat ${els.fat.value}%, Muscle ${els.muscle.value}%
                 - Derived: Metabolic Age ${bioAgeText}y
                 - Comorbidities: ${risks.join(", ") || "None"}
+                - Est. Current Intake: ${intakeVal} (${balanceVal})
                 
                 CALCULATED STRATEGY:
                 - Target Weight: ${targetWeight} kg
@@ -449,7 +493,7 @@
                 - Exercise: ${exType} regime
                 
                 Format:
-                1. Clinical Assessment: (Risk stratification & metabolic age analysis)
+                1. Clinical Assessment: (Risk stratification, metabolic age, and intake analysis)
                 2. Management Plan: (Dietary, Exercise, and Medical recommendations)
                 Do not use asterisks or markdown formatting too heavily. Keep it clean text.
             `;
@@ -647,9 +691,39 @@
 
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
             
-            // UPDATE SCREEN METABOLIC DISPLAY
-            document.getElementById('screenBMR').innerText = Math.round(bmr) + " kcal";
-            document.getElementById('screenTDEE').innerText = Math.round(tdee) + " kcal";
+            // --- INTAKE CALCULATION (NEW) ---
+            let mealKcal = parseFloat(document.getElementById('mealSize').value) || 600;
+            let mealFreq = parseFloat(document.getElementById('mealFreq').value) || 0;
+            let snackFreq = parseFloat(document.getElementById('snackFreq').value) || 0;
+            let drinkFreq = parseFloat(document.getElementById('drinkFreq').value) || 0;
+            let estIntake = (mealKcal * mealFreq) + (snackFreq * 200) + (drinkFreq * 150);
+            
+            let calorieBalance = Math.round(estIntake - tdee);
+            let balanceText = calorieBalance > 0 ? `+${calorieBalance} kcal` : `${calorieBalance} kcal`;
+            
+            // Update Screen Metabolic
+            document.getElementById('screenBMR').innerText = Math.round(bmr);
+            document.getElementById('screenTDEE').innerText = Math.round(tdee);
+            document.getElementById('screenIntake').innerText = Math.round(estIntake);
+            
+            const balCard = document.getElementById('balanceCard');
+            const balVal = document.getElementById('screenBalance');
+            balVal.innerText = balanceText;
+            
+            if(calorieBalance > 200) {
+                balCard.className = "meta-card surplus";
+                balCard.querySelector('.meta-desc').innerText = "Surplus (Gaining Weight)";
+            } else if (calorieBalance < -200) {
+                balCard.className = "meta-card deficit";
+                balCard.querySelector('.meta-desc').innerText = "Deficit (Losing Weight)";
+            } else {
+                balCard.className = "meta-card";
+                balCard.querySelector('.meta-desc').innerText = "Maintenance";
+            }
+
+            // Update Print Metabolic
+            document.getElementById('ppIntake').innerText = Math.round(estIntake) + " kcal";
+            document.getElementById('ppBalance').innerText = balanceText;
 
             let exPref = document.getElementById('exPref').value;
             let dietPref = document.getElementById('dietPref').value;
@@ -744,8 +818,11 @@
 
         document.getElementById('exPref').addEventListener('change', performAnalysis);
         document.getElementById('dietPref').addEventListener('change', performAnalysis);
-        // Recalculate when activity level changes
         document.getElementById('activity').addEventListener('change', performAnalysis);
+        document.getElementById('mealSize').addEventListener('change', performAnalysis);
+        document.getElementById('mealFreq').addEventListener('input', performAnalysis);
+        document.getElementById('snackFreq').addEventListener('input', performAnalysis);
+        document.getElementById('drinkFreq').addEventListener('input', performAnalysis);
 
         document.getElementById('printBtn').addEventListener('click', () => {
             document.getElementById('ppRemarks').innerText = els.docRemarks.value;
