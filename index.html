@@ -54,9 +54,17 @@
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0; }
         
-        /* NEW: MEAL GRID */
-        .input-grid-meals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
-        .input-grid-snacks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* NEW: MEAL MATRIX GRID */
+        .meal-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; align-items: end; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
+        .meal-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .meal-label { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 5px; display: block; }
+
+        .input-grid-snacks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        
+        /* HABIT CHECKBOX GRID */
+        .habit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .habit-check { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer; }
+        .habit-check input { width: 16px; height: 16px; margin: 0; accent-color: var(--primary); }
 
         .form-group { margin-bottom: 0; width: 100%; }
         label { display: block; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; white-space: nowrap; overflow: hidden; }
@@ -289,38 +297,85 @@
 
                 <div class="card">
                     <h3>C. Dietary Intake Estimator</h3>
-                    <div class="input-grid-meals">
+                    <div class="meal-row">
+                        <span class="meal-label">Breakfast</span>
                         <div class="form-group">
-                            <label>Breakfast</label>
+                            <label>Type</label>
+                            <select id="bfType">
+                                <option value="carb">Carb Heavy (Rice/Noodles)</option>
+                                <option value="prot">Protein Heavy (Meat/Eggs)</option>
+                                <option value="bal" selected>Balanced (Rice+Meat+Veg)</option>
+                                <option value="lite">Light (Soup/Oats/Bread)</option>
+                                <option value="skip">Skipped / Fasting</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Size</label>
                             <select id="bfSize">
-                                <option value="0">Skipped (0)</option>
-                                <option value="300">Light (300)</option>
-                                <option value="500" selected>Medium (500)</option>
-                                <option value="800">Heavy (800)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Lunch</label>
-                            <select id="luSize">
-                                <option value="0">Skipped (0)</option>
-                                <option value="400">Light (400)</option>
-                                <option value="600" selected>Medium (600)</option>
-                                <option value="900">Heavy (900)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Dinner</label>
-                            <select id="dnSize">
-                                <option value="0">Skipped (0)</option>
-                                <option value="400">Light (400)</option>
-                                <option value="600" selected>Medium (600)</option>
-                                <option value="900">Heavy (900)</option>
+                                <option value="S">Small</option>
+                                <option value="M" selected>Medium</option>
+                                <option value="L">Large</option>
                             </select>
                         </div>
                     </div>
+
+                    <div class="meal-row">
+                        <span class="meal-label">Lunch</span>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="luType">
+                                <option value="carb" selected>Carb Heavy (Rice/Noodles)</option>
+                                <option value="prot">Protein Heavy (Meat/Eggs)</option>
+                                <option value="bal">Balanced (Rice+Meat+Veg)</option>
+                                <option value="lite">Light (Soup/Oats/Bread)</option>
+                                <option value="skip">Skipped / Fasting</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Size</label>
+                            <select id="luSize">
+                                <option value="S">Small</option>
+                                <option value="M" selected>Medium</option>
+                                <option value="L">Large</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="meal-row">
+                        <span class="meal-label">Dinner</span>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="dnType">
+                                <option value="carb">Carb Heavy (Rice/Noodles)</option>
+                                <option value="prot">Protein Heavy (Meat/Eggs)</option>
+                                <option value="bal" selected>Balanced (Rice+Meat+Veg)</option>
+                                <option value="lite">Light (Soup/Oats/Bread)</option>
+                                <option value="skip">Skipped / Fasting</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Size</label>
+                            <select id="dnSize">
+                                <option value="S">Small</option>
+                                <option value="M" selected>Medium</option>
+                                <option value="L">Large</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="input-grid-snacks">
                         <div class="form-group"><label>Snacks/Day (Est. 200/ea)</label><input type="number" id="snackFreq" value="0"></div>
                         <div class="form-group"><label>Sugary Drinks (Est. 150/ea)</label><input type="number" id="drinkFreq" value="0"></div>
+                    </div>
+                    
+                    <div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                        <label style="margin-bottom:8px;">Dietary Pattern Flags</label>
+                        <div class="habit-grid">
+                            <label class="habit-check"><input type="checkbox" id="habit_carbs"> Rice Heavy / High Carb</label>
+                            <label class="habit-check"><input type="checkbox" id="habit_fried"> Frequent Fried Food</label>
+                            <label class="habit-check"><input type="checkbox" id="habit_night"> Late Night Eating</label>
+                            <label class="habit-check"><input type="checkbox" id="habit_fiber"> Low Veggie / Fiber</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -505,6 +560,7 @@
             const targetCal = document.getElementById('screenStatGrid').children[1].querySelector('.stat-value').innerText;
             const targetWeight = document.getElementById('screenStatGrid').children[0].querySelector('.stat-value').innerText;
 
+            // BIO-AGE in AI Context
             const bioAgeCard = document.getElementById('screenStatGrid').children[3];
             const bioAgeText = bioAgeCard ? bioAgeCard.querySelector('.stat-value').innerText : "N/A";
             const intakeVal = document.getElementById('screenIntake').innerText;
@@ -651,6 +707,15 @@
             </div>`;
         }
 
+        // --- NEW: SMART CALORIE MATRIX ---
+        const calMap = {
+            'carb': { 'S': 300, 'M': 500, 'L': 800 }, // Rice, Noodles
+            'prot': { 'S': 250, 'M': 450, 'L': 700 }, // Steak, Chicken Chop
+            'bal':  { 'S': 350, 'M': 550, 'L': 750 }, // Rice + Meat + Veg
+            'lite': { 'S': 150, 'M': 250, 'L': 350 }, // Soup, Salad, Oats
+            'skip': { 'S': 0, 'M': 0, 'L': 0 }        // Fasting
+        };
+
         function performAnalysis() {
             const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
             const bmiSegs = [{limit: 18.5, color: cU, label: "Under"},{limit: 22.9, color: cN, label: "Normal"},{limit: 27.4, color: cPre, label: "Pre-Ob"},{limit: 32.4, color: cO1, label: "Ob I"},{limit: 37.4, color: cO2, label: "Ob II"},{limit: 45.0, color: cO3, label: "Ob III"}];
@@ -695,6 +760,7 @@
             let currentW = parseFloat(els.weight.value);
             let wPreOb = (27.4 * hM * hM).toFixed(1);
             let wNorm = (22.9 * hM * hM).toFixed(1);
+            let wTargetLimit = els.gender.value === 'male' ? 90 : 80;
             let lossKgMin = (currentW * (minPct/100)).toFixed(1);
             let lossKgMax = (currentW * (maxPct/100)).toFixed(1);
             let avgMonthlyLoss = (currentW * 0.075) / 6; 
@@ -716,10 +782,15 @@
 
             document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
             
-            // --- INTAKE LOGIC (UPDATED) ---
-            let bfKcal = parseFloat(document.getElementById('bfSize').value) || 0;
-            let luKcal = parseFloat(document.getElementById('luSize').value) || 0;
-            let dnKcal = parseFloat(document.getElementById('dnSize').value) || 0;
+            // --- SMART CALORIE LOGIC ---
+            let bfT = document.getElementById('bfType').value; let bfS = document.getElementById('bfSize').value;
+            let luT = document.getElementById('luType').value; let luS = document.getElementById('luSize').value;
+            let dnT = document.getElementById('dnType').value; let dnS = document.getElementById('dnSize').value;
+            
+            let bfKcal = calMap[bfT][bfS];
+            let luKcal = calMap[luT][luS];
+            let dnKcal = calMap[dnT][dnS];
+            
             let snackFreq = parseFloat(document.getElementById('snackFreq').value) || 0;
             let drinkFreq = parseFloat(document.getElementById('drinkFreq').value) || 0;
             let estIntake = bfKcal + luKcal + dnKcal + (snackFreq * 200) + (drinkFreq * 150);
@@ -788,7 +859,14 @@
             `;
             document.getElementById('printStatGrid').innerHTML = printStatHTML;
 
-            let recs = `<ul><li>Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.</li><li>${dietText}</li><li>${activityText}</li>${proteinText}</ul>`;
+            // --- HABIT RECS ---
+            let habitRecs = "";
+            if(document.getElementById('habit_carbs').checked) habitRecs += "<li><b>Carb Control:</b> Limit white rice/bread. Switch to Basmati, Brown Rice, or Quinoa.</li>";
+            if(document.getElementById('habit_fried').checked) habitRecs += "<li><b>Cooking Method:</b> Avoid deep frying. Opt for steam, grill, soup, or air-fry.</li>";
+            if(document.getElementById('habit_night').checked) habitRecs += "<li><b>Meal Timing:</b> Stop eating 3 hours before sleep to lower fasting insulin.</li>";
+            if(document.getElementById('habit_fiber').checked) habitRecs += "<li><b>Fiber Boost:</b> Ensure 2 servings of vegetables per main meal (half-plate).</li>";
+
+            let recs = `<ul><li>Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.</li><li>${dietText}</li>${proteinText}${habitRecs}</ul>`;
             document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
         }
@@ -799,15 +877,12 @@
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
 
-        document.getElementById('exPref').addEventListener('change', performAnalysis);
-        document.getElementById('dietPref').addEventListener('change', performAnalysis);
-        document.getElementById('activity').addEventListener('change', performAnalysis);
-        // Updated listeners for new inputs
-        document.getElementById('bfSize').addEventListener('change', performAnalysis);
-        document.getElementById('luSize').addEventListener('change', performAnalysis);
-        document.getElementById('dnSize').addEventListener('change', performAnalysis);
-        document.getElementById('snackFreq').addEventListener('input', performAnalysis);
-        document.getElementById('drinkFreq').addEventListener('input', performAnalysis);
+        const inputs = ['exPref','dietPref','activity','bfType','bfSize','luType','luSize','dnType','dnSize','habit_carbs','habit_fried','habit_night','habit_fiber'];
+        inputs.forEach(id => document.getElementById(id).addEventListener('change', performAnalysis));
+        ['snackFreq','drinkFreq','mealFreq'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', performAnalysis);
+        });
 
         document.getElementById('printBtn').addEventListener('click', () => {
             document.getElementById('ppRemarks').innerText = els.docRemarks.value;
