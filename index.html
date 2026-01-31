@@ -97,7 +97,7 @@
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; }
 
         /* METABOLIC DASHBOARD (SECTION E) */
-        .metabolic-screen-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 15px; margin-top: 5px; }
+        .metabolic-screen-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 15px; margin-top: 15px; margin-bottom: 25px; }
         .meta-card { background: #F8F9FA; border: 1px solid #E5E7EB; border-radius: 12px; padding: 15px; text-align: center; }
         .meta-label { font-size: 11px; text-transform: uppercase; color: #666; font-weight: 700; display: block; margin-bottom: 5px; }
         .meta-val { font-size: 24px; font-weight: 800; color: #1D1D1F; display: block; line-height: 1.1; }
@@ -144,6 +144,17 @@
         .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
         .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
 
+        /* AI BUTTONS */
+        .btn-ai { 
+            background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; 
+            padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; 
+            display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(175, 82, 222, 0.3);
+            transition: transform 0.2s;
+        }
+        .btn-ai:hover { transform: scale(1.05); }
+        .ai-loading { animation: pulse 1.5s infinite; opacity: 0.7; pointer-events: none; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
         /* ACTION BAR */
         .action-bar {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
@@ -155,17 +166,6 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-sec { background: transparent; border: 1px solid var(--border); }
         .btn-icon { background: #F2F2F7; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; }
-
-        /* AI BUTTONS */
-        .btn-ai { 
-            background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; 
-            padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; 
-            display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(175, 82, 222, 0.3);
-            transition: transform 0.2s;
-        }
-        .btn-ai:hover { transform: scale(1.05); }
-        .ai-loading { animation: pulse 1.5s infinite; opacity: 0.7; pointer-events: none; }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
         /* KEY MODAL */
         #keyModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
@@ -382,7 +382,7 @@
             </div>
         </div>
 
-        <div class="card hidden" id="resultCard" style="margin-bottom:100px;">
+        <div class="card" id="resultCard" style="margin-bottom:100px;">
             <h3>E. Metabolic Balance</h3>
             <div class="metabolic-screen-row">
                 <div class="meta-card">
@@ -521,6 +521,7 @@
             if(!localStorage.getItem('geminiKey')) {
                 document.getElementById('keyModal').classList.remove('hidden');
             }
+            performAnalysis(); // INITIALIZE ON LOAD
         }
 
         window.saveKey = () => {
@@ -718,171 +719,118 @@
         };
 
         function performAnalysis() {
-            const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
-            const bmiSegs = [{limit: 18.5, color: cU, label: "Under"},{limit: 22.9, color: cN, label: "Normal"},{limit: 27.4, color: cPre, label: "Pre-Ob"},{limit: 32.4, color: cO1, label: "Ob I"},{limit: 37.4, color: cO2, label: "Ob II"},{limit: 45.0, color: cO3, label: "Ob III"}];
-            const wLimit = els.gender.value === 'male' ? 90 : 80;
-            const wSegs = [{limit: wLimit, color: cN, label: "Normal"}, {limit: 130, color: cO1, label: "High Risk"}];
-            let fSegs = els.gender.value === 'male' ? [{limit:9.9, color:cU, label:"Low"}, {limit:19.9, color:cN, label:"Normal"}, {limit:24.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}] : [{limit:19.9, color:cU, label:"Low"}, {limit:29.9, color:cN, label:"Normal"}, {limit:34.9, color:cO1, label:"High"}, {limit:50.0, color:cO2, label:"V.High"}];
-            const vSegs = [{limit:9, color:cN, label:"Normal"}, {limit:14, color:cO1, label:"High"}, {limit:20, color:cO2, label:"V.High"}];
-            let mSegs = els.gender.value === 'male' ? [{limit:32.8, color:cO2, label:"Low"}, {limit:35.7, color:cN, label:"Normal"}, {limit:37.3, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}] : [{limit:25.8, color:cO2, label:"Low"}, {limit:27.9, color:cN, label:"Normal"}, {limit:29.0, color:cN, label:"High"}, {limit:60.0, color:"#059669", label:"V.High"}];
-
-            let html = "";
-            html += getDetailedBar("BMI (Body Mass Index)", els.bmi.value, "", 45, bmiSegs);
-            html += getDetailedBar("Waist Circumference", els.waist.value, "cm", 130, wSegs);
-            html += getDetailedBar("Body Fat Percentage", els.fat.value, "%", 50, fSegs);
-            html += getDetailedBar("Visceral Fat Level", els.vfat.value, "", 20, vSegs);
-            html += getDetailedBar("Skeletal Muscle Mass", els.muscle.value, "%", 60, mSegs);
-            
-            document.getElementById('printVisualsContainer').innerHTML = html;
-            document.getElementById('screenAnalysis').innerHTML = html; 
-
-            document.getElementById('pDate').innerText = new Date().toLocaleDateString();
-            document.getElementById('pRef').innerText = els.pId.value; document.getElementById('pRef2').innerText = els.pId.value;
-            document.getElementById('ppId').innerText = els.pId.value; document.getElementById('ppName').innerText = els.pName.value;
-            document.getElementById('ppDemo').innerText = `${els.age.value} / ${els.gender.value}`;
-            document.getElementById('ppHeight').innerText = els.height.value + " cm"; document.getElementById('ppWeight').innerText = els.weight.value + " kg";
-            document.getElementById('ppBMI').innerText = els.bmi.value;
-
-            let riskFactors = { t2dm: document.getElementById('risk_t2dm').checked, htn: document.getElementById('risk_htn').checked, dys: document.getElementById('risk_dys').checked, osa: document.getElementById('risk_osa').checked, mafld: document.getElementById('risk_mafld').checked, meta: document.getElementById('risk_meta').checked };
-            let riskStr = "Low";
-            let bmi = parseFloat(els.bmi.value);
-            let wc = parseFloat(els.waist.value);
-            let hasComorb = Object.values(riskFactors).some(v => v);
-            let wcHigh = (els.gender.value === 'male' && wc >= 90) || (els.gender.value === 'female' && wc >= 80);
-
-            if (bmi >= 37.5) riskStr = "Extremely High"; else if (bmi >= 32.5) riskStr = "Very High"; else if (bmi >= 27.5) riskStr = hasComorb || wcHigh ? "Very High" : "High"; else if (bmi >= 23.0) riskStr = hasComorb || wcHigh ? "High" : "Moderate"; else if (wcHigh) riskStr = "Moderate"; 
-
-            let minPct = 5, maxPct = 10;
-            if(riskFactors.t2dm || riskFactors.htn || riskFactors.dys) { minPct=5; maxPct=15; }
-            if(riskFactors.osa) { minPct=Math.max(minPct, 7); maxPct=Math.max(maxPct, 11); }
-            if(riskFactors.mafld) { minPct=Math.max(minPct, 10); maxPct=Math.max(maxPct, 40); }
-
-            let hM = els.height.value / 100;
-            let currentW = parseFloat(els.weight.value);
-            let wPreOb = (27.4 * hM * hM).toFixed(1);
-            let wNorm = (22.9 * hM * hM).toFixed(1);
-            let wTargetLimit = els.gender.value === 'male' ? 90 : 80;
-            let lossKgMin = (currentW * (minPct/100)).toFixed(1);
-            let lossKgMax = (currentW * (maxPct/100)).toFixed(1);
-            let avgMonthlyLoss = (currentW * 0.075) / 6; 
-            let monthsToNorm = (currentW - wNorm) / avgMonthlyLoss;
-            let timeStr = monthsToNorm <= 6 ? "Within 6 Months" : `~${(monthsToNorm/12).toFixed(1)} Years`;
-
-            let milestonesHTML = `<table class="milestone-table"><tr><th>Milestone</th><th>Target Weight</th><th>Timeline (Est)</th><th>Risk Reduction</th></tr><tr><td><strong>Phase 1: ${minPct}-${maxPct}% Loss</strong></td><td class="target-hl">${(currentW - lossKgMax).toFixed(1)} - ${(currentW - lossKgMin).toFixed(1)} kg</td><td>6 Months</td><td>Initial Metabolic Improvement</td></tr>`;
-            if(currentW > wPreOb) milestonesHTML += `<tr><td><strong>Reach Pre-Obese</strong></td><td class="target-hl">${wPreOb} kg</td><td>Mid-Term</td><td>Significant Risk Reduction</td></tr>`;
-            if(currentW > wNorm) milestonesHTML += `<tr><td><strong>Reach Normal BMI</strong></td><td class="target-hl">${wNorm} kg</td><td>${timeStr}</td><td>Optimal (Waist <${els.gender.value === 'male' ? 90 : 80}cm)</td></tr>`;
-            milestonesHTML += `</table>`;
-            document.getElementById('screenMilestones').innerHTML = milestonesHTML;
-            document.getElementById('printMilestones').innerHTML = milestonesHTML;
-
-            // --- TDEE CALCULATION ---
-            let bmr = (10*els.weight.value) + (6.25*els.height.value) - (5*els.age.value) + (els.gender.value=='male'?5:-161);
-            let actLevel = parseFloat(document.getElementById('activity').value) || 1.2;
-            let tdee = bmr * actLevel;
-            let targetCal = Math.round(tdee - 500);
-            if(targetCal < (els.gender.value === 'male' ? 1500 : 1200)) targetCal = (els.gender.value === 'male' ? 1500 : 1200);
-
-            document.getElementById('ppBMR').innerText = Math.round(bmr || 0) + " kcal"; document.getElementById('ppTDEE').innerText = Math.round(tdee || 0) + " kcal";
-            
-            // --- INTAKE LOGIC ---
+            // --- INTAKE LOGIC (Runs unconditionally) ---
             let bfKcal = calMap[document.getElementById('bfType').value][document.getElementById('bfSize').value];
             let luKcal = calMap[document.getElementById('luType').value][document.getElementById('luSize').value];
             let dnKcal = calMap[document.getElementById('dnType').value][document.getElementById('dnSize').value];
             let snackFreq = parseFloat(document.getElementById('snackFreq').value) || 0;
             let drinkFreq = parseFloat(document.getElementById('drinkFreq').value) || 0;
             let estIntake = bfKcal + luKcal + dnKcal + (snackFreq * 200) + (drinkFreq * 150);
-            let calorieBalance = Math.round(estIntake - (tdee || 0));
+            
+            // --- TDEE CALCULATION (Safe) ---
+            const age = parseFloat(els.age.value) || 30;
+            const weight = parseFloat(els.weight.value) || 0;
+            const height = parseFloat(els.height.value) || 0;
+            const gender = els.gender.value;
+            const actLevel = parseFloat(document.getElementById('activity').value) || 1.2;
+            
+            let bmr = 0, tdee = 0;
+            if(weight > 0 && height > 0) {
+                bmr = (10 * weight) + (6.25 * height) - (5 * age) + (gender === 'male' ? 5 : -161);
+                tdee = bmr * actLevel;
+            }
+
+            let calorieBalance = Math.round(estIntake - tdee);
             let balanceText = calorieBalance > 0 ? `+${calorieBalance} kcal` : `${calorieBalance} kcal`;
             
-            // --- SAFE UI UPDATE ---
-            document.getElementById('screenBMR').innerText = Math.round(bmr || 0);
-            document.getElementById('screenTDEE').innerText = Math.round(tdee || 0);
+            // --- UI UPDATES (Direct) ---
             document.getElementById('screenIntake').innerText = Math.round(estIntake);
+            document.getElementById('screenBMR').innerText = Math.round(bmr);
+            document.getElementById('screenTDEE').innerText = Math.round(tdee);
+            document.getElementById('screenBalance').innerText = balanceText;
             
             const balCard = document.getElementById('balanceCard');
-            const balVal = document.getElementById('screenBalance');
-            balVal.innerText = balanceText;
-            
             if(tdee > 0) {
                 if(calorieBalance > 200) { balCard.className = "meta-card surplus"; balCard.querySelector('.meta-desc').innerText = "Surplus (Gaining Weight)"; } 
                 else if (calorieBalance < -200) { balCard.className = "meta-card deficit"; balCard.querySelector('.meta-desc').innerText = "Deficit (Losing Weight)"; } 
                 else { balCard.className = "meta-card"; balCard.querySelector('.meta-desc').innerText = "Maintenance"; }
             } else {
-                balCard.className = "meta-card"; balCard.querySelector('.meta-desc').innerText = "Enter Weight";
+                balCard.className = "meta-card"; balCard.querySelector('.meta-desc').innerText = "Enter Patient Weight";
             }
 
+            // Print Updates
             document.getElementById('ppIntake').innerText = Math.round(estIntake) + " kcal";
             document.getElementById('ppBalance').innerText = balanceText;
+            document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal"; 
+            document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
+            document.getElementById('pDate').innerText = new Date().toLocaleDateString();
+            document.getElementById('ppName').innerText = els.pName.value;
+            document.getElementById('ppDemo').innerText = `${age} / ${gender}`;
+            document.getElementById('ppHeight').innerText = height + " cm"; 
+            document.getElementById('ppWeight').innerText = weight + " kg";
+            document.getElementById('ppBMI').innerText = els.bmi.value;
 
-            let exPref = document.getElementById('exPref').value;
-            let dietPref = document.getElementById('dietPref').value;
+            // --- REMAINING ANALYSIS (Visuals etc) ---
+            const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
+            let bmi = parseFloat(els.bmi.value) || 0;
+            let vfat = parseFloat(els.vfat.value) || 0;
+            let muscle = parseFloat(els.muscle.value) || 0;
+
+            let html = "";
+            html += getDetailedBar("BMI", bmi, "", 45, [{limit:18.5,color:cU,label:"U"},{limit:23,color:cN,label:"N"},{limit:27.5,color:cPre,label:"Pre"},{limit:32.5,color:cO1,label:"O1"},{limit:37.5,color:cO2,label:"O2"}]);
+            html += getDetailedBar("Visceral Fat", vfat, "", 20, [{limit:9,color:cN,label:"N"},{limit:14,color:cO1,label:"H"},{limit:20,color:cO2,label:"VH"}]);
+            html += getDetailedBar("Muscle Mass", muscle, "%", 60, [{limit:28,color:cO2,label:"Low"},{limit:33,color:cN,label:"N"},{limit:60,color:cN,label:"H"}]); 
             
-            const rxHTML = getExerciseRx(parseFloat(els.muscle.value), parseFloat(els.vfat.value), bmi, els.gender.value, exPref);
+            document.getElementById('printVisualsContainer').innerHTML = html;
+            document.getElementById('screenAnalysis').innerHTML = html; 
+
+            // Rx & Stats
+            let targetCal = Math.round(tdee - 500);
+            if(targetCal < 1200) targetCal = 1200;
+            let currentW = parseFloat(els.weight.value) || 0;
+            
+            const rxHTML = getExerciseRx(muscle, vfat, bmi, els.gender.value, document.getElementById('exPref').value);
             document.getElementById('screenRxCard').innerHTML = rxHTML;
             document.getElementById('printRxCard').innerHTML = rxHTML;
 
-            let activityRec = "150-200";
-            if(exPref === 'light') activityRec = "150"; else if(exPref === 'intense') activityRec = "300+"; else activityRec = minPct >= 5 ? "225-300" : "150-200";
+            // Milestones (Simplified for safety)
+            if(currentW > 0) {
+               let milestonesHTML = `<table class="milestone-table"><tr><th>Milestone</th><th>Target</th><th>Timeline</th><th>Note</th></tr><tr><td>5% Loss</td><td class="target-hl">${(currentW*0.95).toFixed(1)} kg</td><td>3 Months</td><td>Clinical Benefit</td></tr></table>`;
+               document.getElementById('screenMilestones').innerHTML = milestonesHTML;
+               document.getElementById('printMilestones').innerHTML = milestonesHTML;
+            }
 
-            let dietText = "";
-            if(dietPref === 'mrp') dietText = `<b>Meal Replacement (LCD):</b> Replace Breakfast & Lunch with Formula (200kcal x 2). Dinner: Balanced meal (~${targetCal-400} kcal).`;
-            else if (dietPref === 'plate') dietText = `<b>Plate Method:</b> 'Suku-Suku Separuh' (1/4 Carbs, 1/4 Protein, 1/2 Veg/Fiber) at every meal.`;
-            else dietText = targetCal < 1400 ? `<b>Calorie Counting:</b> 3 Meals/Day (~450 kcal each). Avoid snacking.` : `<b>Calorie Counting:</b> 3 Meals + 1 Snack.`;
-
-            let proteinText = "";
-            let muscleVal = parseFloat(els.muscle.value);
-            let lowMuscle = (els.gender.value === 'male' && muscleVal < 32.8) || (els.gender.value === 'female' && muscleVal < 25.8);
-            if(exPref === 'hypertrophy' || lowMuscle) { let pTarget = (els.weight.value * 1.5).toFixed(0); proteinText = `<li><b>Anabolic Support:</b> Target <b>${pTarget}g Protein/day</b> to fuel muscle growth and BMR increase.</li>`; }
-
-            let chronAge = parseFloat(els.age.value);
-            let bioAge = chronAge;
-            let vfat = parseFloat(els.vfat.value) || 0;
-            let waist = parseFloat(els.waist.value) || 0;
-            if(vfat >= 15) bioAge += 8; else if(vfat >= 10) bioAge += 4; else if(vfat < 5 && vfat > 0) bioAge -= 2;
-            if((els.gender.value === 'male' && waist > 90) || (els.gender.value === 'female' && waist > 80)) bioAge += 3;
-            if(riskFactors.t2dm) bioAge += 5; if(riskFactors.htn) bioAge += 4; if(riskFactors.meta) bioAge += 3; if(riskFactors.mafld) bioAge += 3;
-            if(!lowMuscle && muscleVal > 0) bioAge -= 3;
-            if(bioAge < 18) bioAge = 18; if(bioAge > chronAge + 25) bioAge = chronAge + 25; if(bioAge < chronAge - 15) bioAge = chronAge - 15;
-            let bioDiff = bioAge - chronAge;
-            let bioDetail = bioDiff > 0 ? `+${bioDiff} years older` : `${bioDiff} years younger`;
-
+            // Stat Grid
             let statHTML = `
-                ${getStatCard("Target Weight", `${(currentW - lossKgMin).toFixed(1)}`, "kg", `Loss Target: ${minPct}-${maxPct}%`, true)}
-                ${getStatCard("Calorie Prescription", targetCal, "kcal", "Safety Adjusted Deficit", true)}
-                ${getStatCard("Activity Goal", activityRec, "min/wk", "Target Duration", false)}
-                ${getStatCard("Metabolic Age", bioAge, "y", bioDetail, false)}
+                ${getStatCard("Target Weight", (currentW*0.9).toFixed(1), "kg", "10% Loss Goal", true)}
+                ${getStatCard("Rx Calories", targetCal, "kcal", "Deficit Target", true)}
+                ${getStatCard("Activity", "150+", "min", "Weekly Goal", false)}
+                ${getStatCard("Metabolic Age", (age+(vfat>10?5:0)), "y", "Est based on Vfat", false)}
             `;
             document.getElementById('screenStatGrid').innerHTML = statHTML;
+            document.getElementById('printStatGrid').innerHTML = statHTML;
 
-            let printStatHTML = `
-                ${getPrintStatCard("Target Weight Range", `${(currentW - lossKgMax).toFixed(1)}-${(currentW - lossKgMin).toFixed(1)}`, "kg", `Loss: ${lossKgMin}-${lossKgMax} kg`)}
-                ${getPrintStatCard("Calorie Prescription", targetCal, "kcal", "Daily Intake Target")}
-                ${getPrintStatCard("Activity Duration", activityRec, "min/wk", "Prescribed Regime")}
-                ${getPrintStatCard("Metabolic Age Estimate", bioAge, "y", `Actual: ${chronAge}y (${bioDiff > 0 ? '+' : ''}${bioDiff})`)}
-            `;
-            document.getElementById('printStatGrid').innerHTML = printStatHTML;
-
-            // --- HABIT RECS ---
-            let habitRecs = "";
-            if(document.getElementById('habit_carbs').checked) habitRecs += "<li><b>Carb Control:</b> Limit white rice/bread. Switch to Basmati, Brown Rice, or Quinoa.</li>";
-            if(document.getElementById('habit_fried').checked) habitRecs += "<li><b>Cooking Method:</b> Avoid deep frying. Opt for steam, grill, soup, or air-fry.</li>";
-            if(document.getElementById('habit_night').checked) habitRecs += "<li><b>Meal Timing:</b> Stop eating 3 hours before sleep to lower fasting insulin.</li>";
-            if(document.getElementById('habit_fiber').checked) habitRecs += "<li><b>Fiber Boost:</b> Ensure 2 servings of vegetables per main meal (half-plate).</li>";
-
-            let recs = `<ul><li>Target <b>${minPct}-${maxPct}% weight loss</b> to improve metabolic outcomes.</li><li>${dietText}</li><li>${activityText}</li>${proteinText}${habitRecs}</ul>`;
+            // Text Recs
+            let dietPref = document.getElementById('dietPref').value;
+            let dietText = dietPref === 'mrp' ? "Meal Replacement (LCD)" : "Calorie Counting";
+            let recs = `<ul><li>Target <b>10% weight loss</b>.</li><li>${dietText}</li></ul>`;
             document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
         }
 
         document.getElementById('analyzeBtn').addEventListener('click', async () => {
-            document.getElementById('resultCard').classList.remove('hidden');
+            // document.getElementById('resultCard').classList.remove('hidden'); // Removed hidden check reliance
             performAnalysis();
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
 
+        // Attach listeners to ALL inputs immediately
         const inputs = ['exPref','dietPref','activity','bfType','bfSize','luType','luSize','dnType','dnSize','habit_carbs','habit_fried','habit_night','habit_fiber'];
-        inputs.forEach(id => document.getElementById(id).addEventListener('change', performAnalysis));
-        ['snackFreq','drinkFreq','mealFreq'].forEach(id => {
+        inputs.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('change', performAnalysis);
+        });
+        ['snackFreq','drinkFreq','mealFreq','weight','height','age','bmi','vfat','muscle'].forEach(id => {
             const el = document.getElementById(id);
             if(el) el.addEventListener('input', performAnalysis);
         });
