@@ -382,7 +382,7 @@
             </div>
         </div>
 
-        <div class="card" id="resultCard" style="margin-bottom:100px;">
+        <div class="card hidden" id="resultCard" style="margin-bottom:100px;">
             <h3>E. Metabolic Balance</h3>
             <div class="metabolic-screen-row">
                 <div class="meta-card">
@@ -521,7 +521,7 @@
             if(!localStorage.getItem('geminiKey')) {
                 document.getElementById('keyModal').classList.remove('hidden');
             }
-            performAnalysis(); // INITIALIZE ON LOAD
+            performAnalysis(); // FORCE INITIAL CALC
         }
 
         window.saveKey = () => {
@@ -719,7 +719,7 @@
         };
 
         function performAnalysis() {
-            // --- INTAKE LOGIC (Runs unconditionally) ---
+            // --- INTAKE LOGIC ---
             let bfKcal = calMap[document.getElementById('bfType').value][document.getElementById('bfSize').value];
             let luKcal = calMap[document.getElementById('luType').value][document.getElementById('luSize').value];
             let dnKcal = calMap[document.getElementById('dnType').value][document.getElementById('dnSize').value];
@@ -727,7 +727,7 @@
             let drinkFreq = parseFloat(document.getElementById('drinkFreq').value) || 0;
             let estIntake = bfKcal + luKcal + dnKcal + (snackFreq * 200) + (drinkFreq * 150);
             
-            // --- TDEE CALCULATION (Safe) ---
+            // --- TDEE CALCULATION ---
             const age = parseFloat(els.age.value) || 30;
             const weight = parseFloat(els.weight.value) || 0;
             const height = parseFloat(els.height.value) || 0;
@@ -770,7 +770,7 @@
             document.getElementById('ppWeight').innerText = weight + " kg";
             document.getElementById('ppBMI').innerText = els.bmi.value;
 
-            // --- REMAINING ANALYSIS (Visuals etc) ---
+            // --- VISUALS ---
             const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
             let bmi = parseFloat(els.bmi.value) || 0;
             let vfat = parseFloat(els.vfat.value) || 0;
@@ -784,7 +784,7 @@
             document.getElementById('printVisualsContainer').innerHTML = html;
             document.getElementById('screenAnalysis').innerHTML = html; 
 
-            // Rx & Stats
+            // --- STRATEGY & RECS (Unconditional Execution) ---
             let targetCal = Math.round(tdee - 500);
             if(targetCal < 1200) targetCal = 1200;
             let currentW = parseFloat(els.weight.value) || 0;
@@ -795,7 +795,7 @@
 
             // Milestones (Simplified for safety)
             if(currentW > 0) {
-               let milestonesHTML = `<table class="milestone-table"><tr><th>Milestone</th><th>Target</th><th>Timeline</th><th>Note</th></tr><tr><td>5% Loss</td><td class="target-hl">${(currentW*0.95).toFixed(1)} kg</td><td>3 Months</td><td>Clinical Benefit</td></tr></table>`;
+               let milestonesHTML = `<table class="milestone-table"><tr><th>Milestone</th><th>Target</th><th>Timeline</th><th>Note</th></tr><tr><td>5% Loss</td><td class="target-hl">${(currentW*0.95).toFixed(1)} kg</td><td>3 Months</td><td>Clinical Benefit</td></tr><tr><td>10% Loss</td><td class="target-hl">${(currentW*0.90).toFixed(1)} kg</td><td>6 Months</td><td>Major Benefit</td></tr></table>`;
                document.getElementById('screenMilestones').innerHTML = milestonesHTML;
                document.getElementById('printMilestones').innerHTML = milestonesHTML;
             }
@@ -812,14 +812,23 @@
 
             // Text Recs
             let dietPref = document.getElementById('dietPref').value;
-            let dietText = dietPref === 'mrp' ? "Meal Replacement (LCD)" : "Calorie Counting";
-            let recs = `<ul><li>Target <b>10% weight loss</b>.</li><li>${dietText}</li></ul>`;
+            let dietText = "";
+            if(dietPref === 'mrp') dietText = "Replace 1-2 meals with formula (LCD).";
+            else if(dietPref === 'plate') dietText = "Follow Suku-Suku Separuh (Quarter/Quarter/Half).";
+            else dietText = `Target ${targetCal} kcal/day using MyFitnessPal.`;
+
+            let habitRecs = "";
+            if(document.getElementById('habit_carbs').checked) habitRecs += "<li>Limit white rice. Switch to Basmati/Brown Rice.</li>";
+            if(document.getElementById('habit_night').checked) habitRecs += "<li>Stop eating 3 hours before sleep (Intermittent Fasting).</li>";
+            if(document.getElementById('habit_fried').checked) habitRecs += "<li>Avoid deep frying. Grill or steam instead.</li>";
+            
+            let recs = `<ul><li>Target <b>10% weight loss</b> (${(currentW*0.9).toFixed(1)} kg).</li><li>${dietText}</li>${habitRecs}</ul>`;
             document.getElementById('screenRecommendations').innerHTML = recs;
             document.getElementById('ppRecommendations').innerHTML = recs;
         }
 
         document.getElementById('analyzeBtn').addEventListener('click', async () => {
-            // document.getElementById('resultCard').classList.remove('hidden'); // Removed hidden check reliance
+            document.getElementById('resultCard').classList.remove('hidden');
             performAnalysis();
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
