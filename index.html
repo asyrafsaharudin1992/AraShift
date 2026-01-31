@@ -6,7 +6,7 @@
     <title>AraShift Medical Suite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- SYSTEM VARIABLES --- */
+        /* ---  SYSTEM VARIABLES --- */
         :root {
             --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
@@ -136,7 +136,7 @@
             .pt-field { display: flex; flex-direction: column; } .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
             .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 20px; }
             .metabolic-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
-            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; break-inside: avoid; }
+            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; page-break-inside: avoid; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
             .visual-row { break-inside: avoid; margin-bottom: 10px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
@@ -450,12 +450,17 @@
                 document.getElementById('printMilestones').innerHTML = mHTML;
             }
 
-            // Recs
+            // Recs - DYNAMIC UPDATE FROM SECTION D
             let dietTxt = document.getElementById('dietPref').value === 'mrp' ? "Replace 2 meals with LCD." : `Limit to ${targetCal} kcal/day.`;
-            let habits = "";
-            if(document.getElementById('habit_carbs').checked) habits += "<li>Reduce rice/bread by 50%.</li>";
-            if(document.getElementById('habit_night').checked) habits += "<li>Stop eating 3h before bed.</li>";
-            const rHTML = `<ul><li>Target <b>10% loss</b>.</li><li>${dietTxt}</li>${habits}</ul>`;
+            let clinicalRecs = "";
+            if(document.getElementById('risk_t2dm').checked) clinicalRecs += "<li><b>Diabetes/Pre-DM:</b> Strict Glycemic Control. Low GI.</li>";
+            if(document.getElementById('risk_htn').checked) clinicalRecs += "<li><b>Hypertension:</b> Limit Sodium (DASH).</li>";
+            if(document.getElementById('risk_mafld').checked) clinicalRecs += "<li><b>Fatty Liver:</b> Target >7-10% loss to reduce steatosis.</li>";
+            
+            if(document.getElementById('habit_carbs').checked) clinicalRecs += "<li>Reduce rice/bread by 50%.</li>";
+            if(document.getElementById('habit_night').checked) clinicalRecs += "<li>Stop eating 3h before bed.</li>";
+            
+            const rHTML = `<ul><li>Target <b>10% loss</b>.</li><li>${dietTxt}</li>${clinicalRecs}</ul>`;
             document.getElementById('screenRecommendations').innerHTML = rHTML;
             document.getElementById('ppRecommendations').innerHTML = rHTML;
         }
