@@ -6,27 +6,17 @@
     <title>AraShift Medical Suite</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ---  SYSTEM VARIABLES --- */
+        /* --- SYSTEM VARIABLES --- */
         :root {
-            --primary: #007AFF;
-            --success: #34C759;
-            --danger: #FF3B30;
-            --warning: #FF9500;
-            --bg: #F5F5F7;
-            --card-bg: #FFFFFF;
-            --text: #1D1D1F;
-            --text-sec: #86868B;
+            --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
+            --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #D2D2D7;
+            /* Clinical Colors */
             --c-under: #F59E0B; --c-norm: #10B981; --c-pre: #FBBF24;
             --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
         }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif;
-            background-color: var(--bg); color: var(--text); margin: 0; padding: 20px;
-            -webkit-font-smoothing: antialiased;
-        }
-
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; -webkit-font-smoothing: antialiased; }
         .container { max-width: 1100px; margin: 0 auto; padding-bottom: 80px; }
         .hidden { display: none !important; }
         
@@ -36,22 +26,17 @@
         .brand span { color: var(--primary); }
         .logout { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 15px; }
 
-        /* MAIN GRID */
+        /* GRID */
         .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 25px; }
-        
-        .card { 
-            background: var(--card-bg); border-radius: 18px; padding: 22px; 
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.02);
-            height: 100%; box-sizing: border-box;
-            margin-bottom: 20px;
-        }
+        .card { background: var(--card-bg); border-radius: 18px; padding: 22px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 20px; }
         .card h3 { font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; }
 
         /* INPUTS */
         .input-grid-profile { display: grid; grid-template-columns: 0.6fr 1.2fr 0.5fr 0.8fr 1.2fr; gap: 10px; margin-bottom: 15px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0; }
-        .meal-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; align-items: end; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
+        
+        .meal-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; align-items: end; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
         .meal-row:last-child { border-bottom: none; }
         .meal-label { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 5px; display: block; }
         .input-grid-snacks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
@@ -59,11 +44,7 @@
         .form-group { margin-bottom: 0; width: 100%; }
         label { display: block; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; white-space: nowrap; overflow: hidden; }
         
-        input, select, textarea {
-            width: 100%; padding: 9px 10px; border: 1px solid #D1D1D6; border-radius: 9px;
-            font-size: 13px; font-weight: 500; color: var(--text); background: #fff; appearance: none;
-            box-sizing: border-box; transition: 0.2s; font-family: inherit;
-        }
+        input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #D1D1D6; border-radius: 9px; font-size: 13px; font-weight: 500; color: var(--text); background: #fff; appearance: none; box-sizing: border-box; transition: 0.2s; font-family: inherit; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
         input[readonly] { background-color: #F2F2F7; color: var(--primary); font-weight: 700; border-color: transparent; }
 
@@ -79,8 +60,20 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* SECTION E: METABOLIC DASHBOARD */
-        .metabolic-screen-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 15px; margin-top: 5px; }
+        /* VISUAL BARS (Section F) */
+        .visual-row { margin-bottom: 25px; }
+        .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+        .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
+        .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
+        .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
+        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
+        .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
+        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
+        .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
+        .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; transition: left 0.3s ease; }
+
+        /* METABOLIC DASHBOARD (Section E) */
+        .metabolic-screen-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1.2fr; gap: 15px; margin-top: 10px; margin-bottom: 25px; }
         .meta-card { background: #F8F9FA; border: 1px solid #E5E7EB; border-radius: 12px; padding: 15px; text-align: center; }
         .meta-label { font-size: 11px; text-transform: uppercase; color: #666; font-weight: 700; display: block; margin-bottom: 5px; }
         .meta-val { font-size: 24px; font-weight: 800; color: #1D1D1F; display: block; line-height: 1.1; }
@@ -88,19 +81,7 @@
         .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
         .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
 
-        /* SECTION F: VISUALS */
-        .visual-row { margin-bottom: 25px; }
-        .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-        .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #e0e0e0; }
-        .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
-        .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
-        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
-        .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
-        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
-        .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
-        .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; transition: left 0.5s ease; }
-
-        /* SECTION G: STRATEGY */
+        /* STRATEGY (Section G) */
         .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px; margin-bottom: 20px; }
         .apple-stat-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; }
         .stat-header { font-size: 11px; text-transform: uppercase; color: var(--text-sec); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px; }
@@ -112,6 +93,16 @@
         .rec-container ul { margin: 0; padding-left: 20px; }
         .rec-container li { font-size: 14px; margin-bottom: 6px; color: #1D1D1F; line-height: 1.5; }
         
+        .strategy-toolbar { display: flex; gap: 10px; margin-bottom: 10px; justify-content: space-between; align-items: center; }
+        .pref-select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 15px; font-size: 12px; font-weight: 600; color: var(--text); background: white; cursor: pointer; transition: 0.2s; }
+        
+        .milestone-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; }
+        .milestone-table th { text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; color: var(--text-sec); font-weight: 700; }
+        .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; }
+        .milestone-table tr:last-child td { border-bottom: none; }
+        .target-hl { color: var(--primary); font-weight: 700; }
+
+        /* EXERCISE RX CARD */
         .rx-box { border: 1px solid #E5E5EA; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #fff; }
         .rx-head { background: #F2F2F7; padding: 10px 15px; font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; display: flex; justify-content: space-between; }
         .rx-body { padding: 15px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
@@ -121,59 +112,36 @@
         .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
         .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
 
-        .milestone-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; }
-        .milestone-table th { text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; color: var(--text-sec); font-weight: 700; }
-        .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; }
-        .target-hl { color: var(--primary); font-weight: 700; }
-
         /* ACTION BAR */
-        .action-bar {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
-            padding: 8px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            display: flex; gap: 8px; border: 1px solid rgba(0,0,0,0.1); z-index: 100;
-        }
+        .action-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.85); backdrop-filter: blur(20px); padding: 8px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; gap: 8px; border: 1px solid rgba(0,0,0,0.1); z-index: 100; }
         .btn { border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 14px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-sec { background: transparent; border: 1px solid var(--border); }
         .btn-icon { background: #F2F2F7; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; }
+        .btn-ai { background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-        /* AI & MODAL */
-        .btn-ai { background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        /* KEY MODAL */
         #keyModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
         .key-box { background:white; padding:30px; border-radius:24px; width:90%; max-width:420px; text-align:center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         .key-input { width:100%; padding:12px; border:1px solid #D2D2D7; border-radius:12px; margin-bottom:15px; font-size:14px; text-align:center; }
 
-        /* PRINT */
+        /* PRINT DOM */
         #clinical-report { display: none; }
         @media print {
-            @page { size: A4; margin: 10mm 15mm; }
             body { background: white; margin: 0; padding: 0; }
             .container, .action-bar, #login-screen, #keyModal { display: none !important; }
             #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
-            
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-            .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
             .patient-strip { display: flex; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 12px; margin-bottom: 15px; justify-content: space-between; }
-            .pt-field { display: flex; flex-direction: column; }
-            .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; }
-            .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
+            .pt-field { display: flex; flex-direction: column; } .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
             .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 20px; }
-            .visual-row { page-break-inside: avoid; margin-bottom: 12px; }
-            .bar-complex { height: 10px; border: 1px solid #999; border-radius: 4px; }
-            .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; width: 3px; }
             .metabolic-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
-            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; page-break-inside: avoid; }
+            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; break-inside: avoid; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
-            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; }
-            .p-stat-val { font-size: 12pt; font-weight: 900; display: block; }
-            .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
-            .milestone-table { border: 1px solid #000; width: 100%; margin-bottom: 15px; page-break-inside: avoid; }
-            .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
-            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 15px; page-break-inside: avoid; }
-            .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; padding: 5px; font-weight: 700; }
-            .rx-body { padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-            .rx-chart { border: 1px solid #999; height: 15px; } 
+            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
+            .visual-row { break-inside: avoid; margin-bottom: 10px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
+            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 15px; break-inside: avoid; } .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; }
+            .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; break-inside: avoid; }
             .page-break { page-break-before: always; }
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
             .report-footer { position: fixed; bottom: 5mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
@@ -184,11 +152,10 @@
 
     <div id="keyModal" class="hidden">
         <div class="key-box">
-            <h2>🔐 Enable AI Clinical Assistant</h2>
-            <p>Paste your <b>Google Gemini API Key</b> below.<br>Get one free at <b>aistudio.google.com</b>.</p>
+            <h2>🔐 AI Assistant Key</h2>
+            <p>Enter Google Gemini API Key for auto-drafting.</p>
             <input type="password" id="userKeyInput" class="key-input" placeholder="AIzaSy...">
-            <button class="btn btn-primary" onclick="saveKey()">Connect & Save</button>
-            <p style="font-size:11px; margin-top:15px; color:#86868B;">Key is stored locally on your device.</p>
+            <button class="btn btn-primary" onclick="saveKey()">Save & Continue</button>
         </div>
     </div>
 
@@ -199,69 +166,49 @@
         </header>
 
         <div class="main-grid">
-            <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display:flex; flex-direction:column; gap:20px;">
                 <div class="card">
                     <h3>A. Patient Profile</h3>
                     <div class="input-grid-profile">
                         <div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div>
-                        <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Full Name"></div>
+                        <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div>
                         <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
                         <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                        <div class="form-group">
-                            <label>Activity Level</label>
-                            <select id="activity">
-                                <option value="1.2">Sedentary (1.2x)</option>
-                                <option value="1.375">Light (1.375x)</option>
-                                <option value="1.55">Moderate (1.55x)</option>
-                                <option value="1.725">Active (1.725x)</option>
-                            </select>
-                        </div>
+                        <div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary (1.2)</option><option value="1.375">Light (1.375)</option><option value="1.55">Mod (1.55)</option><option value="1.725">Active (1.7)</option></select></div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3>B. Measurements & Composition</h3>
+                    <h3>B. Measurements</h3>
                     <div class="input-grid-4">
-                        <div class="form-group"><label>Height (cm)</label><input type="number" id="height" placeholder="175"></div>
-                        <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" placeholder="70"></div>
-                        <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist"></div>
-                        <div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly placeholder="-"></div>
+                        <div class="form-group"><label>Ht (cm)</label><input type="number" id="height" placeholder="175"></div>
+                        <div class="form-group"><label>Wt (kg)</label><input type="number" id="weight" placeholder="70"></div>
+                        <div class="form-group"><label>Waist</label><input type="number" id="waist"></div>
+                        <div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div>
                     </div>
                     <div class="input-grid-3">
-                        <div class="form-group"><label>Visceral Fat</label><input type="number" id="vfat" placeholder="Lvl"></div>
-                        <div class="form-group"><label>Body Fat %</label><input type="number" id="fat" placeholder="%"></div>
+                        <div class="form-group"><label>V.Fat</label><input type="number" id="vfat" placeholder="Lvl"></div>
+                        <div class="form-group"><label>Fat %</label><input type="number" id="fat" placeholder="%"></div>
                         <div class="form-group"><label>Muscle %</label><input type="number" id="muscle" placeholder="%"></div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3>C. Dietary Intake Estimator</h3>
-                    <div class="meal-row">
-                        <span class="meal-label">Breakfast</span>
-                        <div class="form-group"><label>Type</label><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select></div>
-                        <div class="form-group"><label>Size</label><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                    </div>
-                    <div class="meal-row">
-                        <span class="meal-label">Lunch</span>
-                        <div class="form-group"><label>Type</label><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select></div>
-                        <div class="form-group"><label>Size</label><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                    </div>
-                    <div class="meal-row">
-                        <span class="meal-label">Dinner</span>
-                        <div class="form-group"><label>Type</label><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select></div>
-                        <div class="form-group"><label>Size</label><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                    </div>
+                    <h3>C. Dietary Matrix</h3>
+                    <div class="meal-row"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                    <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                    <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
                     <div class="input-grid-snacks">
-                        <div class="form-group"><label>Snacks/Day (Est 200)</label><input type="number" id="snackFreq" value="0"></div>
-                        <div class="form-group"><label>Sugary Drinks (Est 150)</label><input type="number" id="drinkFreq" value="0"></div>
+                        <div class="form-group"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div>
+                        <div class="form-group"><label>Sugary Drinks (150kc)</label><input type="number" id="drinkFreq" value="0"></div>
                     </div>
                     <div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
                         <label style="margin-bottom:8px;">Dietary Pattern Flags</label>
                         <div class="ios-list">
-                            <div class="ios-item"><span class="ios-label">Rice Heavy / High Carb</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div>
-                            <div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div>
-                            <div class="ios-item"><span class="ios-label">Late Night Eating</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div>
-                            <div class="ios-item"><span class="ios-label">Low Veggie / Fiber</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div>
+                            <div class="ios-item"><span class="ios-label">High Carb</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div>
+                            <div class="ios-item"><span class="ios-label">Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div>
+                            <div class="ios-item"><span class="ios-label">Late Night</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div>
+                            <div class="ios-item"><span class="ios-label">Low Fiber</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div>
                         </div>
                     </div>
                 </div>
@@ -270,46 +217,30 @@
             <div class="card">
                 <h3>D. Risk Factors</h3>
                 <div class="ios-list">
-                    <div class="ios-item"><span class="ios-label">T2DM / Pre-Diabetes</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
+                    <div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div>
                     <div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Sleep Apnea (OSA)</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Metabolic Syn.</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div>
+                    <div class="ios-item"><span class="ios-label">OSA (Sleep)</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
+                    <div class="ios-item"><span class="ios-label">Fatty Liver</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div>
+                    <div class="ios-item"><span class="ios-label">Meta Syndrome</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div>
                 </div>
             </div>
         </div>
 
-        <div class="card hidden" id="resultCard" style="margin-bottom:100px;">
+        <div class="card hidden" id="resultCard">
             <h3>E. Metabolic Balance</h3>
             <div class="metabolic-screen-row">
-                <div class="meta-card">
-                    <span class="meta-label">Current Intake (Est)</span>
-                    <span class="meta-val" id="screenIntake" style="color:#1D1D1F;">0</span>
-                    <span class="meta-desc">Based on Recall</span>
-                </div>
-                <div class="meta-card">
-                    <span class="meta-label">BMR (Resting)</span>
-                    <span class="meta-val" id="screenBMR">0</span>
-                    <span class="meta-desc">Coma State</span>
-                </div>
-                <div class="meta-card">
-                    <span class="meta-label">TDEE (Output)</span>
-                    <span class="meta-val" id="screenTDEE">0</span>
-                    <span class="meta-desc">Maintenance</span>
-                </div>
-                <div class="meta-card" id="balanceCard">
-                    <span class="meta-label">Net Balance</span>
-                    <span class="meta-val" id="screenBalance">0</span>
-                    <span class="meta-desc">Daily caloric gap</span>
-                </div>
+                <div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="screenIntake">0</span><span class="meta-desc">kcal/day</span></div>
+                <div class="meta-card"><span class="meta-label">BMR</span><span class="meta-val" id="screenBMR">0</span><span class="meta-desc">Resting</span></div>
+                <div class="meta-card"><span class="meta-label">TDEE</span><span class="meta-val" id="screenTDEE">0</span><span class="meta-desc">Output</span></div>
+                <div class="meta-card" id="balanceCard"><span class="meta-label">Balance</span><span class="meta-val" id="screenBalance">0</span><span class="meta-desc">Net</span></div>
             </div>
 
             <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
 
             <h3>F. Clinical Analysis</h3>
             <div id="screenAnalysis"></div>
-            
+
             <div style="margin-top:30px;">
                 <div class="strategy-toolbar">
                     <h3 style="margin:0;">G. Clinical Strategy</h3>
@@ -322,24 +253,24 @@
                         <select id="exPref" class="pref-select">
                             <option value="standard">Std: CPG (225m/wk)</option>
                             <option value="hypertrophy">BMR Boost: Resistance Focus</option>
-                            <option value="light">Light: Beginner (150m)</option>
-                            <option value="intense">Intense: High Vol (300m+)</option>
+                            <option value="light">Light: Beginner</option>
+                            <option value="intense">Intense: High Vol</option>
                         </select>
                     </div>
                 </div>
                 
-                <div id="screenStatGrid"></div>
+                <div class="apple-stat-grid" id="screenStatGrid"></div>
                 <div id="screenRxCard"></div>
                 <div id="screenMilestones"></div>
                 <div class="rec-container"><div id="screenRecommendations"></div></div>
             </div>
 
-            <div class="form-group" style="margin-top:30px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h3 style="margin:0;">H. Clinical Remarks</h3>
-                    <button class="btn-ai" id="aiBtn" onclick="generateAIReport()">✨ Auto-Draft Analysis</button>
+            <div class="form-group" style="margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <label>Clinical Remarks</label>
+                    <button class="btn-ai" id="aiBtn" onclick="generateAIReport()">✨ AI Draft</button>
                 </div>
-                <textarea id="docRemarks" rows="5" placeholder="Doctor's notes..."></textarea>
+                <textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea>
             </div>
         </div>
 
@@ -347,30 +278,26 @@
             <button class="btn-icon" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
             <button class="btn btn-sec" onclick="location.reload()">Reset</button>
             <button class="btn btn-primary" id="analyzeBtn">Analyze & Save</button>
-            <button class="btn btn-sec" id="printBtn">🖨️ Print Report</button>
+            <button class="btn btn-sec" id="printBtn">🖨️ Print</button>
         </div>
     </div>
 
     <div id="clinical-report">
-        <div class="report-header">
-            <div class="report-title"><h1>AraShift</h1><p>Clinical Body Composition Report</p></div>
-            <div class="report-meta">Date: <span id="pDate"></span><br>ID: <span id="ppId"></span></div>
-        </div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Metabolic Assessment</p></div><div class="report-meta">Date: <span id="pDate"></span></div></div>
         <div class="patient-strip">
-            <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="ppName">-</span></div>
-            <div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="ppDemo">-</span></div>
-            <div class="pt-field"><span class="pt-label">Height</span><span class="pt-val" id="ppHeight">-</span></div>
-            <div class="pt-field"><span class="pt-label">Weight</span><span class="pt-val" id="ppWeight">-</span></div>
-            <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="ppBMI">-</span></div>
+            <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="ppName"></span></div>
+            <div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="ppDemo"></span></div>
+            <div class="pt-field"><span class="pt-label">Ht/Wt</span><span class="pt-val" id="ppBio"></span></div>
+            <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="ppBMI"></span></div>
         </div>
-        <div class="section-head" style="margin-top:0;">D. Clinical Analysis</div>
+        <div class="section-head" style="margin-top:0;">D. Analysis</div>
         <div class="metabolic-row">
-            <div class="meta-item"><span>Intake</span><strong id="ppIntake">-</strong></div>
-            <div class="meta-item"><span>TDEE</span><strong id="ppTDEE">-</strong></div>
-            <div class="meta-item"><span>Balance</span><strong id="ppBalance">-</strong></div>
+            <div class="meta-item"><span>Intake</span><strong id="ppIntake"></strong></div>
+            <div class="meta-item"><span>TDEE</span><strong id="ppTDEE"></strong></div>
+            <div class="meta-item"><span>Balance</span><strong id="ppBalance"></strong></div>
         </div>
         <div id="printVisualsContainer"></div>
-        <div class="section-head">E. Clinical Strategy</div>
+        <div class="section-head">E. Strategy</div>
         <div class="print-stat-grid" id="printStatGrid"></div>
         <div id="printRxCard"></div>
         <div id="printMilestones"></div>
@@ -386,160 +313,151 @@
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCnL8Lv6iPN7c_j6vuygjifMIbmU7Fr0Ew",
-            authDomain: "arashift-8a3cc.firebaseapp.com",
-            projectId: "arashift-8a3cc",
-            storageBucket: "arashift-8a3cc.firebasestorage.app",
-            messagingSenderId: "1018560049929",
-            appId: "1:1018560049929:web:23b7ebfd6d5822de7bd9d8"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyCnL8Lv6iPN7c_j6vuygjifMIbmU7Fr0Ew", authDomain: "arashift-8a3cc.firebaseapp.com", projectId: "arashift-8a3cc", storageBucket: "arashift-8a3cc.firebasestorage.app", messagingSenderId: "1018560049929", appId: "1:1018560049929:web:23b7ebfd6d5822de7bd9d8" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
         const ids = ['pId','pName','age','gender','height','weight','waist','bmi','vfat','fat','muscle','docRemarks'];
         const els = {}; ids.forEach(id => els[id] = document.getElementById(id));
-        
-        window.onload = function() {
-            if(!localStorage.getItem('geminiKey')) { document.getElementById('keyModal').classList.remove('hidden'); }
-            performAnalysis(); // Run immediately on load
-        }
+        const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
 
-        window.saveKey = () => {
-            localStorage.setItem('geminiKey', document.getElementById('userKeyInput').value);
-            document.getElementById('keyModal').classList.add('hidden');
-        }
-
-        function calcBMI() {
-            const h = parseFloat(els.height.value)/100; const w = parseFloat(els.weight.value);
-            if(h>0 && w>0) els.bmi.value = (w/(h*h)).toFixed(1);
-        }
-        els.height.addEventListener('input', calcBMI);
-        els.weight.addEventListener('input', calcBMI);
-
-        function getDetailedBar(label, value, unit, totalMax, segments) {
-            let barsHTML = ""; let numsHTML = ""; let labelsHTML = ""; let prevLimit = 0;
+        // HELPER FUNCTIONS (Globally accessible logic)
+        window.getDetailedBar = (label, value, unit, totalMax, segments) => {
+            let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
             segments.forEach(seg => {
-                let width = ((seg.limit - prevLimit) / totalMax) * 100;
-                barsHTML += `<div class="bar-seg" style="width:${width}%; background:${seg.color};"></div>`;
-                let cumulativePos = (seg.limit / totalMax) * 100;
-                numsHTML += `<div class="bar-number-item" style="left:${cumulativePos}%;">${seg.limit}</div>`;
-                labelsHTML += `<div class="bar-label-item" style="width:${width}%;">${seg.label}</div>`;
+                let w = ((seg.limit - prevLimit) / totalMax) * 100;
+                barsHTML += `<div class="bar-seg" style="width:${w}%; background:${seg.color};"></div>`;
+                let cp = (seg.limit / totalMax) * 100;
+                numsHTML += `<div class="bar-number-item" style="left:${cp}%;">${seg.limit}</div>`;
+                labelsHTML += `<div class="bar-label-item" style="width:${w}%;">${seg.label}</div>`;
                 prevLimit = seg.limit;
             });
-            let markerPos = (value / totalMax) * 100;
-            if(markerPos > 100) markerPos = 100; if(markerPos < 0) markerPos = 0;
-            return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span style="color:#007AFF;">${value} ${unit}</span></div><div style="position:relative;"><div class="bar-complex">${barsHTML}</div><div class="bar-numbers-row">${numsHTML}</div><div class="bar-labels-row">${labelsHTML}</div><div class="bar-marker-wrapper"><div class="bar-marker" style="left: ${markerPos}%;"></div></div></div></div>`;
-        }
+            let mp = (value / totalMax) * 100; if(mp > 100) mp = 100; if(mp < 0) mp = 0;
+            return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span style="color:#007AFF;">${value} ${unit}</span></div><div style="position:relative;"><div class="bar-complex">${barsHTML}</div><div class="bar-numbers-row">${numsHTML}</div><div class="bar-labels-row">${labelsHTML}</div><div class="bar-marker-wrapper"><div class="bar-marker" style="left: ${mp}%;"></div></div></div></div>`;
+        };
 
-        function getStatCard(label, val, unit, detail, isPositive) {
-            let detailClass = isPositive ? 'color:var(--success)' : 'color:var(--text-sec)';
-            if(unit === 'y' && label.includes("Metabolic")) {
-                const actualAge = parseInt(document.getElementById('age').value || 0);
-                if(parseInt(val) > actualAge) detailClass = 'color:var(--danger); font-weight:800;';
-                else detailClass = 'color:var(--success); font-weight:800;';
-            }
-            return `<div class="apple-stat-card"><div><div class="stat-header">${label}</div><div style="display:flex; align-items:baseline;"><span class="stat-value">${val}</span><span class="stat-unit">${unit}</span></div></div><div class="stat-detail-box" style="${detailClass}">${detail}</div></div>`;
-        }
-        function getPrintStatCard(label, val, unit, detail) {
-            return `<div class="print-stat-card"><span class="p-stat-label">${label}</span><span class="p-stat-val">${val} <small style="font-size:10pt; font-weight:normal;">${unit}</small></span><span class="p-stat-detail">${detail}</span></div>`;
-        }
+        window.getStatCard = (label, val, unit, detail, isPos) => {
+            let color = isPos ? 'var(--success)' : 'var(--text-sec)';
+            if(label.includes("Status")) color = val === 'Surplus' ? '#EA580C' : '#059669';
+            return `<div class="apple-stat-card"><div><div class="stat-header">${label}</div><div style="display:flex; align-items:baseline;"><span class="stat-value">${val}</span><span class="stat-unit">${unit}</span></div></div><div class="stat-detail-box" style="color:${color}">${detail}</div></div>`;
+        };
 
-        function getExerciseRx(muscleVal, vfatVal, bmiVal, gender, pref) {
+        window.getPrintStatCard = (label, val, unit, detail) => {
+            return `<div class="print-stat-card"><span class="p-stat-label">${label}</span><span class="p-stat-val">${val} <small style="font-size:10pt;">${unit}</small></span><span class="p-stat-detail">${detail}</span></div>`;
+        };
+
+        window.getExerciseRx = (muscleVal, vfatVal, bmiVal, gender, pref) => {
             const isLowMuscle = (gender === 'male' && muscleVal < 32.8) || (gender === 'female' && muscleVal < 25.8);
             const isHighVfat = vfatVal >= 10;
             const isSevereObese = bmiVal >= 35;
-            let rx = { title: "Standard CPG Protocol", ratio: "50", cardio: "150 mins/week", resist: "2x/week", desc: "Balanced approach for weight loss." };
+            let rx = { title: "Standard CPG Protocol", ratio: "50", cardio: "150 mins/week", resist: "2x/week", desc: "Balanced approach." };
 
-            if(isSevereObese) {
-                rx = { title: "Low Impact / Joint Safe", ratio: "80", cardio: "Swimming / Recumbent Bike", resist: "Seated Machine", desc: "Priority: Protect joints while burning calories." };
-            } else if(isLowMuscle) {
-                rx = { title: "Sarcopenic Obesity (Anabolic)", ratio: "30", cardio: "Light Walking", resist: "3-4x/week Hypertrophy", desc: "Priority: Rebuild muscle to fix BMR." };
-            } else if(isHighVfat) {
-                rx = { title: "Visceral Fat Targeting", ratio: "60", cardio: "Zone 2 (45min x 4)", resist: "Circuit Training", desc: "Priority: Lipid oxidation via duration." };
-            } else if(pref === 'hypertrophy') {
-                rx = { title: "BMR Boost (Hypertrophy)", ratio: "10", cardio: "Warm-up only", resist: "Split Routine (4x/week)", desc: "Focus: Increase lean mass to raise RMR." };
-            }
+            if(isSevereObese) { rx = { title: "Low Impact", ratio: "80", cardio: "Swimming / Bike", resist: "Seated", desc: "Joint protection." }; }
+            else if(isLowMuscle) { rx = { title: "Sarcopenic (Anabolic)", ratio: "30", cardio: "Walking", resist: "3-4x/week Hypertrophy", desc: "Rebuild muscle engine." }; }
+            else if(isHighVfat) { rx = { title: "Visceral Fat Focus", ratio: "60", cardio: "Zone 2 (45m x 4)", resist: "Circuit", desc: "Lipid oxidation." }; }
+            else if(pref === 'hypertrophy') { rx = { title: "BMR Boost", ratio: "10", cardio: "Warm-up", resist: "Split Routine (4x/wk)", desc: "Build lean mass." }; }
 
-            return `<div class="rx-box"><div class="rx-head"><span>${rx.title}</span><span>RX: EXERCISE</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${rx.ratio}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${100-parseInt(rx.ratio)}%; background:#AF52DE;">Resist</div></div><div style="font-size:10px; text-align:center;">${rx.ratio}% Cardio / ${100-parseInt(rx.ratio)}% Resistance</div></div><div class="rx-details"><h4>Prescription:</h4><ul><li><b>Cardio:</b> ${rx.cardio}</li><li><b>Resistance:</b> ${rx.resist}</li></ul><div class="rx-reason">${rx.desc}</div></div></div></div>`;
-        }
+            return `<div class="rx-box"><div class="rx-head"><span>${rx.title}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${rx.ratio}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${100-parseInt(rx.ratio)}%; background:#AF52DE;">Resist</div></div><div style="font-size:10px; text-align:center;">${rx.ratio}% Cardio / ${100-parseInt(rx.ratio)}% Resistance</div></div><div class="rx-details"><h4>Plan:</h4><ul><li><b>Cardio:</b> ${rx.cardio}</li><li><b>Resistance:</b> ${rx.resist}</li></ul><div class="rx-reason">${rx.desc}</div></div></div></div>`;
+        };
 
-        const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
-
-        function performAnalysis() {
-            // 1. INTAKE
-            let bfK = calMap[document.getElementById('bfType').value][document.getElementById('bfSize').value];
-            let luK = calMap[document.getElementById('luType').value][document.getElementById('luSize').value];
-            let dnK = calMap[document.getElementById('dnType').value][document.getElementById('dnSize').value];
-            let estIntake = bfK + luK + dnK + ((parseFloat(document.getElementById('snackFreq').value)||0)*200) + ((parseFloat(document.getElementById('drinkFreq').value)||0)*150);
+        // MAIN CALCULATION FUNCTION
+        window.performAnalysis = () => {
+            // 1. INTAKE (Safe)
+            const bfK = calMap[document.getElementById('bfType').value][document.getElementById('bfSize').value];
+            const luK = calMap[document.getElementById('luType').value][document.getElementById('luSize').value];
+            const dnK = calMap[document.getElementById('dnType').value][document.getElementById('dnSize').value];
+            const intake = bfK + luK + dnK + ((parseFloat(document.getElementById('snackFreq').value)||0)*200) + ((parseFloat(document.getElementById('drinkFreq').value)||0)*150);
             
-            // 2. TDEE
+            // 2. METABOLIC (Safe)
             const age = parseFloat(els.age.value) || 30;
-            const weight = parseFloat(els.weight.value) || 0;
-            const height = parseFloat(els.height.value) || 0;
+            const w = parseFloat(els.weight.value) || 0;
+            const h = parseFloat(els.height.value) || 0;
             const act = parseFloat(document.getElementById('activity').value) || 1.2;
             let bmr = 0, tdee = 0;
-            if(weight > 0 && height > 0) {
-                bmr = (10*weight) + (6.25*height) - (5*age) + (els.gender.value==='male'?5:-161);
-                tdee = bmr * act;
-            }
-            let bal = Math.round(estIntake - tdee);
             
-            // UI Updates E
-            document.getElementById('screenIntake').innerText = Math.round(estIntake);
+            if(w > 0 && h > 0) {
+                bmr = (10 * w) + (6.25 * h) - (5 * age) + (els.gender.value === 'male' ? 5 : -161);
+                tdee = bmr * act;
+                els.bmi.value = (w / ((h/100)*(h/100))).toFixed(1);
+            }
+            
+            const bal = Math.round(intake - tdee);
+            
+            // 3. UI UPDATE E (Metabolic)
+            document.getElementById('screenIntake').innerText = Math.round(intake);
             document.getElementById('screenBMR').innerText = Math.round(bmr);
             document.getElementById('screenTDEE').innerText = Math.round(tdee);
-            document.getElementById('screenBalance').innerText = (bal>0?"+":"")+bal;
-            document.getElementById('balanceCard').className = "meta-card " + (tdee>0 ? (bal>200?"surplus":(bal<-200?"deficit":"")) : "");
-            
-            // Print Updates
-            document.getElementById('ppIntake').innerText = Math.round(estIntake) + " kcal";
-            document.getElementById('ppBMR').innerText = Math.round(bmr) + " kcal";
-            document.getElementById('ppTDEE').innerText = Math.round(tdee) + " kcal";
-            document.getElementById('ppBalance').innerText = (bal>0?"+":"")+bal + " kcal";
+            document.getElementById('screenBalance').innerText = (bal>0?"+":"") + bal;
+            const bCard = document.getElementById('balanceCard');
+            if(tdee > 0) bCard.className = "meta-card " + (bal>200?"surplus" : (bal<-200?"deficit":""));
+            else bCard.className = "meta-card";
+
+            // Print Sync
+            document.getElementById('ppIntake').innerText = Math.round(intake);
+            document.getElementById('ppTDEE').innerText = Math.round(tdee);
+            document.getElementById('ppBalance').innerText = (bal>0?"+":"") + bal;
             document.getElementById('ppName').innerText = els.pName.value;
-            document.getElementById('ppDemo').innerText = `${age} / ${els.gender.value}`;
-            document.getElementById('ppHeight').innerText = height; document.getElementById('ppWeight').innerText = weight; document.getElementById('ppBMI').innerText = els.bmi.value;
+            document.getElementById('ppDemo').innerText = `${age}/${els.gender.value}`;
+            document.getElementById('ppBio').innerText = `${h}cm / ${w}kg`;
+            document.getElementById('ppBMI').innerText = els.bmi.value;
+            document.getElementById('pDate').innerText = new Date().toLocaleDateString();
 
-            // 3. VISUALS (F) - Always Run
-            const cU="#F59E0B", cN="#10B981", cPre="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
-            let bmi = parseFloat(els.bmi.value) || 0;
-            let vfat = parseFloat(els.vfat.value) || 0;
-            let muscle = parseFloat(els.muscle.value) || 0;
+            // 4. GENERATE SECTION F (Visuals)
+            const cU="#F59E0B", cN="#10B981", cP="#FBBF24", cO1="#F97316", cO2="#EF4444", cO3="#991B1B";
+            const bmiV = parseFloat(els.bmi.value) || 0;
+            const vfat = parseFloat(els.vfat.value) || 0;
+            const mus = parseFloat(els.muscle.value) || 0;
             
-            let html = "";
-            html += getDetailedBar("BMI", bmi, "", 45, [{limit:18.5,color:cU,label:"U"},{limit:23,color:cN,label:"N"},{limit:27.5,color:cPre,label:"Pre"},{limit:32.5,color:cO1,label:"O1"},{limit:37.5,color:cO2,label:"O2"}]);
-            html += getDetailedBar("Visceral Fat", vfat, "", 20, [{limit:9,color:cN,label:"N"},{limit:14,color:cO1,label:"H"},{limit:20,color:cO2,label:"VH"}]);
-            html += getDetailedBar("Muscle Mass", muscle, "%", 60, [{limit:28,color:cO2,label:"Low"},{limit:33,color:cN,label:"N"},{limit:60,color:cN,label:"H"}]);
-            document.getElementById('screenAnalysis').innerHTML = html;
-            document.getElementById('printVisualsContainer').innerHTML = html;
+            let vHTML = "";
+            vHTML += getDetailedBar("BMI", bmiV, "", 45, [{limit:18.5,color:cU,label:"U"},{limit:23,color:cN,label:"N"},{limit:27.5,color:cP,label:"Pre"},{limit:32.5,color:cO1,label:"O1"},{limit:37.5,color:cO2,label:"O2"}]);
+            vHTML += getDetailedBar("Visceral Fat", vfat, "", 20, [{limit:9,color:cN,label:"N"},{limit:14,color:cO1,label:"H"},{limit:20,color:cO2,label:"VH"}]);
+            vHTML += getDetailedBar("Muscle Mass", mus, "%", 60, [{limit:28,color:cO2,label:"Low"},{limit:33,color:cN,label:"N"},{limit:60,color:cN,label:"H"}]);
+            
+            document.getElementById('screenAnalysis').innerHTML = vHTML;
+            document.getElementById('printVisualsContainer').innerHTML = vHTML;
 
-            // 4. STRATEGY (G) - Always Run
-            const rxHTML = getExerciseRx(muscle, vfat, bmi, els.gender.value, document.getElementById('exPref').value);
+            // 5. GENERATE SECTION G (Strategy)
+            // Rx
+            const rxHTML = getExerciseRx(mus, vfat, bmiV, els.gender.value, document.getElementById('exPref').value);
             document.getElementById('screenRxCard').innerHTML = rxHTML;
             document.getElementById('printRxCard').innerHTML = rxHTML;
 
-            let targetCal = Math.max(1200, Math.round(tdee - 500));
-            let milestonesHTML = `<table class="milestone-table"><tr><th>Milestone</th><th>Target</th><th>Timeline</th></tr><tr><td>5% Loss</td><td class="target-hl">${(weight*0.95).toFixed(1)} kg</td><td>3 Months</td></tr><tr><td>10% Loss</td><td class="target-hl">${(weight*0.9).toFixed(1)} kg</td><td>6 Months</td></tr></table>`;
-            document.getElementById('screenMilestones').innerHTML = milestonesHTML;
-            document.getElementById('printMilestones').innerHTML = milestonesHTML;
-
-            let bioAge = age + (vfat>10?5:0) + (muscle<28?3:0);
-            let statHTML = `
-                ${getStatCard("Target Weight", (weight*0.9).toFixed(1), "kg", "10% Loss", true)}
-                ${getStatCard("Rx Calories", targetCal, "kcal", "Daily Limit", true)}
-                ${getStatCard("Metabolic Age", bioAge, "y", "Estimated", false)}
+            // Stats
+            const targetW = (w * 0.9).toFixed(1);
+            const targetCal = Math.max(1200, Math.round(tdee - 500));
+            const bioAge = age + (vfat>10?5:0) + (mus<28?3:0);
+            
+            const sHTML = `
+                ${getStatCard("Target Wt", targetW, "kg", "10% Loss", true)}
+                ${getStatCard("Rx Cal", targetCal, "kcal", "Deficit", true)}
+                ${getStatCard("Meta Age", bioAge, "y", "Est.", false)}
                 ${getStatCard("Status", bal>0?"Surplus":"Deficit", "", "Caloric", false)}
             `;
-            document.getElementById('screenStatGrid').innerHTML = statHTML;
-            document.getElementById('printStatGrid').innerHTML = statHTML;
+            const pSHTML = `
+                ${getPrintStatCard("Target Wt", targetW, "kg", "10% Loss")}
+                ${getPrintStatCard("Rx Cal", targetCal, "kcal", "Deficit")}
+                ${getPrintStatCard("Meta Age", bioAge, "y", "Est.")}
+                ${getPrintStatCard("Status", bal>0?"Surplus":"Deficit", "", "Caloric")}
+            `;
+            document.getElementById('screenStatGrid').innerHTML = sHTML;
+            document.getElementById('printStatGrid').innerHTML = pSHTML;
 
-            let dietText = document.getElementById('dietPref').value === 'mrp' ? "Replace 2 meals with LCD formula." : `Limit to ${targetCal} kcal/day.`;
-            let recs = `<ul><li>Target <b>${(weight*0.9).toFixed(1)} kg</b>.</li><li>${dietText}</li></ul>`;
-            if(document.getElementById('habit_carbs').checked) recs += "<li>Reduce rice intake by 50%.</li>";
-            document.getElementById('screenRecommendations').innerHTML = recs;
-            document.getElementById('ppRecommendations').innerHTML = recs;
+            // Milestones
+            if(w > 0) {
+                const mHTML = `<table class="milestone-table"><tr><th>Milestone</th><th>Target</th><th>Timeline</th></tr><tr><td>5% Loss</td><td class="target-hl">${(w*0.95).toFixed(1)}kg</td><td>3 Months</td></tr><tr><td>10% Loss</td><td class="target-hl">${(w*0.9).toFixed(1)}kg</td><td>6 Months</td></tr></table>`;
+                document.getElementById('screenMilestones').innerHTML = mHTML;
+                document.getElementById('printMilestones').innerHTML = mHTML;
+            }
+
+            // Recs
+            let dietTxt = document.getElementById('dietPref').value === 'mrp' ? "Replace 2 meals with LCD." : `Limit to ${targetCal} kcal/day.`;
+            let habits = "";
+            if(document.getElementById('habit_carbs').checked) habits += "<li>Reduce rice/bread by 50%.</li>";
+            if(document.getElementById('habit_night').checked) habits += "<li>Stop eating 3h before bed.</li>";
+            const rHTML = `<ul><li>Target <b>10% loss</b>.</li><li>${dietTxt}</li>${habits}</ul>`;
+            document.getElementById('screenRecommendations').innerHTML = rHTML;
+            document.getElementById('ppRecommendations').innerHTML = rHTML;
         }
 
         // LISTENERS
@@ -548,10 +466,20 @@
             performAnalysis();
             addDoc(collection(db, 'shared_records'), { pId: els.pId.value, weight: els.weight.value, timestamp: serverTimestamp() });
         });
-        document.querySelectorAll('input, select').forEach(el => el.addEventListener('change', performAnalysis));
-        ['snackFreq','drinkFreq','mealFreq','weight','height','age'].forEach(id => document.getElementById(id).addEventListener('input', performAnalysis));
 
-        // AI & AUTH
+        // Global Listeners for ALL inputs
+        document.querySelectorAll('input, select').forEach(el => {
+            if(el.id !== 'docRemarks' && el.id !== 'userKeyInput') el.addEventListener('change', performAnalysis);
+        });
+        ['snackFreq','drinkFreq','weight','height','age','vfat','muscle','bmi'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('input', performAnalysis);
+        });
+
+        // AI & KEY
+        window.saveKey = () => { localStorage.setItem('geminiKey', document.getElementById('userKeyInput').value); document.getElementById('keyModal').classList.add('hidden'); };
+        window.onload = () => { if(!localStorage.getItem('geminiKey')) document.getElementById('keyModal').classList.remove('hidden'); performAnalysis(); };
+        
         window.generateAIReport = async () => {
             const k = localStorage.getItem('geminiKey');
             if(!k) { document.getElementById('keyModal').classList.remove('hidden'); return; }
@@ -563,6 +491,7 @@
             } catch(e) { alert("AI Error"); }
             document.getElementById('aiBtn').innerText = "✨ AI Draft";
         }
+        
         document.getElementById('printBtn').addEventListener('click', () => { document.getElementById('ppRemarks').innerText = els.docRemarks.value; window.print(); });
         document.getElementById('loginBtn').addEventListener('click', () => signInWithPopup(auth, new GoogleAuthProvider()));
     </script>
