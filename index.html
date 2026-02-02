@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite</title>
+    <title>AraShift Medical Suite (v4.0)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- SYSTEM VARIABLES --- */
@@ -98,18 +98,18 @@
         .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
         .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
 
-        /* SECTION G: STRATEGY (Refined Layout) */
+        /* SECTION G: STRATEGY */
         .strategy-toolbar { display: flex; gap: 10px; margin-bottom: 15px; }
         .pref-select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; background: white; }
         
         .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .apple-stat-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #E5E5EB; }
+        .apple-stat-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #E5E5EB; display: flex; flex-direction: column; justify-content: space-between;}
         .stat-header { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 8px; }
         .stat-value { font-size: 26px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
         .stat-unit { font-size: 14px; font-weight: 600; color: #86868B; margin-left: 2px; }
         .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 12px; font-weight: 600; color: var(--success); }
 
-        .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } /* New split layout for Milestones/Recs */
+        .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } 
 
         .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; height: fit-content; }
         .milestone-table th { text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; }
@@ -144,23 +144,24 @@
         .key-box { background:white; padding:30px; border-radius:24px; width:90%; max-width:420px; text-align:center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         .key-input { width:100%; padding:12px; border:1px solid #D2D2D7; border-radius:12px; margin-bottom:15px; font-size:14px; text-align:center; }
 
-        /* PRINT */
+        /* PRINT DOM (OPTIMIZED) */
         #clinical-report { display: none; }
         @media print {
-            body { background: white; margin: 0; padding: 0; }
+            body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .container, .action-bar, #login-screen, #keyModal { display: none !important; }
             #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
             .patient-strip { display: flex; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 12px; margin-bottom: 15px; justify-content: space-between; }
             .pt-field { display: flex; flex-direction: column; } .pt-label { font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
             .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 20px; }
-            .metabolic-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; break-inside: avoid; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
             .visual-row { break-inside: avoid; margin-bottom: 10px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 15px; break-inside: avoid; } .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; }
             .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; break-inside: avoid; }
+            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
             .page-break { page-break-before: always; }
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
             .report-footer { position: fixed; bottom: 5mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
@@ -307,20 +308,28 @@
     </div>
 
     <div id="clinical-report">
-        <div class="p-header"><div class="p-title"><h1>AraShift Report</h1><p>Clinical Assessment</p></div><div style="text-align:right;"><span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
-        <div class="p-strip">
-            <span>Name: <b id="pdName"></b></span><span>Age/Sex: <b id="pdDemo"></b></span><span>Ht/Wt: <b id="pdBio"></b></span><span>BMI: <b id="pdBMI"></b></span>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span></div></div>
+        <div class="patient-strip">
+            <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
+            <div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="pdDemo"></span></div>
+            <div class="pt-field"><span class="pt-label">Ht/Wt</span><span class="pt-val" id="pdBio"></span></div>
+            <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="pdBMI"></span></div>
         </div>
         <div class="section-head" style="margin-top:0;">D. Analysis</div>
-        <div class="p-meta-grid">
-            <div>Intake: <b id="pdIntake"></b></div><div>TDEE: <b id="pdTDEE"></b></div><div>Balance: <b id="pdBal"></b></div>
+        <div class="metabolic-row">
+            <div class="print-stat-card"><span class="p-stat-label">Intake</span><span class="p-stat-val" id="pdIntake"></span></div>
+            <div class="print-stat-card"><span class="p-stat-label">BMR</span><span class="p-stat-val" id="pdBMR"></span></div>
+            <div class="print-stat-card"><span class="p-stat-label">TDEE</span><span class="p-stat-val" id="pdTDEE"></span></div>
+            <div class="print-stat-card"><span class="p-stat-label">Balance</span><span class="p-stat-val" id="pdBal"></span></div>
         </div>
         <div id="pdVisuals"></div>
         <div class="section-head">E. Strategy</div>
         <div class="print-stat-grid" id="pdStats"></div>
         <div id="pdRx"></div>
-        <div id="pdMile"></div>
-        <div class="rec-box"><div id="pdRecs"></div></div>
+        <div class="clinical-plan-grid">
+            <div id="pdMile"></div>
+            <div class="rec-box"><div id="pdRecs"></div></div>
+        </div>
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
@@ -334,8 +343,47 @@
         const els = {}; ids.forEach(id => els[id] = document.getElementById(id));
         const checks = ['risk_t2dm','risk_htn','risk_dys','risk_osa','risk_mafld','risk_meta','habit_carbs','habit_fried','habit_night','habit_fiber'];
 
-        // CORE FUNCTION
-        function runCalc() {
+        // HELPER FUNCTIONS
+        window.getDetailedBar = (label, value, unit, totalMax, segments) => {
+            let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
+            segments.forEach(seg => {
+                let w = ((seg.limit - prevLimit) / totalMax) * 100;
+                barsHTML += `<div class="bar-seg" style="width:${w}%; background:${seg.color};"></div>`;
+                let cp = (seg.limit / totalMax) * 100;
+                numsHTML += `<div class="bar-number-item" style="left:${cp}%;">${seg.limit}</div>`;
+                labelsHTML += `<div class="bar-label-item" style="width:${w}%;">${seg.label}</div>`;
+                prevLimit = seg.limit;
+            });
+            let mp = (value / totalMax) * 100; if(mp > 100) mp = 100; if(mp < 0) mp = 0;
+            return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span style="color:#007AFF;">${value} ${unit}</span></div><div style="position:relative;"><div class="bar-complex">${barsHTML}</div><div class="bar-numbers-row">${numsHTML}</div><div class="bar-labels-row">${labelsHTML}</div><div class="bar-marker-wrapper"><div class="bar-marker" style="left: ${mp}%;"></div></div></div></div>`;
+        };
+
+        window.getStatCard = (label, val, unit, detail, isPos) => {
+            let color = isPos ? 'var(--success)' : 'var(--text-sec)';
+            if(label.includes("Status")) color = val === 'Surplus' ? '#EA580C' : '#059669';
+            return `<div class="apple-stat-card"><div><div class="stat-header">${label}</div><div style="display:flex; align-items:baseline;"><span class="stat-value">${val}</span><span class="stat-unit">${unit}</span></div></div><div class="stat-detail-box" style="color:${color}">${detail}</div></div>`;
+        };
+
+        window.getPrintStatCard = (label, val, unit, detail) => {
+            return `<div class="print-stat-card"><span class="p-stat-label">${label}</span><span class="p-stat-val">${val} <small style="font-size:10pt;">${unit}</small></span><span class="p-stat-detail">${detail}</span></div>`;
+        };
+
+        window.getExerciseRx = (muscleVal, vfatVal, bmiVal, gender, pref) => {
+            const isLowMuscle = (gender === 'male' && muscleVal < 32.8) || (gender === 'female' && muscleVal < 25.8);
+            const isHighVfat = vfatVal >= 10;
+            const isSevereObese = bmiVal >= 35;
+            let rx = { title: "Standard CPG Protocol", ratio: "50", cardio: "150 mins/week", resist: "2x/week", desc: "Balanced approach." };
+
+            if(isSevereObese) { rx = { title: "Low Impact", ratio: "80", cardio: "Swimming / Bike", resist: "Seated", desc: "Joint protection." }; }
+            else if(isLowMuscle) { rx = { title: "Sarcopenic (Anabolic)", ratio: "30", cardio: "Walking", resist: "3-4x/week Hypertrophy", desc: "Rebuild muscle engine." }; }
+            else if(isHighVfat) { rx = { title: "Visceral Fat Focus", ratio: "60", cardio: "Zone 2 (45m x 4)", resist: "Circuit", desc: "Lipid oxidation." }; }
+            else if(pref === 'hypertrophy') { rx = { title: "BMR Boost", ratio: "10", cardio: "Warm-up", resist: "Split Routine (4x/wk)", desc: "Build lean mass." }; }
+
+            return `<div class="rx-box"><div class="rx-head"><span>${rx.title}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${rx.ratio}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${100-parseInt(rx.ratio)}%; background:#AF52DE;">Resist</div></div><div style="font-size:10px; text-align:center;">${rx.ratio}% Cardio / ${100-parseInt(rx.ratio)}% Resistance</div></div><div class="rx-details"><h4>Plan:</h4><ul><li><b>Cardio:</b> ${rx.cardio}</li><li><b>Resistance:</b> ${rx.resist}</li></ul><div class="rx-reason">${rx.desc}</div></div></div></div>`;
+        };
+
+        // MAIN CALCULATION FUNCTION
+        window.runCalc = () => {
             document.getElementById('resultCard').classList.remove('hidden');
 
             // 1. INTAKE
@@ -361,6 +409,7 @@
 
             // Print Sync
             document.getElementById('pdIntake').innerText = Math.round(intake) + " kcal";
+            document.getElementById('pdBMR').innerText = Math.round(bmr) + " kcal";
             document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
             document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
             document.getElementById('pdName').innerText = els.pName.value;
@@ -374,25 +423,50 @@
             document.getElementById('sAnalysis').innerHTML = vHTML;
             document.getElementById('pdVisuals').innerHTML = vHTML;
 
-            // 5. STRATEGY (CPG Logic)
-            let minLoss = 5, maxLoss = 10;
+            // 5. STRATEGY (CPG Logic STRICT)
+            let minLoss = 5, maxLoss = 10; 
             let recList = "";
-            let reasons = [];
+            let riskFound = false;
 
-            // CPG RISK MAPPING
-            if(document.getElementById('risk_t2dm').checked) { minLoss=Math.max(minLoss,5); maxLoss=Math.max(maxLoss,15); recList+="<li><b>T2DM:</b> Target 5-15% loss. <br>Goal: &darr; HbA1c, remission.</li>"; reasons.push("Diabetes"); }
-            if(document.getElementById('risk_htn').checked) { minLoss=Math.max(minLoss,5); maxLoss=Math.max(maxLoss,15); recList+="<li><b>Hypertension:</b> Target 5-15% loss. <br>Goal: &darr; BP & meds.</li>"; reasons.push("HTN"); }
-            if(document.getElementById('risk_dys').checked) { minLoss=Math.max(minLoss,5); maxLoss=Math.max(maxLoss,15); recList+="<li><b>Dyslipidemia:</b> Target 5-15% loss. <br>Goal: &darr; TG/LDL, &uarr; HDL.</li>"; }
-            if(document.getElementById('risk_osa').checked) { minLoss=Math.max(minLoss,7); maxLoss=Math.max(maxLoss,11); recList+="<li><b>Sleep Apnea (OSA):</b> Target 7-11% loss. <br>Goal: &darr; Apnoea Index (AHI).</li>"; }
-            if(document.getElementById('risk_mafld').checked) { minLoss=Math.max(minLoss,10); maxLoss=Math.max(maxLoss,40); recList+="<li><b>Fatty Liver (MAFLD):</b> Target 10-40% loss. <br>Goal: Reduce liver fat/inflammation.</li>"; }
-            if(document.getElementById('risk_meta').checked) { minLoss=Math.max(minLoss,10); recList+="<li><b>Metabolic Syn:</b> Target 10% loss. <br>Goal: Prevent T2DM.</li>"; }
+            // CPG TABLE LOGIC
+            // We prioritize the highest necessary loss range for milestones
+            if(document.getElementById('risk_mafld').checked) {
+                minLoss = 10; maxLoss = 40; // Overwrite max if higher
+                recList += "<li><b>Fatty Liver (MAFLD):</b> Target 10-40% loss. <br>Goal: &darr; Liver fat & inflammation.</li>";
+                riskFound = true;
+            }
+            if(document.getElementById('risk_osa').checked) {
+                if(maxLoss < 11) maxLoss = 11;
+                minLoss = Math.max(minLoss, 7);
+                recList += "<li><b>Sleep Apnoea (OSA):</b> Target 7-11% loss. <br>Goal: &darr; Apnoea/Hypopnoea Index.</li>";
+                riskFound = true;
+            }
+            if(document.getElementById('risk_t2dm').checked) {
+                if(maxLoss < 15) maxLoss = 15;
+                recList += "<li><b>T2DM:</b> Target 5-15% loss. <br>Goal: &darr; HbA1c, remission.</li>";
+                riskFound = true;
+            }
+            if(document.getElementById('risk_htn').checked) {
+                if(maxLoss < 15) maxLoss = 15;
+                recList += "<li><b>Hypertension:</b> Target 5-15% loss. <br>Goal: &darr; BP & meds.</li>";
+                riskFound = true;
+            }
+            if(document.getElementById('risk_dys').checked) {
+                if(maxLoss < 15) maxLoss = 15;
+                recList += "<li><b>Dyslipidaemia:</b> Target 5-15% loss. <br>Goal: &darr; TG/LDL, &uarr; HDL.</li>";
+                riskFound = true;
+            }
+            if(document.getElementById('risk_meta').checked) {
+                minLoss = Math.max(minLoss, 10);
+                recList += "<li><b>Metabolic Syn:</b> Target 10% loss. <br>Goal: Prevent T2DM.</li>";
+                riskFound = true;
+            }
 
             // HABIT MAPPING
-            if(document.getElementById('habit_carbs').checked) recList += "<li><b>Diet:</b> Reduce rice/carbs by 50% (Low GI).</li>";
+            if(document.getElementById('habit_carbs').checked) recList += "<li><b>High Carb:</b> Reduce rice/carbs by 50% (Low GI).</li>";
             if(document.getElementById('habit_night').checked) recList += "<li><b>Timing:</b> Stop eating 3h before sleep.</li>";
             if(document.getElementById('habit_fried').checked) recList += "<li><b>Cooking:</b> Avoid deep fry. Grill/Steam/Soup.</li>";
-            if(document.getElementById('habit_fiber').checked) recList += "<li><b>Plate:</b> Fill half plate with vegetables.</li>";
-
+            
             // RX & STATS
             let rxHTML = genRx(parseFloat(els.muscle.value)||0, parseFloat(els.vfat.value)||0, parseFloat(els.bmi.value)||0, els.gender.value, els.exPref.value);
             document.getElementById('sRxCard').innerHTML = rxHTML;
@@ -410,31 +484,30 @@
             document.getElementById('sStatGrid').innerHTML = sHTML;
             document.getElementById('pdStats').innerHTML = sHTML.replace(/apple-stat-card/g, 'print-stat-card');
 
-            // Milestones
-            let mHTML = w > 0 ? `<table class="milestone-table"><tr><th>Goal</th><th>Weight</th><th>Time</th></tr><tr><td>5%</td><td>${(w*0.95).toFixed(1)}kg</td><td>3 Mo</td></tr><tr><td>10%</td><td>${(w*0.9).toFixed(1)}kg</td><td>6 Mo</td></tr></table>` : "";
+            // NEW MILESTONE LOGIC (Dynamic Expansion)
+            let mHTML = "";
+            if(w > 0) {
+                mHTML += `<table class="milestone-table"><tr><th>Goal</th><th>Weight</th><th>Timeline</th></tr>`;
+                // Always show 5% and 10%
+                mHTML += `<tr><td>5%</td><td class="target-hl">${(w*0.95).toFixed(1)}kg</td><td>3 Months</td></tr>`;
+                if(maxLoss >= 10) mHTML += `<tr><td>10%</td><td class="target-hl">${(w*0.90).toFixed(1)}kg</td><td>6 Months</td></tr>`;
+                
+                // CPG Extended Targets
+                if(maxLoss >= 15) mHTML += `<tr><td>15%</td><td class="target-hl">${(w*0.85).toFixed(1)}kg</td><td>9 Months</td></tr>`;
+                if(maxLoss >= 20) mHTML += `<tr><td>20%</td><td class="target-hl">${(w*0.80).toFixed(1)}kg</td><td>12 Months</td></tr>`;
+                if(maxLoss >= 40) mHTML += `<tr><td>40%</td><td class="target-hl">${(w*0.60).toFixed(1)}kg</td><td>Long Term</td></tr>`;
+                mHTML += `</table>`;
+            }
             document.getElementById('sMilestones').innerHTML = mHTML;
             document.getElementById('pdMile').innerHTML = mHTML;
 
             // Final Recommendations
-            let finalRecs = `<ul>${recList}</ul>`;
-            if(recList === "") finalRecs = `<ul><li>Target 5-10% weight loss for general health.</li><li>Calorie deficit of 500kcal/day.</li></ul>`;
+            if(!riskFound && recList === "") recList = "<li>Target 5-10% weight loss for general health.</li><li>Calorie deficit of 500kcal/day.</li>";
+            let dietTxt = els.dietPref.value === 'mrp' ? "Replace 2 meals/day with LCD." : `Limit to ${targetCal} kcal/day.`;
+            let rHTML = `<ul><li>${dietTxt}</li>${recList}</ul>`;
             
-            document.getElementById('sRecs').innerHTML = finalRecs;
-            document.getElementById('pdRecs').innerHTML = finalRecs;
-        }
-
-        // HELPERS
-        function getBar(l, v, m) {
-            let p = (v/m)*100; if(p>100)p=100;
-            return `<div class="visual-row"><div class="visual-head"><span>${l}</span><span>${v}</span></div><div class="bar-wrap"><div class="bar-seg" style="width:25%;background:#10B981"></div><div class="bar-seg" style="width:25%;background:#FBBF24"></div><div class="bar-seg" style="width:25%;background:#F97316"></div><div class="bar-seg" style="width:25%;background:#EF4444"></div><div class="bar-pointer" style="left:${p}%"></div></div></div>`;
-        }
-
-        function genRx(m, v, b, g, p) {
-            let t="Standard", r=50, c="150m Mod", s="2x Full", d="Balanced";
-            if(b>35) { t="Low Impact"; r=80; c="Swim/Bike"; s="Seated"; d="Joint Safe"; }
-            else if((g=='male'&&m<32)||(g=='female'&&m<25)) { t="Anabolic"; r=30; c="Walk"; s="4x Hypertrophy"; d="Build Muscle"; }
-            else if(p=='hypertrophy') { t="BMR Boost"; r=10; c="Warmup"; s="4x Split"; d="Max BMR"; }
-            return `<div class="rx-box"><div class="rx-head"><span>${t}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${r}%;background:#34C759">C</div><div class="rx-bar" style="width:${100-r}%;background:#AF52DE">R</div></div></div><div class="rx-text"><ul><li><b>Cardio:</b> ${c}</li><li><b>Resist:</b> ${s}</li></ul><div class="rx-reason">${d}</div></div></div></div>`;
+            document.getElementById('sRecs').innerHTML = rHTML;
+            document.getElementById('pdRecs').innerHTML = rHTML;
         }
 
         // INIT & LISTENERS
