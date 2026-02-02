@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (v4.0)</title>
+    <title>AraShift Medical Suite (Final)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* --- SYSTEM VARIABLES --- */
@@ -11,7 +11,6 @@
             --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
-            /* Clinical Colors */
             --c-under: #F59E0B; --c-norm: #10B981; --c-pre: #FBBF24;
             --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
         }
@@ -72,26 +71,9 @@
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; transition: left 0.3s ease; }
 
-        /* SECTION E: METABOLIC DASHBOARD (Horizontal Grid) */
-        .metabolic-screen-row { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* FORCED HORIZONTAL */
-            gap: 15px; 
-            margin-top: 10px; 
-            margin-bottom: 25px; 
-        }
-        .meta-card { 
-            background: #F8F9FA; 
-            border: 1px solid #E5E5EB; 
-            border-radius: 14px; 
-            padding: 15px; 
-            text-align: center; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100%;
-            box-sizing: border-box;
-        }
+        /* SECTION E: METABOLIC DASHBOARD (Horizontal) */
+        .metabolic-screen-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 10px; margin-bottom: 25px; }
+        .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 14px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; }
         .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 5px; }
         .meta-val { font-size: 24px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
         .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; margin-top: 5px; }
@@ -191,7 +173,7 @@
                     <h3>A. Patient Profile</h3>
                     <div class="input-grid-profile">
                         <div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div>
-                        <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Full Name"></div>
+                        <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div>
                         <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
                         <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
                         <div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary (1.2)</option><option value="1.375">Light (1.375)</option><option value="1.55">Mod (1.55)</option><option value="1.725">Active (1.7)</option></select></div>
@@ -223,7 +205,7 @@
                         <div class="form-group"><label>Sugary Drinks (150kc)</label><input type="number" id="drinkFreq" value="0"></div>
                     </div>
                     <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;">
-                        <label style="margin-bottom:8px;">Dietary Pattern Flags</label>
+                        <label style="margin-bottom:8px;">Dietary Flags</label>
                         <div class="ios-list">
                             <div class="ios-item"><span class="ios-label">High Carb / Rice</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div>
                             <div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div>
@@ -308,12 +290,9 @@
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span></div></div>
-        <div class="patient-strip">
-            <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
-            <div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="pdDemo"></span></div>
-            <div class="pt-field"><span class="pt-label">Ht/Wt</span><span class="pt-val" id="pdBio"></span></div>
-            <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="pdBMI"></span></div>
+        <div class="p-header"><div class="p-title"><h1>AraShift Report</h1><p>Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="p-strip">
+            <span>Name: <b id="pdName"></b></span><span>Age/Sex: <b id="pdDemo"></b></span><span>Ht/Wt: <b id="pdBio"></b></span><span>BMI: <b id="pdBMI"></b></span>
         </div>
         <div class="section-head" style="margin-top:0;">D. Analysis</div>
         <div class="metabolic-row">
@@ -419,7 +398,10 @@
             document.getElementById('pdDate').innerText = new Date().toLocaleDateString();
 
             // 4. VISUALS
-            let vHTML = getBar("BMI", parseFloat(els.bmi.value)||0, 45) + getBar("Visceral Fat", parseFloat(els.vfat.value)||0, 20) + getBar("Muscle", parseFloat(els.muscle.value)||0, 60);
+            let vHTML = getDetailedBar("BMI", parseFloat(els.bmi.value)||0, 45, [{limit:18.5,color:"#F59E0B",label:"U"},{limit:23,color:"#10B981",label:"N"},{limit:27.5,color:"#FBBF24",label:"Pre"},{limit:32.5,color:"#F97316",label:"O1"},{limit:37.5,color:"#EF4444",label:"O2"}]);
+            vHTML += getDetailedBar("Visceral Fat", parseFloat(els.vfat.value)||0, 20, [{limit:9,color:"#10B981",label:"N"},{limit:14,color:"#F97316",label:"H"},{limit:20,color:"#EF4444",label:"VH"}]);
+            vHTML += getDetailedBar("Muscle Mass", parseFloat(els.muscle.value)||0, 60, [{limit:28,color:"#EF4444",label:"Low"},{limit:33,color:"#10B981",label:"N"},{limit:60,color:"#10B981",label:"H"}]);
+            
             document.getElementById('sAnalysis').innerHTML = vHTML;
             document.getElementById('pdVisuals').innerHTML = vHTML;
 
@@ -429,30 +411,28 @@
             let riskFound = false;
 
             // CPG TABLE LOGIC
-            // We prioritize the highest necessary loss range for milestones
             if(document.getElementById('risk_mafld').checked) {
-                minLoss = 10; maxLoss = 40; // Overwrite max if higher
+                minLoss = 10; maxLoss = 40; 
                 recList += "<li><b>Fatty Liver (MAFLD):</b> Target 10-40% loss. <br>Goal: &darr; Liver fat & inflammation.</li>";
                 riskFound = true;
             }
             if(document.getElementById('risk_osa').checked) {
-                if(maxLoss < 11) maxLoss = 11;
-                minLoss = Math.max(minLoss, 7);
+                if(maxLoss < 11) maxLoss = 11; minLoss = Math.max(minLoss, 7);
                 recList += "<li><b>Sleep Apnoea (OSA):</b> Target 7-11% loss. <br>Goal: &darr; Apnoea/Hypopnoea Index.</li>";
                 riskFound = true;
             }
             if(document.getElementById('risk_t2dm').checked) {
-                if(maxLoss < 15) maxLoss = 15;
+                if(maxLoss < 15) maxLoss = 15; minLoss = Math.max(minLoss, 5);
                 recList += "<li><b>T2DM:</b> Target 5-15% loss. <br>Goal: &darr; HbA1c, remission.</li>";
                 riskFound = true;
             }
             if(document.getElementById('risk_htn').checked) {
-                if(maxLoss < 15) maxLoss = 15;
+                if(maxLoss < 15) maxLoss = 15; minLoss = Math.max(minLoss, 5);
                 recList += "<li><b>Hypertension:</b> Target 5-15% loss. <br>Goal: &darr; BP & meds.</li>";
                 riskFound = true;
             }
             if(document.getElementById('risk_dys').checked) {
-                if(maxLoss < 15) maxLoss = 15;
+                if(maxLoss < 15) maxLoss = 15; minLoss = Math.max(minLoss, 5);
                 recList += "<li><b>Dyslipidaemia:</b> Target 5-15% loss. <br>Goal: &darr; TG/LDL, &uarr; HDL.</li>";
                 riskFound = true;
             }
@@ -468,7 +448,7 @@
             if(document.getElementById('habit_fried').checked) recList += "<li><b>Cooking:</b> Avoid deep fry. Grill/Steam/Soup.</li>";
             
             // RX & STATS
-            let rxHTML = genRx(parseFloat(els.muscle.value)||0, parseFloat(els.vfat.value)||0, parseFloat(els.bmi.value)||0, els.gender.value, els.exPref.value);
+            let rxHTML = getExerciseRx(parseFloat(els.muscle.value)||0, parseFloat(els.vfat.value)||0, parseFloat(els.bmi.value)||0, els.gender.value, els.exPref.value);
             document.getElementById('sRxCard').innerHTML = rxHTML;
             document.getElementById('pdRx').innerHTML = rxHTML;
 
