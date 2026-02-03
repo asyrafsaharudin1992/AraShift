@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (v6.2)</title>
+    <title>AraShift Medical Suite (v6.5 Final)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* --- SYSTEM VARIABLES --- */
+        /* ---  SYSTEM VARIABLES --- */
         :root {
             --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
@@ -122,7 +122,7 @@
         .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; text-align: center; }
 
         /* PROTEIN BOX */
-        .protein-box { border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd; display: none; }
+        .protein-box { border-radius: 12px; padding: 15px; margin-bottom: 20px; border: 1px solid #ddd; }
         .protein-head { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
         .protein-val { font-size: 18px; font-weight: 800; }
 
@@ -195,9 +195,9 @@
             .visual-row { page-break-inside: avoid; margin-bottom: 15px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
             .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; page-break-inside: avoid; } .planner-header h4 { font-size: 10pt; color: #000; } .add-row, .del-btn { display: none !important; } .plan-table th { background: #eee; color: #000; border-bottom: 1px solid #000; } .plan-table td { border-bottom: 1px solid #ccc; }
             .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
-            .clinical-plan-grid { display: grid; grid-template-columns: 1fr; gap: 20px; page-break-inside: avoid; }
+            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; }
             .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
-            .protein-box { display: block !important; border: 1px solid #000; page-break-inside: avoid; }
+            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; }
             .page-break { page-break-before: always; }
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
             .report-footer { position: fixed; bottom: 5mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
@@ -230,7 +230,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v6.2</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v6.5</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -396,7 +396,7 @@
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v6.2</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v6.5</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
         <div class="patient-strip">
             <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
             <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div>
@@ -422,7 +422,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v6.2</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v6.5</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -558,36 +558,40 @@
             document.getElementById('sAnalysis').innerHTML = vHTML;
             document.getElementById('pdVisuals').innerHTML = vHTML;
 
-            // PROTEIN LOGIC (SMART)
-            let mus = parseFloat(els.muscle.value) || 0;
-            let hasMuscleInput = mus > 0;
+            // PROTEIN LOGIC (ALWAYS VISIBLE)
+            let mus = parseFloat(els.muscle.value);
+            let hasMuscleInput = !isNaN(mus) && mus > 0;
             let isLowMuscle = false;
+            
             if(hasMuscleInput) {
                 isLowMuscle = (els.gender.value === 'male' && mus < 32.8) || (els.gender.value === 'female' && mus < 25.8);
             }
-            let pBox = document.getElementById('proteinBox');
             
-            if(w > 0) {
-                pBox.style.display = "block";
-                let pHTML = "";
-                if(!hasMuscleInput) {
-                    // Scenario 1: No Input -> Standard Dieting Protection
-                    pBox.style.background = "#F9FAFB"; pBox.style.borderColor = "#ddd";
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#333;"><span>📋 <b>Standard Protein Goal</b></span><span class="protein-val" style="color:#333;">${Math.round(w*1.0)}-${Math.round(w*1.2)}g <small>/day</small></span></div><div style="font-size:13px; margin-top:5px; color:#666;">Protects lean mass during caloric deficit. (Input Muscle % for precise Rx)</div>`;
-                } else if(isLowMuscle) {
-                    // Scenario 2: Low Muscle -> High Protein
-                    pBox.style.background = "#F2F8FF"; pBox.style.borderColor = "#007AFF";
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#007AFF;"><span>⚠️ <b>Low Muscle Mass Detected</b></span><span class="protein-val">${Math.round(w*1.2)}-${Math.round(w*1.5)}g <small>/day</small></span></div><div style="font-size:13px; margin-top:5px; color:#555;">Increase protein to prevent sarcopenia (Chicken, Fish, Eggs, Whey).</div>`;
-                } else {
-                    // Scenario 3: Normal Muscle -> Maintenance
-                    pBox.style.background = "#ECFDF5"; pBox.style.borderColor = "#10B981";
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#065F46;"><span>✅ <b>Muscle Mass Adequate</b></span><span class="protein-val" style="color:#065F46;">${Math.round(w*0.8)}-${Math.round(w*1.0)}g <small>/day</small></span></div><div style="font-size:13px; margin-top:5px; color:#555;">Maintenance level protein intake sufficient.</div>`;
-                }
-                document.getElementById('proteinText').innerHTML = pHTML;
-                document.getElementById('pdProtein').innerHTML = pBox.innerHTML; 
-                document.getElementById('pdProtein').className = "protein-box"; 
-                document.getElementById('pdProtein').style.background = pBox.style.background;
+            let pBox = document.getElementById('proteinBox');
+            let displayW = w > 0 ? w : 0; // Fallback for calc
+            let pHTML = "";
+
+            if(!hasMuscleInput) {
+                // Scenario 1: Standard (No Muscle Data)
+                pBox.style.background = "#F9FAFB"; pBox.style.borderColor = "#ddd";
+                let range = w > 0 ? `${Math.round(w*1.0)}-${Math.round(w*1.2)}g <small>/day</small>` : "1.0-1.2 g/kg";
+                pHTML = `<div style="display:flex;justify-content:space-between;color:#333;"><span>📋 <b>Standard Protein Goal</b></span><span class="protein-val" style="color:#333;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#666;">Standard weight management target.</div>`;
+            } else if(isLowMuscle) {
+                // Scenario 2: Low Muscle
+                pBox.style.background = "#F2F8FF"; pBox.style.borderColor = "#007AFF";
+                let range = w > 0 ? `${Math.round(w*1.2)}-${Math.round(w*1.5)}g <small>/day</small>` : "1.2-1.5 g/kg";
+                pHTML = `<div style="display:flex;justify-content:space-between;color:#007AFF;"><span>⚠️ <b>Low Muscle Mass Detected</b></span><span class="protein-val">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">High protein recommended to prevent sarcopenia.</div>`;
+            } else {
+                // Scenario 3: Normal Muscle
+                pBox.style.background = "#ECFDF5"; pBox.style.borderColor = "#10B981";
+                let range = w > 0 ? `${Math.round(w*0.8)}-${Math.round(w*1.0)}g <small>/day</small>` : "0.8-1.0 g/kg";
+                pHTML = `<div style="display:flex;justify-content:space-between;color:#065F46;"><span>✅ <b>Muscle Mass Adequate</b></span><span class="protein-val" style="color:#065F46;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">Maintenance level protein intake sufficient.</div>`;
             }
+            pBox.style.display = "block"; // FORCE DISPLAY
+            document.getElementById('proteinText').innerHTML = pHTML;
+            document.getElementById('pdProtein').innerHTML = pBox.innerHTML; 
+            document.getElementById('pdProtein').className = "protein-box"; 
+            document.getElementById('pdProtein').style.background = pBox.style.background;
 
             // STRATEGY
             let minLoss = 5, maxLoss = 10, recList = "", riskFound = false;
