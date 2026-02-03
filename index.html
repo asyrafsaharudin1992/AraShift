@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (v5.1 Print Update)</title>
+    <title>AraShift Medical Suite (v5.3)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
@@ -22,8 +22,9 @@
         
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; } 
+        .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: baseline; gap: 8px; } 
         .brand span { color: var(--primary); }
+        .version-tag { font-size: 12px; color: var(--text-sec); font-weight: 600; background: #E5E5EA; padding: 2px 8px; border-radius: 12px; }
         .logout { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 15px; }
 
         /* GRID */
@@ -139,21 +140,22 @@
         .btn-icon { background: #F2F2F7; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; }
         .btn-ai { background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 
-        /* KEY MODAL */
-        #keyModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
+        /* MODALS (KEY & GUIDE) */
+        #keyModal, #guideModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
         .key-box { background:white; padding:30px; border-radius:24px; width:90%; max-width:420px; text-align:center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         .key-input { width:100%; padding:12px; border:1px solid #D2D2D7; border-radius:12px; margin-bottom:15px; font-size:14px; text-align:center; }
 
         /* PRINT DOM (OPTIMIZED) */
         #clinical-report { display: none; }
+        
         @media print {
             body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .container, .action-bar, #login-screen, #keyModal { display: none !important; }
+            .container, .action-bar, #login-screen, #keyModal, #guideModal { display: none !important; }
             #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
             
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+            .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
             
-            /* IMPROVED PATIENT HEADER FOR PRINT */
             .patient-strip { 
                 display: grid !important; 
                 grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
@@ -162,28 +164,57 @@
                 border: 2px solid #000; 
                 border-radius: 0; 
                 padding: 0; 
-                margin-bottom: 20px; 
+                margin-bottom: 25px; 
             }
             .pt-field { 
                 display: flex; 
                 flex-direction: column; 
                 border-right: 1px solid #000; 
-                padding: 8px; 
+                padding: 8px 10px; 
                 justify-content: center;
             }
             .pt-field:last-child { border-right: none; }
-            .pt-label { font-size: 8pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; }
-            .pt-val { font-size: 11pt; font-weight: bold; color: #000; }
+            .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; }
+            .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
 
-            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 20px; }
-            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
-            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; break-inside: avoid; }
+            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 12px; margin-top: 25px; page-break-after: avoid; }
+            
+            .metabolic-row { 
+                display: grid; 
+                grid-template-columns: repeat(4, 1fr); 
+                gap: 10px; 
+                background: #F9FAFB; 
+                border: 1px solid #ddd; 
+                padding: 10px; 
+                border-radius: 6px; 
+                margin-bottom: 20px; 
+                page-break-inside: avoid;
+            }
+            
+            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; page-break-inside: avoid; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
-            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
-            .visual-row { break-inside: avoid; margin-bottom: 10px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
-            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 15px; break-inside: avoid; } .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; }
-            .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; break-inside: avoid; }
-            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } 
+            .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } 
+            .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
+            
+            .visual-row { page-break-inside: avoid; margin-bottom: 15px; } 
+            .bar-complex { border: 1px solid #999; height: 10px; } 
+            .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
+            
+            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; } 
+            .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } 
+            .rx-chart { border: 1px solid #000; height: 15px; } 
+            
+            /* STACKED LAYOUT FOR PRINT TO AVOID OVERLAP */
+            .clinical-plan-grid { 
+                display: grid; 
+                grid-template-columns: 1fr; /* Stack vertically for safety */
+                gap: 20px; 
+                page-break-inside: avoid;
+            }
+            
+            .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
+            
             .page-break { page-break-before: always; }
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
             .report-footer { position: fixed; bottom: 5mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
@@ -191,6 +222,19 @@
     </style>
 </head>
 <body>
+
+    <div id="guideModal" class="hidden">
+        <div class="key-box" style="width: 500px; max-width:90%; text-align:left;">
+            <h3 style="margin-top:0; color:var(--primary); font-size:18px;">Meal Portion Guide</h3>
+            <table class="milestone-table" style="margin-bottom:15px; border:none;">
+                <tr><th style="background:#eee;">Size</th><th style="background:#eee;">Calories</th><th style="background:#eee;">Visual Guide</th></tr>
+                <tr><td><b>Small</b></td><td>300-350</td><td>Half fist Carb + Palm Protein<br><small style="color:#666;">(Soup, Porridge, Grill)</small></td></tr>
+                <tr><td><b>Medium</b></td><td>450-550</td><td>1 Fist Carb + Palm Protein<br><small style="color:#666;">(Nasi Campur, Stir-fry)</small></td></tr>
+                <tr><td><b>Large</b></td><td>700-800+</td><td>2 Fists Carb + 2 Palms Protein<br><small style="color:#666;">(Nasi Kandar, Deep Fried)</small></td></tr>
+            </table>
+            <button class="btn btn-p" onclick="document.getElementById('guideModal').classList.add('hidden')" style="width:100%">Close Guide</button>
+        </div>
+    </div>
 
     <div id="keyModal" class="hidden">
         <div class="key-box">
@@ -203,7 +247,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v5.3</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -236,8 +280,11 @@
                 </div>
 
                 <div class="card">
-                    <h3>C. Dietary Matrix</h3>
-                    <div class="meal-row"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h3>C. Dietary Matrix</h3>
+                        <button class="version-tag" style="border:none; cursor:pointer; background:#eee; color:#333;" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Portion Guide</button>
+                    </div>
+                    <div class="meal-row" style="margin-top:10px;"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
                     <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
                     <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
                     <div class="input-grid-snacks">
@@ -330,7 +377,7 @@
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v5.3</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
         <div class="patient-strip">
             <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
             <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div>
@@ -351,12 +398,12 @@
         <div id="pdRx"></div>
         <div class="clinical-plan-grid">
             <div id="pdMile"></div>
-            <div class="rec-box"><div id="pdRecs"></div></div>
+            <div class="rec-box"><strong>Recommendations:</strong><div id="pdRecs"></div></div>
         </div>
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift v2.0</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v5.3</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -409,26 +456,35 @@
         window.runCalc = () => {
             document.getElementById('resultCard').classList.remove('hidden');
 
-            // 1. INTAKE
-            let bf = calMap[els.bfType.value][els.bfSize.value], lu = calMap[els.luType.value][els.luSize.value], dn = calMap[els.dnType.value][els.dnSize.value];
-            let intake = bf + lu + dn + ((parseFloat(els.snackFreq.value)||0)*200) + ((parseFloat(els.drinkFreq.value)||0)*150);
+            // 1. INTAKE (Safe)
+            const bfK = calMap[document.getElementById('bfType').value][document.getElementById('bfSize').value];
+            const luK = calMap[document.getElementById('luType').value][document.getElementById('luSize').value];
+            const dnK = calMap[document.getElementById('dnType').value][document.getElementById('dnSize').value];
+            const intake = bfK + luK + dnK + ((parseFloat(els.snackFreq.value)||0)*200) + ((parseFloat(els.drinkFreq.value)||0)*150);
             
-            // 2. TDEE
-            let w = parseFloat(els.weight.value)||0, h = parseFloat(els.height.value)||0, age = parseFloat(els.age.value)||30, act = parseFloat(els.activity.value);
+            // 2. METABOLIC (Safe)
+            const age = parseFloat(els.age.value) || 30;
+            const w = parseFloat(els.weight.value) || 0;
+            const h = parseFloat(els.height.value) || 0;
+            const act = parseFloat(document.getElementById('activity').value) || 1.2;
             let bmr = 0, tdee = 0;
+            
             if(w > 0 && h > 0) {
-                bmr = (10*w) + (6.25*h) - (5*age) + (els.gender.value==='male'?5:-161);
+                bmr = (10 * w) + (6.25 * h) - (5 * age) + (els.gender.value === 'male' ? 5 : -161);
                 tdee = bmr * act;
-                els.bmi.value = (w/((h/100)*(h/100))).toFixed(1);
+                els.bmi.value = (w / ((h/100)*(h/100))).toFixed(1);
             }
-            let bal = Math.round(intake - tdee);
-
-            // 3. UI UPDATE (Metabolic)
+            
+            const bal = Math.round(intake - tdee);
+            
+            // 3. UI UPDATE E (Metabolic)
             document.getElementById('sIntake').innerText = Math.round(intake);
             document.getElementById('sBMR').innerText = Math.round(bmr);
             document.getElementById('sTDEE').innerText = Math.round(tdee);
             document.getElementById('sBal').innerText = (bal>0?"+":"")+bal;
-            document.getElementById('sBalCard').className = "meta-card " + (tdee>0?(bal>200?"surplus":(bal<-200?"deficit":"")):"");
+            const bCard = document.getElementById('sBalCard');
+            if(tdee > 0) bCard.className = "meta-card " + (bal>200?"surplus" : (bal<-200?"deficit":""));
+            else bCard.className = "meta-card";
 
             // Print Sync
             document.getElementById('pdIntake').innerText = Math.round(intake) + " kcal";
@@ -462,22 +518,26 @@
                 riskFound = true;
             }
             if(document.getElementById('risk_osa').checked) {
-                if(maxLoss < 11) maxLoss = 11; minLoss = Math.max(minLoss, 7);
+                if(maxLoss < 11) maxLoss = 11;
+                minLoss = Math.max(minLoss, 7);
                 recList += "<li><b>Sleep Apnoea (OSA):</b> Target 7-11% loss. <br>Goal: &darr; Apnoea/Hypopnoea Index.</li>";
                 riskFound = true;
             }
             if(document.getElementById('risk_t2dm').checked) {
-                if(maxLoss < 15) maxLoss = 15; minLoss = Math.max(minLoss, 5);
+                if(maxLoss < 15) maxLoss = 15;
+                minLoss = Math.max(minLoss, 5);
                 recList += "<li><b>T2DM:</b> Target 5-15% loss. <br>Goal: &darr; HbA1c, remission.</li>";
                 riskFound = true;
             }
             if(document.getElementById('risk_htn').checked) {
-                if(maxLoss < 15) maxLoss = 15; minLoss = Math.max(minLoss, 5);
+                if(maxLoss < 15) maxLoss = 15;
+                minLoss = Math.max(minLoss, 5);
                 recList += "<li><b>Hypertension:</b> Target 5-15% loss. <br>Goal: &darr; BP & meds.</li>";
                 riskFound = true;
             }
             if(document.getElementById('risk_dys').checked) {
-                if(maxLoss < 15) maxLoss = 15; minLoss = Math.max(minLoss, 5);
+                if(maxLoss < 15) maxLoss = 15;
+                minLoss = Math.max(minLoss, 5);
                 recList += "<li><b>Dyslipidaemia:</b> Target 5-15% loss. <br>Goal: &darr; TG/LDL, &uarr; HDL.</li>";
                 riskFound = true;
             }
