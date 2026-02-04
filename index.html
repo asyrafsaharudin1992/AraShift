@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (v7.0)</title>
+    <title>AraShift Medical Suite (v7.2 Master)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
@@ -11,10 +11,8 @@
             --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
-            /* Clinical Colors */
             --c-under: #F59E0B; --c-norm: #10B981; --c-pre: #FBBF24;
             --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
-            /* HR Zones */
             --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
@@ -29,24 +27,20 @@
         .version-tag { font-size: 12px; color: var(--text-sec); font-weight: 600; background: #E5E5EA; padding: 2px 8px; border-radius: 12px; }
         .logout { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 15px; }
 
-        /* GRID */
+        /* GRID & CARDS */
         .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 25px; }
         .card { background: var(--card-bg); border-radius: 18px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 20px; }
         .card h3 { font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; }
 
-        /* INPUTS */
+        /* FORMS */
         .input-grid-profile { display: grid; grid-template-columns: 0.5fr 1.5fr 0.5fr 0.8fr 1.5fr; gap: 10px; margin-bottom: 15px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 15px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 0; }
-        
         .meal-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; align-items: end; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
-        .meal-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .meal-label { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 5px; display: block; }
         .input-grid-snacks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-
         .form-group { margin-bottom: 0; width: 100%; }
         label { display: block; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; white-space: nowrap; overflow: hidden; }
-        
         input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #D1D1D6; border-radius: 9px; font-size: 13px; font-weight: 500; color: var(--text); background: #fff; appearance: none; box-sizing: border-box; transition: 0.2s; font-family: inherit; }
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
         input[readonly] { background-color: #F2F2F7; color: var(--primary); font-weight: 700; border-color: transparent; }
@@ -63,7 +57,7 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* VISUAL BARS (Section F) */
+        /* VISUAL BARS */
         .visual-row { margin-bottom: 25px; }
         .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
@@ -75,36 +69,18 @@
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; transition: left 0.3s ease; }
 
-        /* SECTION E: METABOLIC DASHBOARD (Horizontal Grid) */
-        .metabolic-screen-row { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 15px; 
-            margin-top: 10px; 
-            margin-bottom: 25px; 
-        }
-        .meta-card { 
-            background: #F8F9FA; 
-            border: 1px solid #E5E5EB; 
-            border-radius: 14px; 
-            padding: 15px; 
-            text-align: center; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            height: 100%;
-            box-sizing: border-box;
-        }
+        /* METABOLIC DASHBOARD */
+        .metabolic-screen-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 10px; margin-bottom: 25px; }
+        .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 14px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; }
         .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 5px; }
         .meta-val { font-size: 24px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
         .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; margin-top: 5px; }
         .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
         .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
 
-        /* SECTION G: STRATEGY */
+        /* STRATEGY & STATS */
         .strategy-toolbar { display: flex; gap: 10px; margin-bottom: 15px; }
         .pref-select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; background: white; }
-        
         .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
         .apple-stat-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #E5E5EB; display: flex; flex-direction: column; justify-content: space-between;}
         .stat-header { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 8px; }
@@ -112,7 +88,7 @@
         .stat-unit { font-size: 14px; font-weight: 600; color: #86868B; margin-left: 2px; }
         .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 12px; font-weight: 600; color: var(--success); }
 
-        /* EXERCISE RX BOX (NEW) */
+        /* EXERCISE RX BOX */
         .rx-box { border: 1px solid #E5E5EA; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #fff; display: block; }
         .rx-head { background: #F2F2F7; padding: 10px 15px; font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; display: flex; justify-content: space-between; }
         .rx-body { padding: 15px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
@@ -121,8 +97,19 @@
         .rx-details h4 { margin: 0 0 5px 0; font-size: 13px; color: var(--primary); }
         .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
         .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
+        .fitt-grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px; }
+        .fitt-item { background:#F9FAFB; padding:8px; border-radius:6px; font-size:11px; }
+        .fitt-label { display:block; font-weight:700; color:#555; margin-bottom:2px; }
 
-        /* EXERCISE PLANNER STYLES */
+        /* PROTEIN BOX */
+        .protein-box { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: block; }
+        .protein-head { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
+        .protein-val { font-size: 18px; font-weight: 800; }
+        .food-calc-row { display: grid; grid-template-columns: 2fr 1fr 0.5fr; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; align-items: end; }
+        .food-list { margin-top: 10px; font-size: 13px; }
+        .food-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; }
+
+        /* EXERCISE PLANNER & HR */
         .planner-box { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .planner-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .planner-header h4 { margin: 0; color: var(--primary); font-size: 14px; text-transform: uppercase; }
@@ -130,22 +117,7 @@
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 8px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
         .plan-table td { padding: 8px; border-bottom: 1px solid #eee; }
-        .total-row { font-weight: 800; background: #F9FAFB; }
         .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; text-align: center; }
-
-        /* PROTEIN BOX */
-        .protein-box { 
-            background: #fff; border: 1px solid #ddd; 
-            border-radius: 12px; padding: 15px; margin-bottom: 20px; 
-            display: block; /* FORCED VISIBLE */
-        }
-        .protein-head { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
-        .protein-val { font-size: 18px; font-weight: 800; }
-        .food-calc-row { display: grid; grid-template-columns: 2fr 1fr 0.5fr; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; align-items: end; }
-        .food-list { margin-top: 10px; font-size: 13px; }
-        .food-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; }
-
-        /* HEART RATE ZONES */
         .hr-zone-wrap { margin-top: 15px; }
         .hr-bars { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
         .hr-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #1D1D1F; border-right: 1px solid rgba(255,255,255,0.5); }
@@ -172,7 +144,7 @@
         .key-box { background:white; padding:30px; border-radius:24px; width:90%; max-width:420px; text-align:center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
         .key-input { width:100%; padding:12px; border:1px solid #D2D2D7; border-radius:12px; margin-bottom:15px; font-size:14px; text-align:center; }
 
-        /* PRINT DOM (OPTIMIZED) */
+        /* PRINT DOM */
         #clinical-report { display: none; }
         @media print {
             body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -180,42 +152,22 @@
             #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
-            
-            .patient-strip { 
-                display: grid !important; 
-                grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-                gap: 0;
-                background: #fff !important; 
-                border: 2px solid #000; 
-                border-radius: 0; 
-                padding: 0; 
-                margin-bottom: 25px; 
-            }
-            .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 8px 10px; justify-content: center; }
-            .pt-field:last-child { border-right: none; }
-            .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; }
-            .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
-
+            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 25px; }
+            .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 8px 10px; justify-content: center; } .pt-field:last-child { border-right: none; }
+            .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
             .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 12px; margin-top: 25px; page-break-after: avoid; }
             .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid; }
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; page-break-inside: avoid; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
-            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } 
-            .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } 
-            .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
-            
+            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
             .visual-row { page-break-inside: avoid; margin-bottom: 15px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
-            
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; } 
-            .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } 
-            .rx-chart { border: 1px solid #000; height: 15px; } 
-            
+            .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
             .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; page-break-inside: avoid; } .planner-header h4 { font-size: 10pt; color: #000; } .add-row, .del-btn { display: none !important; } .plan-table th { background: #eee; color: #000; border-bottom: 1px solid #000; } .plan-table td { border-bottom: 1px solid #ccc; }
             .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
-            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; }
+            .clinical-plan-grid { display: grid; grid-template-columns: 1fr; gap: 20px; page-break-inside: avoid; }
             .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
-            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; }
-            .food-calc-row { display: none; }
+            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; } .food-calc-row { display: none; }
             .page-break { page-break-before: always; }
             .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
             .report-footer { position: fixed; bottom: 5mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
@@ -248,7 +200,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v7.0</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v7.2</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -423,17 +375,17 @@
                 <textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea>
             </div>
         </div>
+    </div>
 
-        <div class="action-bar">
-            <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
-            <button class="btn btn-s" onclick="location.reload()">Reset</button>
-            <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
-            <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
-        </div>
+    <div class="action-bar">
+        <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
+        <button class="btn btn-s" onclick="location.reload()">Reset</button>
+        <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
+        <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v7.0</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v7.2</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
         <div class="patient-strip">
             <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
             <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div>
@@ -451,7 +403,8 @@
         <div id="pdVisuals"></div>
         <div class="section-head">E. Strategy</div>
         <div class="print-stat-grid" id="pdStats"></div>
-        <div id="pdRx"></div> <div id="pdProtein"></div> 
+        <div id="pdRx"></div> 
+        <div id="pdProtein"></div> 
         <div id="pdRxContainer"></div> 
         <div class="clinical-plan-grid">
             <div id="pdMile"></div>
@@ -460,7 +413,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v7.0</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v7.2</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -567,18 +520,67 @@
             return `<div class="print-stat-card"><span class="p-stat-label">${label}</span><span class="p-stat-val">${val} <small style="font-size:10pt;">${unit}</small></span><span class="p-stat-detail">${detail}</span></div>`;
         };
 
-        // RESTORED RX FUNCTION
-        window.getExerciseRx = (muscleVal, vfatVal, bmiVal, gender, pref) => {
+        // EXERCISE RX (NKFS/ACSM)
+        window.getExerciseRx = (muscleVal, vfatVal, bmiVal, gender) => {
             const isLowMuscle = (gender === 'male' && muscleVal < 32.8) || (gender === 'female' && muscleVal < 25.8);
             const isHighVfat = vfatVal >= 10;
             const isSevereObese = bmiVal >= 35;
-            let rx = { title: "Standard CPG Protocol", ratio: "50", cardio: "150 mins/week", resist: "2x/week", desc: "Balanced approach." };
-
-            if(isSevereObese) { rx = { title: "Low Impact Protocol", ratio: "80", cardio: "Swimming / Bike", resist: "Seated", desc: "Joint protection priority." }; }
-            else if(isLowMuscle) { rx = { title: "Anabolic Focus RX", ratio: "30", cardio: "Walking", resist: "3-4x/week Hypertrophy", desc: "Rebuild muscle engine." }; }
-            else if(isHighVfat) { rx = { title: "Metabolic Focus RX", ratio: "60", cardio: "Zone 2 (45m x 4)", resist: "Circuit", desc: "Lipid oxidation focus." }; }
             
-            return `<div class="rx-box"><div class="rx-head"><span>${rx.title}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${rx.ratio}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${100-parseInt(rx.ratio)}%; background:#AF52DE;">Resist</div></div><div style="font-size:10px; text-align:center;">${rx.ratio}% Cardio / ${100-parseInt(rx.ratio)}% Resistance</div></div><div class="rx-details"><h4>Plan:</h4><ul><li><b>Cardio:</b> ${rx.cardio}</li><li><b>Resistance:</b> ${rx.resist}</li></ul><div class="rx-reason">${rx.desc}</div></div></div></div>`;
+            let rx = { 
+                title: "Standard CPG Protocol", 
+                ratio: 50, 
+                desc: "Balanced health maintenance.",
+                fitt: [
+                    {l:"Frequency", v:"3-5 days/week"},
+                    {l:"Intensity", v:"Moderate (Talk Test)"},
+                    {l:"Time", v:"150 mins/week"},
+                    {l:"Type", v:"Mix of Cardio & Resistance"}
+                ]
+            };
+
+            if(isSevereObese) { 
+                rx = { 
+                    title: "Low Impact Protocol (Joint Safety)", 
+                    ratio: 80, 
+                    desc: "Focus on non-weight bearing movement.",
+                    fitt: [
+                        {l:"Frequency", v:"5-6 days/week"},
+                        {l:"Intensity", v:"Low-Moderate"},
+                        {l:"Time", v:"Start 10m -> Build to 45m"},
+                        {l:"Type", v:"Swimming, Cycling, Seated Weights"}
+                    ]
+                }; 
+            }
+            else if(isLowMuscle) { 
+                rx = { 
+                    title: "Strength & Conditioning (Sarcopenia)", 
+                    ratio: 30, 
+                    desc: "Priority on rebuilding muscle mass.",
+                    fitt: [
+                        {l:"Frequency", v:"3-4 days/week Resistance"},
+                        {l:"Intensity", v:"Moderate-High (Fatigue at 10 reps)"},
+                        {l:"Time", v:"30-45 mins/session"},
+                        {l:"Type", v:"Weights, Bands, Bodyweight"}
+                    ]
+                }; 
+            }
+            else if(isHighVfat) { 
+                rx = { 
+                    title: "Aerobic Endurance (Metabolic)", 
+                    ratio: 70, 
+                    desc: "High volume to oxidize visceral fat.",
+                    fitt: [
+                        {l:"Frequency", v:"5-6 days/week"},
+                        {l:"Intensity", v:"Zone 2 (60-70% Max HR)"},
+                        {l:"Time", v:"Accumulate 250-300 mins/week"},
+                        {l:"Type", v:"Brisk Walking, Jogging, Cycling"}
+                    ]
+                }; 
+            }
+            
+            let fittHTML = rx.fitt.map(f => `<div class="fitt-item"><span class="fitt-label">${f.l}</span>${f.v}</div>`).join("");
+
+            return `<div class="rx-box"><div class="rx-head"><span>${rx.title}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${rx.ratio}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${100-rx.ratio}%; background:#AF52DE;">Resist</div></div><div style="font-size:10px; text-align:center; margin-top:4px;">${rx.ratio}% Cardio / ${100-rx.ratio}% Resistance</div></div><div class="rx-details"><h4>F.I.T.T. Protocol:</h4><div class="fitt-grid">${fittHTML}</div><div class="rx-reason">${rx.desc} <br> *Talk Test: Can talk but not sing = Moderate Intensity.</div></div></div></div>`;
         };
 
         window.runCalc = () => {
@@ -634,27 +636,21 @@
             let mus = parseFloat(els.muscle.value);
             let hasMuscleInput = !isNaN(mus) && mus > 0;
             let isLowMuscle = false;
-            
-            if(hasMuscleInput) {
-                isLowMuscle = (els.gender.value === 'male' && mus < 32.8) || (els.gender.value === 'female' && mus < 25.8);
-            }
+            if(hasMuscleInput) isLowMuscle = (els.gender.value === 'male' && mus < 32.8) || (els.gender.value === 'female' && mus < 25.8);
             
             let pBox = document.getElementById('proteinBox');
             let pHTML = "";
 
             if(w > 0) {
                 if(!hasMuscleInput) {
-                    // Standard
                     pBox.style.background = "#F9FAFB"; pBox.style.borderColor = "#ddd";
                     let range = `${Math.round(w*1.0)}-${Math.round(w*1.2)}g <small>/day</small>`;
                     pHTML = `<div style="display:flex;justify-content:space-between;color:#333;"><span>📋 <b>Standard Protein Goal</b></span><span class="protein-val" style="color:#333;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#666;">Standard weight management target (1.0-1.2g/kg).</div>`;
                 } else if(isLowMuscle) {
-                    // Low Muscle
                     pBox.style.background = "#F2F8FF"; pBox.style.borderColor = "#007AFF";
                     let range = `${Math.round(w*1.2)}-${Math.round(w*1.5)}g <small>/day</small>`;
                     pHTML = `<div style="display:flex;justify-content:space-between;color:#007AFF;"><span>⚠️ <b>Low Muscle Mass Detected</b></span><span class="protein-val">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">High protein recommended (1.2-1.5g/kg) to prevent sarcopenia.</div>`;
                 } else {
-                    // Normal
                     pBox.style.background = "#ECFDF5"; pBox.style.borderColor = "#10B981";
                     let range = `${Math.round(w*0.8)}-${Math.round(w*1.0)}g <small>/day</small>`;
                     pHTML = `<div style="display:flex;justify-content:space-between;color:#065F46;"><span>✅ <b>Muscle Mass Adequate</b></span><span class="protein-val" style="color:#065F46;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">Maintenance level protein intake sufficient (0.8-1.0g/kg).</div>`;
@@ -665,7 +661,7 @@
             }
             
             document.getElementById('proteinText').innerHTML = pHTML;
-            pBox.style.display = "block"; // Ensure visibility
+            pBox.style.display = "block"; 
             renderFood(); // Sync print
 
             // STRATEGY
