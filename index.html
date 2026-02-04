@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (v7.6 Expanded)</title>
+    <title>AraShift System v8.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
@@ -21,6 +21,12 @@
         .container { max-width: 1100px; margin: 0 auto; }
         .hidden { display: none !important; }
         
+        /* NAVIGATION TABS */
+        .nav-tabs { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid #E5E5EA; padding-bottom: 10px; }
+        .tab-btn { background: transparent; border: none; font-size: 16px; font-weight: 600; color: var(--text-sec); cursor: pointer; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
+        .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .tab-btn:hover { color: var(--primary); }
+
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: baseline; gap: 8px; } 
@@ -167,7 +173,7 @@
         @media print {
             body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal { display: none !important; }
-            .help-icon { display: none !important; } 
+            .help-icon, .nav-tabs { display: none !important; } 
             #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
@@ -228,233 +234,297 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v7.6</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v8.0</span></div>
             <div class="logout">Logout</div>
         </header>
 
-        <div class="main-grid">
-            <div style="display:flex; flex-direction:column; gap:20px;">
-                <div class="card">
-                    <h3>A. Patient Profile</h3>
-                    <div class="input-grid-profile">
-                        <div class="form-group"><label>ID <span class="help-icon" onclick="showDef('id')">?</span></label><input type="number" id="pId" placeholder="1001"></div>
-                        <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div>
-                        <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
-                        <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                        <div class="form-group"><label>Activity <span class="help-icon" onclick="showDef('act')">?</span></label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
-                    </div>
-                </div>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('arashift')" id="btn-arashift">AraShift (Obesity)</button>
+            <button class="tab-btn" onclick="switchTab('diabetes')" id="btn-diabetes">Diabetes Mgmt</button>
+        </div>
 
-                <div class="card">
-                    <h3>B. Measurements & Biochemistry</h3>
-                    <div class="input-grid-4">
-                        <div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div>
-                        <div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div>
-                        <div class="form-group"><label>Waist <span class="help-icon" onclick="showDef('waist')">?</span></label><input type="number" id="waist"></div>
-                        <div class="form-group"><label>BMI <span class="help-icon" onclick="showDef('bmi')">?</span></label><input type="number" id="bmi" readonly></div>
-                    </div>
-                    <div class="input-grid-3">
-                        <div class="form-group"><label>V.Fat <span class="help-icon" onclick="showDef('vfat')">?</span></label><input type="number" id="vfat"></div>
-                        <div class="form-group"><label>Fat %</label><input type="number" id="fat"></div>
-                        <div class="form-group"><label>Muscle % <span class="help-icon" onclick="showDef('mus')">?</span></label><input type="number" id="muscle"></div>
-                    </div>
-                    
-                    <span class="sub-label">Glucose Profile</span>
-                    <div class="input-grid-3">
-                        <div class="form-group"><label>FBS <span class="help-icon" onclick="showDef('fbs')">?</span></label><input type="number" id="fbs" step="0.1"></div>
-                        <div class="form-group"><label>RBS <span class="help-icon" onclick="showDef('rbs')">?</span></label><input type="number" id="rbs" step="0.1"></div>
-                        <div class="form-group"><label>HbA1c <span class="help-icon" onclick="showDef('hba1c')">?</span></label><input type="number" id="hba1c" step="0.1"></div>
-                    </div>
-
-                    <span class="sub-label">Cardiovascular & Lipids</span>
-                    <div class="input-grid-3">
-                        <div class="form-group"><label>BP Sys <span class="help-icon" onclick="showDef('bp')">?</span></label><input type="number" id="sbp"></div>
-                        <div class="form-group"><label>BP Dia</label><input type="number" id="dbp"></div>
-                        <div class="form-group"><label>R. HR <span class="help-icon" onclick="showDef('rhr')">?</span></label><input type="number" id="rhr" placeholder="BPM"></div>
-                    </div>
-                    <div class="input-grid-4">
-                        <div class="form-group"><label>Chol</label><input type="number" id="chol" step="0.1"></div>
-                        <div class="form-group"><label>LDL <span class="help-icon" onclick="showDef('ldl')">?</span></label><input type="number" id="ldl" step="0.1"></div>
-                        <div class="form-group"><label>HDL <span class="help-icon" onclick="showDef('hdl')">?</span></label><input type="number" id="hdl" step="0.1"></div>
-                        <div class="form-group"><label>TG <span class="help-icon" onclick="showDef('tg')">?</span></label><input type="number" id="tg" step="0.1"></div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3>C. Dietary Matrix</h3>
-                        <button class="version-tag" style="border:none; cursor:pointer; background:#eee; color:#333;" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Guide</button>
-                    </div>
-                    <div class="meal-row" style="margin-top:10px;"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                    <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                    <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                    <div class="input-grid-snacks">
-                        <div class="form-group"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div>
-                        <div class="form-group"><label>Sugary Drinks</label><input type="number" id="drinkFreq" value="0"></div>
-                    </div>
-                    <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;">
-                        <label style="margin-bottom:8px;">Dietary Flags</label>
-                        <div class="ios-list">
-                            <div class="ios-item"><span class="ios-label">High Carb / Rice</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div>
-                            <div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div>
-                            <div class="ios-item"><span class="ios-label">Late Night Eating</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div>
-                            <div class="ios-item"><span class="ios-label">Low Fiber / Veg</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div>
+        <div id="tab-arashift">
+            <div class="main-grid">
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div class="card">
+                        <h3>A. Patient Profile</h3>
+                        <div class="input-grid-profile">
+                            <div class="form-group"><label>ID <span class="help-icon" onclick="showDef('id')">?</span></label><input type="number" id="pId" placeholder="1001"></div>
+                            <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div>
+                            <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
+                            <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                            <div class="form-group"><label>Activity <span class="help-icon" onclick="showDef('act')">?</span></label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
                         </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>B. Measurements & Biochemistry</h3>
+                        <div class="input-grid-4">
+                            <div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div>
+                            <div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div>
+                            <div class="form-group"><label>Waist <span class="help-icon" onclick="showDef('waist')">?</span></label><input type="number" id="waist"></div>
+                            <div class="form-group"><label>BMI <span class="help-icon" onclick="showDef('bmi')">?</span></label><input type="number" id="bmi" readonly></div>
+                        </div>
+                        <div class="input-grid-3">
+                            <div class="form-group"><label>V.Fat <span class="help-icon" onclick="showDef('vfat')">?</span></label><input type="number" id="vfat"></div>
+                            <div class="form-group"><label>Fat %</label><input type="number" id="fat"></div>
+                            <div class="form-group"><label>Muscle % <span class="help-icon" onclick="showDef('mus')">?</span></label><input type="number" id="muscle"></div>
+                        </div>
+                        
+                        <span class="sub-label">Glucose Profile</span>
+                        <div class="input-grid-3">
+                            <div class="form-group"><label>FBS <span class="help-icon" onclick="showDef('fbs')">?</span></label><input type="number" id="fbs" step="0.1"></div>
+                            <div class="form-group"><label>RBS <span class="help-icon" onclick="showDef('rbs')">?</span></label><input type="number" id="rbs" step="0.1"></div>
+                            <div class="form-group"><label>HbA1c <span class="help-icon" onclick="showDef('hba1c')">?</span></label><input type="number" id="hba1c" step="0.1"></div>
+                        </div>
+
+                        <span class="sub-label">Cardiovascular & Lipids</span>
+                        <div class="input-grid-3">
+                            <div class="form-group"><label>BP Sys <span class="help-icon" onclick="showDef('bp')">?</span></label><input type="number" id="sbp"></div>
+                            <div class="form-group"><label>BP Dia</label><input type="number" id="dbp"></div>
+                            <div class="form-group"><label>R. HR <span class="help-icon" onclick="showDef('rhr')">?</span></label><input type="number" id="rhr" placeholder="BPM"></div>
+                        </div>
+                        <div class="input-grid-4">
+                            <div class="form-group"><label>Chol</label><input type="number" id="chol" step="0.1"></div>
+                            <div class="form-group"><label>LDL <span class="help-icon" onclick="showDef('ldl')">?</span></label><input type="number" id="ldl" step="0.1"></div>
+                            <div class="form-group"><label>HDL <span class="help-icon" onclick="showDef('hdl')">?</span></label><input type="number" id="hdl" step="0.1"></div>
+                            <div class="form-group"><label>TG <span class="help-icon" onclick="showDef('tg')">?</span></label><input type="number" id="tg" step="0.1"></div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <h3>C. Dietary Matrix</h3>
+                            <button class="version-tag" style="border:none; cursor:pointer; background:#eee; color:#333;" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Guide</button>
+                        </div>
+                        <div class="meal-row" style="margin-top:10px;"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                        <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                        <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                        <div class="input-grid-snacks">
+                            <div class="form-group"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div>
+                            <div class="form-group"><label>Sugary Drinks</label><input type="number" id="drinkFreq" value="0"></div>
+                        </div>
+                        <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;">
+                            <label style="margin-bottom:8px;">Dietary Flags</label>
+                            <div class="ios-list">
+                                <div class="ios-item"><span class="ios-label">High Carb / Rice</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div>
+                                <div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div>
+                                <div class="ios-item"><span class="ios-label">Late Night Eating</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div>
+                                <div class="ios-item"><span class="ios-label">Low Fiber / Veg</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>D. Risk Factors <span class="help-icon" onclick="showDef('cpg')">?</span></h3>
+                    <div class="ios-list">
+                        <div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
+                        <div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div>
+                        <div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div>
+                        <div class="ios-item"><span class="ios-label">Sleep Apnea (OSA) <span class="help-icon" onclick="showDef('osa')">?</span></span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
+                        <div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div>
+                        <div class="ios-item"><span class="ios-label">Meta Syndrome</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div>
                     </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h3>D. Risk Factors <span class="help-icon" onclick="showDef('cpg')">?</span></h3>
-                <div class="ios-list">
-                    <div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Sleep Apnea (OSA) <span class="help-icon" onclick="showDef('osa')">?</span></span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div>
-                    <div class="ios-item"><span class="ios-label">Meta Syndrome</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div>
+            <div class="card" id="resultCard">
+                <h3>E. Metabolic Balance</h3>
+                <div class="metabolic-screen-row">
+                    <div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="sIntake">0</span><span class="meta-desc">kcal/day</span></div>
+                    <div class="meta-card"><span class="meta-label">BMR <span class="help-icon" onclick="showDef('bmr')">?</span></span><span class="meta-val" id="sBMR">0</span><span class="meta-desc">Resting</span></div>
+                    <div class="meta-card"><span class="meta-label">TDEE <span class="help-icon" onclick="showDef('tdee')">?</span></span><span class="meta-val" id="sTDEE">0</span><span class="meta-desc">Output</span></div>
+                    <div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span><span class="meta-desc">Net</span></div>
+                </div>
+
+                <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
+
+                <h3>F. Clinical Analysis</h3>
+                <div id="sAnalysis"></div>
+
+                <div style="margin-top:30px;">
+                    <div class="strategy-toolbar">
+                        <h3 style="margin:0;">G. Clinical Strategy</h3>
+                        <div style="display:flex; gap:10px;">
+                            <select id="dietPref" class="pref-select">
+                                <option value="standard">Std: Calorie Counting</option>
+                                <option value="mrp">Meal Replacement (LCD)</option>
+                                <option value="plate">Plate Method (Visual)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="apple-stat-grid" id="sStatGrid"></div>
+
+                    <div id="sRxCard"></div>
+
+                    <div id="proteinBox" class="protein-box">
+                        <div class="protein-head">Protein Recommendation</div>
+                        <div id="proteinText"></div>
+                        <div class="food-calc-row">
+                            <select id="foodType">
+                                <optgroup label="--- Dairy & Eggs ---">
+                                    <option value="73|3.9">Whole Milk (1/2 cup) - 73kc, 4g P</option>
+                                    <option value="52|8.5">1% Milk (1/2 cup) - 52kc, 8.5g P</option>
+                                    <option value="130|17">Greek Yogurt 2% (6oz) - 130kc, 17g P</option>
+                                    <option value="75|6">Egg Large (1) - 75kc, 6g P</option>
+                                    <option value="16|3.6">Egg White (1) - 16kc, 3.6g P</option>
+                                </optgroup>
+                                <optgroup label="--- Poultry & Meat ---">
+                                    <option value="101|18">Chicken Breast (3oz) - 101kc, 18g P</option>
+                                    <option value="110|14">Chicken Thigh (2oz) - 110kc, 14g P</option>
+                                    <option value="153|34">Turkey Breast (4oz) - 153kc, 34g P</option>
+                                    <option value="111|18.6">Beef Sirloin (3oz) - 111kc, 18.6g P</option>
+                                    <option value="178|24.3">Pork Loin (3oz) - 178kc, 24.3g P</option>
+                                </optgroup>
+                                <optgroup label="--- Seafood ---">
+                                    <option value="175|18.8">Salmon (4oz) - 175kc, 19g P</option>
+                                    <option value="45|9.8">Tuna Canned (1/4 cup) - 45kc, 10g P</option>
+                                    <option value="28|5.9">Shrimp (1oz) - 28kc, 6g P</option>
+                                </optgroup>
+                                <optgroup label="--- Plant-Based & Misc ---">
+                                    <option value="113|7.5">Black Beans (1/2 cup) - 113kc, 7.5g P</option>
+                                    <option value="127|11">Edamame (1/2 cup) - 127kc, 11g P</option>
+                                    <option value="76|8">Tofu (100g) - 76kc, 8g P</option>
+                                    <option value="170|6.3">Almonds (1oz) - 170kc, 6.3g P</option>
+                                    <option value="77|2.7">Oatmeal (1/4 cup) - 77kc, 2.7g P</option>
+                                    <option value="120|24">Whey Scoop - 120kc, 24g P</option>
+                                </optgroup>
+                            </select>
+                            <input type="number" id="foodQty" placeholder="Qty" value="1">
+                            <button class="btn btn-p" onclick="addFood()" style="padding:8px;">Add</button>
+                        </div>
+                        <div class="food-list" id="foodList"></div>
+                        <div style="margin-top:10px; font-weight:700; font-size:12px; color:#555;">
+                            Planned: <span id="planProt">0</span>g Protein / <span id="planCal">0</span> kcal
+                        </div>
+                    </div>
+
+                    <div class="planner-box" id="exPlanner">
+                        <div class="planner-header">
+                            <h4>Exercise Planner <span class="help-icon" onclick="showDef('met')">?</span></h4>
+                            <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
+                        </div>
+                        <div class="add-row">
+                            <select id="exType" onchange="updateMoves()">
+                                <option value="cardio">Cardio / Aerobic</option>
+                                <option value="resist">Resistance / Weights</option>
+                            </select>
+                            <select id="exMove">
+                                <option value="3.5">Brisk Walking</option>
+                                <option value="8.0">Jogging / Running</option>
+                                <option value="6.0">Cycling (Mod)</option>
+                                <option value="7.0">Swimming</option>
+                            </select>
+                            <div style="display:flex; align-items:center; gap:5px;"><input type="number" id="exDur" placeholder="Min" value="30" style="width:100%;"></div>
+                            <button class="btn btn-p" style="padding:8px;" onclick="addExercise()">+</button>
+                        </div>
+                        <table class="plan-table">
+                            <thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead>
+                            <tbody id="planBody"></tbody>
+                        </table>
+                        
+                        <div class="hr-zone-wrap">
+                            <div class="hr-labels" style="margin-bottom:4px;"><span>Target Heart Rates (BPM)</span><span id="maxHrLabel">Max HR: 0</span></div>
+                            <div class="hr-bars">
+                                <div class="hr-seg" style="background:var(--z1);" id="z1">Z1</div>
+                                <div class="hr-seg" style="background:var(--z2);" id="z2">Z2</div>
+                                <div class="hr-seg" style="background:var(--z3);" id="z3">Z3</div>
+                                <div class="hr-seg" style="background:var(--z4);" id="z4">Z4</div>
+                                <div class="hr-seg" style="background:var(--z5);" id="z5">Z5</div>
+                            </div>
+                            <div class="hr-labels"><span id="z1v">0</span><span id="z2v">0</span><span id="z3v">0</span><span id="z4v">0</span><span id="z5v">0</span></div>
+                            <div style="font-size:10px; color:#666; margin-top:5px; font-style:italic;" id="hrMethod">Method: Max HR</div>
+                        </div>
+                    </div>
+
+                    <div class="clinical-plan-grid">
+                        <div id="sMilestones"></div>
+                        <div class="rec-container">
+                            <h4>Medical Recommendations</h4>
+                            <div id="sRecs"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top:20px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <label>Clinical Remarks</label>
+                        <button class="btn-ai" id="aiBtn" onclick="runAI()">✨ AI Draft</button>
+                    </div>
+                    <textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea>
                 </div>
             </div>
         </div>
 
-        <div class="card" id="resultCard">
-            <h3>E. Metabolic Balance</h3>
-            <div class="metabolic-screen-row">
-                <div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="sIntake">0</span><span class="meta-desc">kcal/day</span></div>
-                <div class="meta-card"><span class="meta-label">BMR <span class="help-icon" onclick="showDef('bmr')">?</span></span><span class="meta-val" id="sBMR">0</span><span class="meta-desc">Resting</span></div>
-                <div class="meta-card"><span class="meta-label">TDEE <span class="help-icon" onclick="showDef('tdee')">?</span></span><span class="meta-val" id="sTDEE">0</span><span class="meta-desc">Output</span></div>
-                <div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span><span class="meta-desc">Net</span></div>
-            </div>
-
-            <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
-
-            <h3>F. Clinical Analysis</h3>
-            <div id="sAnalysis"></div>
-
-            <div style="margin-top:30px;">
-                <div class="strategy-toolbar">
-                    <h3 style="margin:0;">G. Clinical Strategy</h3>
-                    <div style="display:flex; gap:10px;">
-                        <select id="dietPref" class="pref-select">
-                            <option value="standard">Std: Calorie Counting</option>
-                            <option value="mrp">Meal Replacement (LCD)</option>
-                            <option value="plate">Plate Method (Visual)</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="apple-stat-grid" id="sStatGrid"></div>
-
-                <div id="sRxCard"></div>
-
-                <div id="proteinBox" class="protein-box">
-                    <div class="protein-head">Protein Recommendation</div>
-                    <div id="proteinText"></div>
-                    <div class="food-calc-row">
-                        <select id="foodType">
-                            <optgroup label="--- Dairy & Eggs ---">
-                                <option value="73|3.9">Whole Milk (1/2 cup) - 73kc, 4g P</option>
-                                <option value="52|8.5">1% Milk (1/2 cup) - 52kc, 8.5g P</option>
-                                <option value="130|17">Greek Yogurt 2% (6oz) - 130kc, 17g P</option>
-                                <option value="75|6">Egg Large (1) - 75kc, 6g P</option>
-                                <option value="16|3.6">Egg White (1) - 16kc, 3.6g P</option>
-                            </optgroup>
-                            <optgroup label="--- Poultry & Meat ---">
-                                <option value="101|18">Chicken Breast (3oz) - 101kc, 18g P</option>
-                                <option value="110|14">Chicken Thigh (2oz) - 110kc, 14g P</option>
-                                <option value="153|34">Turkey Breast (4oz) - 153kc, 34g P</option>
-                                <option value="111|18.6">Beef Sirloin (3oz) - 111kc, 18.6g P</option>
-                                <option value="178|24.3">Pork Loin (3oz) - 178kc, 24.3g P</option>
-                            </optgroup>
-                            <optgroup label="--- Seafood ---">
-                                <option value="175|18.8">Salmon (4oz) - 175kc, 19g P</option>
-                                <option value="45|9.8">Tuna Canned (1/4 cup) - 45kc, 10g P</option>
-                                <option value="28|5.9">Shrimp (1oz) - 28kc, 6g P</option>
-                            </optgroup>
-                            <optgroup label="--- Plant-Based & Misc ---">
-                                <option value="113|7.5">Black Beans (1/2 cup) - 113kc, 7.5g P</option>
-                                <option value="127|11">Edamame (1/2 cup) - 127kc, 11g P</option>
-                                <option value="76|8">Tofu (100g) - 76kc, 8g P</option>
-                                <option value="170|6.3">Almonds (1oz) - 170kc, 6.3g P</option>
-                                <option value="77|2.7">Oatmeal (1/4 cup) - 77kc, 2.7g P</option>
-                                <option value="120|24">Whey Scoop - 120kc, 24g P</option>
-                            </optgroup>
-                        </select>
-                        <input type="number" id="foodQty" placeholder="Qty" value="1">
-                        <button class="btn btn-p" onclick="addFood()" style="padding:8px;">Add</button>
-                    </div>
-                    <div class="food-list" id="foodList"></div>
-                    <div style="margin-top:10px; font-weight:700; font-size:12px; color:#555;">
-                        Planned: <span id="planProt">0</span>g Protein / <span id="planCal">0</span> kcal
-                    </div>
-                </div>
-
-                <div class="planner-box" id="exPlanner">
-                    <div class="planner-header">
-                        <h4>Exercise Planner <span class="help-icon" onclick="showDef('met')">?</span></h4>
-                        <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
-                    </div>
-                    <div class="add-row">
-                        <select id="exType" onchange="updateMoves()">
-                            <option value="cardio">Cardio / Aerobic</option>
-                            <option value="resist">Resistance / Weights</option>
-                        </select>
-                        <select id="exMove">
-                            <option value="3.5">Brisk Walking</option>
-                            <option value="8.0">Jogging / Running</option>
-                            <option value="6.0">Cycling (Mod)</option>
-                            <option value="7.0">Swimming</option>
-                        </select>
-                        <div style="display:flex; align-items:center; gap:5px;"><input type="number" id="exDur" placeholder="Min" value="30" style="width:100%;"></div>
-                        <button class="btn btn-p" style="padding:8px;" onclick="addExercise()">+</button>
-                    </div>
-                    <table class="plan-table">
-                        <thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead>
-                        <tbody id="planBody"></tbody>
-                    </table>
-                    
-                    <div class="hr-zone-wrap">
-                        <div class="hr-labels" style="margin-bottom:4px;"><span>Target Heart Rates (BPM)</span><span id="maxHrLabel">Max HR: 0</span></div>
-                        <div class="hr-bars">
-                            <div class="hr-seg" style="background:var(--z1);" id="z1">Z1</div>
-                            <div class="hr-seg" style="background:var(--z2);" id="z2">Z2</div>
-                            <div class="hr-seg" style="background:var(--z3);" id="z3">Z3</div>
-                            <div class="hr-seg" style="background:var(--z4);" id="z4">Z4</div>
-                            <div class="hr-seg" style="background:var(--z5);" id="z5">Z5</div>
+        <div id="tab-diabetes" class="hidden">
+            <div class="main-grid">
+                <div style="display:flex; flex-direction:column; gap:20px;">
+                    <div class="card">
+                        <h3>A. Patient Profile (Diabetes)</h3>
+                        <div class="input-grid-profile">
+                            <div class="form-group"><label>ID</label><input type="number" id="dm_pId" placeholder="1001"></div>
+                            <div class="form-group"><label>Name</label><input type="text" id="dm_pName" placeholder="Name"></div>
+                            <div class="form-group"><label>Age</label><input type="number" id="dm_age" placeholder="30"></div>
+                            <div class="form-group"><label>Gender</label><select id="dm_gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                            <div class="form-group"><label>Activity</label><select id="dm_activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
                         </div>
-                        <div class="hr-labels"><span id="z1v">0</span><span id="z2v">0</span><span id="z3v">0</span><span id="z4v">0</span><span id="z5v">0</span></div>
-                        <div style="font-size:10px; color:#666; margin-top:5px; font-style:italic;" id="hrMethod">Method: Max HR</div>
                     </div>
-                </div>
 
-                <div class="clinical-plan-grid">
-                    <div id="sMilestones"></div>
-                    <div class="rec-container">
-                        <h4>Medical Recommendations</h4>
-                        <div id="sRecs"></div>
+                    <div class="card">
+                        <h3>B. Measurements & Biochemistry (Diabetes)</h3>
+                        <div class="input-grid-4">
+                            <div class="form-group"><label>Ht (cm)</label><input type="number" id="dm_height"></div>
+                            <div class="form-group"><label>Wt (kg)</label><input type="number" id="dm_weight"></div>
+                            <div class="form-group"><label>Waist</label><input type="number" id="dm_waist"></div>
+                            <div class="form-group"><label>BMI</label><input type="number" id="dm_bmi" readonly></div>
+                        </div>
+                        <div class="input-grid-3">
+                            <div class="form-group"><label>V.Fat</label><input type="number" id="dm_vfat"></div>
+                            <div class="form-group"><label>Fat %</label><input type="number" id="dm_fat"></div>
+                            <div class="form-group"><label>Muscle %</label><input type="number" id="dm_muscle"></div>
+                        </div>
+                        
+                        <span class="sub-label">Glucose Profile</span>
+                        <div class="input-grid-3">
+                            <div class="form-group"><label>FBS (mmol/L)</label><input type="number" id="dm_fbs" step="0.1"></div>
+                            <div class="form-group"><label>RBS (mmol/L)</label><input type="number" id="dm_rbs" step="0.1"></div>
+                            <div class="form-group"><label>HbA1c (%)</label><input type="number" id="dm_hba1c" step="0.1"></div>
+                        </div>
+
+                        <span class="sub-label">Cardiovascular & Lipids</span>
+                        <div class="input-grid-3">
+                            <div class="form-group"><label>BP Sys</label><input type="number" id="dm_sbp"></div>
+                            <div class="form-group"><label>BP Dia</label><input type="number" id="dm_dbp"></div>
+                            <div class="form-group"><label>R. HR</label><input type="number" id="dm_rhr" placeholder="BPM"></div>
+                        </div>
+                        <div class="input-grid-4">
+                            <div class="form-group"><label>Chol</label><input type="number" id="dm_chol" step="0.1"></div>
+                            <div class="form-group"><label>LDL</label><input type="number" id="dm_ldl" step="0.1"></div>
+                            <div class="form-group"><label>HDL</label><input type="number" id="dm_hdl" step="0.1"></div>
+                            <div class="form-group"><label>TG</label><input type="number" id="dm_tg" step="0.1"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>Future Diabetes Modules</h3>
+                        <p style="color:#888; font-size:13px;">Medication titration and complications screening will appear here.</p>
                     </div>
                 </div>
             </div>
-
-            <div class="form-group" style="margin-top:20px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <label>Clinical Remarks</label>
-                    <button class="btn-ai" id="aiBtn" onclick="runAI()">✨ AI Draft</button>
-                </div>
-                <textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea>
-            </div>
-        </div>
-
-        <div class="action-bar">
-            <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
-            <button class="btn btn-s" onclick="location.reload()">Reset</button>
-            <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
-            <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
         </div>
     </div>
 
+    <div class="action-bar" id="actionBar">
+        <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
+        <button class="btn btn-s" onclick="location.reload()">Reset</button>
+        <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
+        <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
+    </div>
+
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v7.6</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v8.0</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
         <div class="patient-strip">
             <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
             <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div>
@@ -495,10 +565,28 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v7.6</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v8.0</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
+        // TAB SWITCHING LOGIC
+        function switchTab(tab) {
+            // UI Toggles
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + tab).classList.add('active');
+            
+            // Content Toggles
+            if(tab === 'arashift') {
+                document.getElementById('tab-arashift').classList.remove('hidden');
+                document.getElementById('tab-diabetes').classList.add('hidden');
+                document.getElementById('actionBar').style.display = 'flex'; // Show main actions
+            } else {
+                document.getElementById('tab-arashift').classList.add('hidden');
+                document.getElementById('tab-diabetes').classList.remove('hidden');
+                document.getElementById('actionBar').style.display = 'none'; // Hide main actions for now to avoid confusion
+            }
+        }
+
         // DATA & DEFS
         const defs = {
             "id": { t:"Patient ID", d:"Unique medical identifier for record tracking." },
@@ -541,6 +629,7 @@
         let plan = [];
         let foodPlan = [];
 
+        // EXERCISE & FOOD LOGIC
         const moves = {
             'cardio': [{name:"Brisk Walking", met:3.5}, {name:"Jogging", met:7.0}, {name:"Running", met:9.0}, {name:"Cycling", met:6.0}],
             'resist': [{name:"Bands", met:3.5}, {name:"Bodyweight", met:4.0}, {name:"Weights", met:6.0}]
@@ -713,6 +802,7 @@
             document.getElementById('pdA1c').innerText = els.hba1c.value ? els.hba1c.value + "%" : "-";
             document.getElementById('pdLipids').innerText = (els.chol.value ? `T: ${els.chol.value}` : "") + (els.ldl.value ? ` L: ${els.ldl.value}` : "") + (els.hdl.value ? ` H: ${els.hdl.value}` : "");
             document.getElementById('pdTG').innerText = els.tg.value || "-";
+            document.getElementById('pdActivity').innerText = els.activity.options[els.activity.selectedIndex].text;
 
             // VISUALS
             let vHTML = getDetailedBar("BMI", parseFloat(els.bmi.value)||0, "", 45, [{limit:18.5,color:"#F59E0B",label:"U"},{limit:23,color:"#10B981",label:"N"},{limit:27.5,color:"#FBBF24",label:"Pre"},{limit:32.5,color:"#F97316",label:"O1"},{limit:37.5,color:"#EF4444",label:"O2"}]);
