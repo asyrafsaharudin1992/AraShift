@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (v6.8 Platinum)</title>
+    <title>AraShift Medical Suite (v7.0)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
@@ -112,6 +112,16 @@
         .stat-unit { font-size: 14px; font-weight: 600; color: #86868B; margin-left: 2px; }
         .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 12px; font-weight: 600; color: var(--success); }
 
+        /* EXERCISE RX BOX (NEW) */
+        .rx-box { border: 1px solid #E5E5EA; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #fff; display: block; }
+        .rx-head { background: #F2F2F7; padding: 10px 15px; font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; display: flex; justify-content: space-between; }
+        .rx-body { padding: 15px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
+        .rx-chart { display: flex; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 10px; background: #eee; }
+        .rx-bar { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; }
+        .rx-details h4 { margin: 0 0 5px 0; font-size: 13px; color: var(--primary); }
+        .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
+        .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
+
         /* EXERCISE PLANNER STYLES */
         .planner-box { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .planner-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -190,11 +200,19 @@
             .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid; }
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; page-break-inside: avoid; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
-            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
+            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } 
+            .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } 
+            .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
+            
             .visual-row { page-break-inside: avoid; margin-bottom: 15px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
+            
+            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; } 
+            .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } 
+            .rx-chart { border: 1px solid #000; height: 15px; } 
+            
             .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; page-break-inside: avoid; } .planner-header h4 { font-size: 10pt; color: #000; } .add-row, .del-btn { display: none !important; } .plan-table th { background: #eee; color: #000; border-bottom: 1px solid #000; } .plan-table td { border-bottom: 1px solid #ccc; }
             .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
-            .clinical-plan-grid { display: grid; grid-template-columns: 1fr; gap: 20px; page-break-inside: avoid; }
+            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; }
             .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
             .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; }
             .food-calc-row { display: none; }
@@ -230,7 +248,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v6.8</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v7.0</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -327,10 +345,11 @@
                 
                 <div class="apple-stat-grid" id="sStatGrid"></div>
 
+                <div id="sRxCard"></div>
+
                 <div id="proteinBox" class="protein-box">
                     <div class="protein-head">Protein Recommendation</div>
                     <div id="proteinText"></div>
-                    
                     <div class="food-calc-row">
                         <select id="foodType">
                             <option value="165|31">Chicken Breast (100g) - 165kcal, 31g P</option>
@@ -352,7 +371,7 @@
 
                 <div class="planner-box" id="exPlanner">
                     <div class="planner-header">
-                        <h4>Exercise Prescription</h4>
+                        <h4>Exercise Planner</h4>
                         <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
                     </div>
                     <div class="add-row">
@@ -404,15 +423,17 @@
                 <textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea>
             </div>
         </div>
-    </div> <div class="action-bar">
-        <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
-        <button class="btn btn-s" onclick="location.reload()">Reset</button>
-        <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
-        <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
+
+        <div class="action-bar">
+            <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
+            <button class="btn btn-s" onclick="location.reload()">Reset</button>
+            <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
+            <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
+        </div>
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v6.8</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v7.0</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
         <div class="patient-strip">
             <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
             <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div>
@@ -430,7 +451,7 @@
         <div id="pdVisuals"></div>
         <div class="section-head">E. Strategy</div>
         <div class="print-stat-grid" id="pdStats"></div>
-        <div id="pdProtein"></div> 
+        <div id="pdRx"></div> <div id="pdProtein"></div> 
         <div id="pdRxContainer"></div> 
         <div class="clinical-plan-grid">
             <div id="pdMile"></div>
@@ -439,7 +460,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v6.8</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v7.0</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -546,6 +567,20 @@
             return `<div class="print-stat-card"><span class="p-stat-label">${label}</span><span class="p-stat-val">${val} <small style="font-size:10pt;">${unit}</small></span><span class="p-stat-detail">${detail}</span></div>`;
         };
 
+        // RESTORED RX FUNCTION
+        window.getExerciseRx = (muscleVal, vfatVal, bmiVal, gender, pref) => {
+            const isLowMuscle = (gender === 'male' && muscleVal < 32.8) || (gender === 'female' && muscleVal < 25.8);
+            const isHighVfat = vfatVal >= 10;
+            const isSevereObese = bmiVal >= 35;
+            let rx = { title: "Standard CPG Protocol", ratio: "50", cardio: "150 mins/week", resist: "2x/week", desc: "Balanced approach." };
+
+            if(isSevereObese) { rx = { title: "Low Impact Protocol", ratio: "80", cardio: "Swimming / Bike", resist: "Seated", desc: "Joint protection priority." }; }
+            else if(isLowMuscle) { rx = { title: "Anabolic Focus RX", ratio: "30", cardio: "Walking", resist: "3-4x/week Hypertrophy", desc: "Rebuild muscle engine." }; }
+            else if(isHighVfat) { rx = { title: "Metabolic Focus RX", ratio: "60", cardio: "Zone 2 (45m x 4)", resist: "Circuit", desc: "Lipid oxidation focus." }; }
+            
+            return `<div class="rx-box"><div class="rx-head"><span>${rx.title}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${rx.ratio}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${100-parseInt(rx.ratio)}%; background:#AF52DE;">Resist</div></div><div style="font-size:10px; text-align:center;">${rx.ratio}% Cardio / ${100-parseInt(rx.ratio)}% Resistance</div></div><div class="rx-details"><h4>Plan:</h4><ul><li><b>Cardio:</b> ${rx.cardio}</li><li><b>Resistance:</b> ${rx.resist}</li></ul><div class="rx-reason">${rx.desc}</div></div></div></div>`;
+        };
+
         window.runCalc = () => {
             document.getElementById('resultCard').classList.remove('hidden');
             renderPlan(); 
@@ -590,28 +625,39 @@
             document.getElementById('sAnalysis').innerHTML = vHTML;
             document.getElementById('pdVisuals').innerHTML = vHTML;
 
-            // PROTEIN LOGIC (ALWAYS VISIBLE - FIXED)
+            // RX LOGIC
+            let rxHTML = getExerciseRx(parseFloat(els.muscle.value)||0, parseFloat(els.vfat.value)||0, parseFloat(els.bmi.value)||0, els.gender.value);
+            document.getElementById('sRxCard').innerHTML = rxHTML;
+            document.getElementById('pdRx').innerHTML = rxHTML;
+
+            // PROTEIN LOGIC (ALWAYS VISIBLE)
             let mus = parseFloat(els.muscle.value);
             let hasMuscleInput = !isNaN(mus) && mus > 0;
             let isLowMuscle = false;
-            if(hasMuscleInput) isLowMuscle = (els.gender.value === 'male' && mus < 32.8) || (els.gender.value === 'female' && mus < 25.8);
+            
+            if(hasMuscleInput) {
+                isLowMuscle = (els.gender.value === 'male' && mus < 32.8) || (els.gender.value === 'female' && mus < 25.8);
+            }
             
             let pBox = document.getElementById('proteinBox');
             let pHTML = "";
 
             if(w > 0) {
                 if(!hasMuscleInput) {
+                    // Standard
                     pBox.style.background = "#F9FAFB"; pBox.style.borderColor = "#ddd";
                     let range = `${Math.round(w*1.0)}-${Math.round(w*1.2)}g <small>/day</small>`;
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#333;"><span>📋 <b>Standard Goal</b></span><span class="protein-val" style="color:#333;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#666;">Standard weight loss target (1.0-1.2g/kg).</div>`;
+                    pHTML = `<div style="display:flex;justify-content:space-between;color:#333;"><span>📋 <b>Standard Protein Goal</b></span><span class="protein-val" style="color:#333;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#666;">Standard weight management target (1.0-1.2g/kg).</div>`;
                 } else if(isLowMuscle) {
+                    // Low Muscle
                     pBox.style.background = "#F2F8FF"; pBox.style.borderColor = "#007AFF";
                     let range = `${Math.round(w*1.2)}-${Math.round(w*1.5)}g <small>/day</small>`;
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#007AFF;"><span>⚠️ <b>Low Muscle Mass</b></span><span class="protein-val">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">High protein recommended (1.2-1.5g/kg).</div>`;
+                    pHTML = `<div style="display:flex;justify-content:space-between;color:#007AFF;"><span>⚠️ <b>Low Muscle Mass Detected</b></span><span class="protein-val">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">High protein recommended (1.2-1.5g/kg) to prevent sarcopenia.</div>`;
                 } else {
+                    // Normal
                     pBox.style.background = "#ECFDF5"; pBox.style.borderColor = "#10B981";
                     let range = `${Math.round(w*0.8)}-${Math.round(w*1.0)}g <small>/day</small>`;
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#065F46;"><span>✅ <b>Adequate Muscle</b></span><span class="protein-val" style="color:#065F46;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">Maintenance level sufficient.</div>`;
+                    pHTML = `<div style="display:flex;justify-content:space-between;color:#065F46;"><span>✅ <b>Muscle Mass Adequate</b></span><span class="protein-val" style="color:#065F46;">${range}</span></div><div style="font-size:13px; margin-top:5px; color:#555;">Maintenance level protein intake sufficient (0.8-1.0g/kg).</div>`;
                 }
             } else {
                 pBox.style.background = "#F9FAFB"; pBox.style.borderColor = "#ddd";
@@ -619,12 +665,13 @@
             }
             
             document.getElementById('proteinText').innerHTML = pHTML;
+            pBox.style.display = "block"; // Ensure visibility
             renderFood(); // Sync print
 
             // STRATEGY
             let minLoss = 5, maxLoss = 10, recList = "", riskFound = false;
             
-            if(document.getElementById('risk_mafld').checked) { minLoss=10; maxLoss=40; recList+="<li><b>Fatty Liver:</b> Target 10-40% loss.</li>"; riskFound=true; }
+            if(document.getElementById('risk_mafld').checked) { minLoss=10; maxLoss=40; recList+="<li><b>Fatty Liver (MAFLD):</b> Target 10-40% loss.</li>"; riskFound=true; }
             if(document.getElementById('risk_osa').checked) { minLoss=Math.max(minLoss,7); if(maxLoss<11)maxLoss=11; recList+="<li><b>Sleep Apnoea:</b> Target 7-11% loss.</li>"; riskFound=true; }
             if(document.getElementById('risk_t2dm').checked) { minLoss=Math.max(minLoss,5); if(maxLoss<15)maxLoss=15; recList+="<li><b>T2DM:</b> Target 5-15% loss.</li>"; riskFound=true; }
             if(document.getElementById('risk_htn').checked) { minLoss=Math.max(minLoss,5); if(maxLoss<15)maxLoss=15; recList+="<li><b>HTN:</b> Target 5-15% loss.</li>"; riskFound=true; }
