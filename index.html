@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift Medical Suite (v7.5 Full Report)</title>
+    <title>AraShift Medical Suite (v7.6 Expanded)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
@@ -171,26 +171,12 @@
             #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
-            
-            /* STRUCTURED DATA GRID FOR PRINT */
-            .print-section-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr); 
-                gap: 10px;
-                border-top: 1px solid #000;
-                border-left: 1px solid #000;
-                margin-bottom: 20px;
-            }
-            .print-cell {
-                border-right: 1px solid #000;
-                border-bottom: 1px solid #000;
-                padding: 6px 8px;
-                font-size: 9pt;
-            }
-            .print-cell strong { display: block; font-size: 7pt; text-transform: uppercase; color: #555; }
-
-            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 15px; page-break-after: avoid; }
-            
+            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 20px; }
+            .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 8px 10px; justify-content: center; } .pt-field:last-child { border-right: none; }
+            .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
+            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 12px; margin-top: 20px; page-break-after: avoid; }
+            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; page-break-inside: avoid; }
+            .bio-item { border: 1px solid #ccc; padding: 5px; font-size: 9pt; } .bio-item b { display: block; }
             .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid; }
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; page-break-inside: avoid; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
@@ -242,7 +228,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v7.5</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v7.6</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -366,13 +352,33 @@
                     <div id="proteinText"></div>
                     <div class="food-calc-row">
                         <select id="foodType">
-                            <option value="165|31">Chicken Breast (100g) - 165kcal, 31g P</option>
-                            <option value="206|22">Salmon (100g) - 206kcal, 22g P</option>
-                            <option value="78|6">Egg (1 Large) - 78kcal, 6g P</option>
-                            <option value="76|8">Tofu (100g) - 76kcal, 8g P</option>
-                            <option value="120|24">Whey Scoop - 120kcal, 24g P</option>
-                            <option value="130|3">Rice (100g cooked) - 130kcal, 3g P</option>
-                            <option value="52|0.3">Apple (1 med) - 52kcal, 0.3g P</option>
+                            <optgroup label="--- Dairy & Eggs ---">
+                                <option value="73|3.9">Whole Milk (1/2 cup) - 73kc, 4g P</option>
+                                <option value="52|8.5">1% Milk (1/2 cup) - 52kc, 8.5g P</option>
+                                <option value="130|17">Greek Yogurt 2% (6oz) - 130kc, 17g P</option>
+                                <option value="75|6">Egg Large (1) - 75kc, 6g P</option>
+                                <option value="16|3.6">Egg White (1) - 16kc, 3.6g P</option>
+                            </optgroup>
+                            <optgroup label="--- Poultry & Meat ---">
+                                <option value="101|18">Chicken Breast (3oz) - 101kc, 18g P</option>
+                                <option value="110|14">Chicken Thigh (2oz) - 110kc, 14g P</option>
+                                <option value="153|34">Turkey Breast (4oz) - 153kc, 34g P</option>
+                                <option value="111|18.6">Beef Sirloin (3oz) - 111kc, 18.6g P</option>
+                                <option value="178|24.3">Pork Loin (3oz) - 178kc, 24.3g P</option>
+                            </optgroup>
+                            <optgroup label="--- Seafood ---">
+                                <option value="175|18.8">Salmon (4oz) - 175kc, 19g P</option>
+                                <option value="45|9.8">Tuna Canned (1/4 cup) - 45kc, 10g P</option>
+                                <option value="28|5.9">Shrimp (1oz) - 28kc, 6g P</option>
+                            </optgroup>
+                            <optgroup label="--- Plant-Based & Misc ---">
+                                <option value="113|7.5">Black Beans (1/2 cup) - 113kc, 7.5g P</option>
+                                <option value="127|11">Edamame (1/2 cup) - 127kc, 11g P</option>
+                                <option value="76|8">Tofu (100g) - 76kc, 8g P</option>
+                                <option value="170|6.3">Almonds (1oz) - 170kc, 6.3g P</option>
+                                <option value="77|2.7">Oatmeal (1/4 cup) - 77kc, 2.7g P</option>
+                                <option value="120|24">Whey Scoop - 120kc, 24g P</option>
+                            </optgroup>
                         </select>
                         <input type="number" id="foodQty" placeholder="Qty" value="1">
                         <button class="btn btn-p" onclick="addFood()" style="padding:8px;">Add</button>
@@ -448,30 +454,25 @@
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v7.5</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
-        
-        <div class="section-head" style="margin-top:0;">A. Patient Profile</div>
-        <div class="print-section-grid">
-             <div class="print-cell"><strong>Name</strong><span id="pdName"></span></div>
-             <div class="print-cell"><strong>ID</strong><span id="pdIdPrint"></span></div>
-             <div class="print-cell"><strong>Age/Sex</strong><span id="pdDemo"></span></div>
-             <div class="print-cell"><strong>Activity</strong><span id="pdActivity"></span></div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v7.6</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="patient-strip">
+            <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
+            <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div>
+            <div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="pdDemo"></span></div>
+            <div class="pt-field"><span class="pt-label">Ht/Wt</span><span class="pt-val" id="pdBio"></span></div>
+            <div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="pdBMI"></span></div>
         </div>
-
-        <div class="section-head">B. Clinical Parameters</div>
-        <div class="print-section-grid">
-             <div class="print-cell"><strong>Ht/Wt</strong><span id="pdBio"></span></div>
-             <div class="print-cell"><strong>BMI</strong><span id="pdBMI"></span></div>
-             <div class="print-cell"><strong>Waist</strong><span id="pdWaist"></span> cm</div>
-             <div class="print-cell"><strong>Body Fat</strong><span id="pdFat"></span> %</div>
-             <div class="print-cell"><strong>Visceral Fat</strong><span id="pdVFat"></span></div>
-             <div class="print-cell"><strong>Muscle</strong><span id="pdMuscle"></span> %</div>
-             <div class="print-cell"><strong>Blood Pressure</strong><span id="pdBP"></span></div>
-             <div class="print-cell"><strong>Resting HR</strong><span id="pdRHR"></span></div>
-             <div class="print-cell"><strong>FBS / RBS</strong><span id="pdGlucose"></span></div>
-             <div class="print-cell"><strong>HbA1c</strong><span id="pdA1c"></span></div>
-             <div class="print-cell"><strong>Lipids (T/L/H)</strong><span id="pdLipids"></span></div>
-             <div class="print-cell"><strong>Triglycerides</strong><span id="pdTG"></span></div>
+        
+        <div class="section-head" style="margin-top:0;">Biochemistry & Vitals</div>
+        <div class="bio-print-grid">
+            <div class="bio-item">BP: <b id="pdBP"></b></div>
+            <div class="bio-item">RHR: <b id="pdRHR"></b></div>
+            <div class="bio-item">FBS: <b id="pdFBS"></b></div>
+            <div class="bio-item">HbA1c: <b id="pdA1c"></b></div>
+            <div class="bio-item">Chol: <b id="pdChol"></b></div>
+            <div class="bio-item">LDL: <b id="pdLDL"></b></div>
+            <div class="bio-item">HDL: <b id="pdHDL"></b></div>
+            <div class="bio-item">TG: <b id="pdTG"></b></div>
         </div>
 
         <div class="section-head">D. Analysis</div>
@@ -494,7 +495,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v7.5</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v7.6</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -702,9 +703,6 @@
             document.getElementById('pdBio').innerText = `${h}cm / ${w}kg`;
             document.getElementById('pdBMI').innerText = els.bmi.value;
             document.getElementById('pdDate').innerText = new Date().toLocaleDateString();
-            document.getElementById('pdActivity').innerText = els.activity.options[els.activity.selectedIndex].text;
-            
-            // NEW VITALS PRINT - UPDATED
             document.getElementById('pdBP').innerText = (els.sbp.value && els.dbp.value) ? `${els.sbp.value}/${els.dbp.value}` : "-";
             document.getElementById('pdRHR').innerText = els.rhr.value || "-";
             document.getElementById('pdWaist').innerText = els.waist.value || "-";
