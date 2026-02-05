@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AraShift System v8.0</title>
+    <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
@@ -493,7 +494,7 @@
                             <div class="form-group"><label>HbA1c (%)</label><input type="number" id="dm_hba1c" step="0.1"></div>
                         </div>
 
-                        <span class="sub-label">Cardiovascular & Lipids</span>
+                        <span class="sub-label">Renal & Cardiovascular</span>
                         <div class="input-grid-3">
                             <div class="form-group"><label>BP Sys</label><input type="number" id="dm_sbp"></div>
                             <div class="form-group"><label>BP Dia</label><input type="number" id="dm_dbp"></div>
@@ -505,11 +506,24 @@
                             <div class="form-group"><label>HDL</label><input type="number" id="dm_hdl" step="0.1"></div>
                             <div class="form-group"><label>TG</label><input type="number" id="dm_tg" step="0.1"></div>
                         </div>
+                        
+                        <div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
+                            <label style="margin-bottom:8px;">Comorbidities</label>
+                            <div class="ios-list">
+                                <div class="ios-item"><span class="ios-label">ASCVD / High CV Risk</span><label class="switch"><input type="checkbox" id="dm_ascvd"><span class="slider round"></span></label></div>
+                                <div class="ios-item"><span class="ios-label">DKD (Renal Disease)</span><label class="switch"><input type="checkbox" id="dm_dkd"><span class="slider round"></span></label></div>
+                                <div class="ios-item"><span class="ios-label">Heart Failure</span><label class="switch"><input type="checkbox" id="dm_hf"><span class="slider round"></span></label></div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="card">
-                        <h3>Future Diabetes Modules</h3>
-                        <p style="color:#888; font-size:13px;">Medication titration and complications screening will appear here.</p>
+                        <h3>CPG Recommendations</h3>
+                        <div class="dm-rec-box">
+                            <span class="dm-status" id="dmStatus">Status: Pending Data</span>
+                            <div id="dmRecText" style="font-size:13px; line-height:1.5;">Enter HbA1c and glucose data to see CPG recommendations.</div>
+                            <div id="dmAlerts"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -524,7 +538,7 @@
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v8.0</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="report-header"><div class="report-title"><h1 id="printTitle">AraShift Report</h1><p id="printSubtitle">Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
         <div class="patient-strip">
             <div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div>
             <div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div>
@@ -569,55 +583,8 @@
     </div>
 
     <script>
-        // TAB SWITCHING LOGIC
-        function switchTab(tab) {
-            // UI Toggles
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + tab).classList.add('active');
-            
-            // Content Toggles
-            if(tab === 'arashift') {
-                document.getElementById('tab-arashift').classList.remove('hidden');
-                document.getElementById('tab-diabetes').classList.add('hidden');
-                document.getElementById('actionBar').style.display = 'flex'; // Show main actions
-            } else {
-                document.getElementById('tab-arashift').classList.add('hidden');
-                document.getElementById('tab-diabetes').classList.remove('hidden');
-                document.getElementById('actionBar').style.display = 'none'; // Hide main actions for now to avoid confusion
-            }
-        }
-
-        // DATA & DEFS
-        const defs = {
-            "id": { t:"Patient ID", d:"Unique medical identifier for record tracking." },
-            "act": { t:"Activity Factor", d:"<b>Sedentary (1.2):</b> Desk job, little exercise.<br><b>Light (1.375):</b> Exercise 1-3 days/wk.<br><b>Mod (1.55):</b> Exercise 3-5 days/wk.<br><b>Active (1.7):</b> Heavy exercise 6-7 days/wk." },
-            "waist": { t:"Waist Circumference", d:"Central obesity indicator.<br><b>Risk:</b> >90cm (Men), >80cm (Women)." },
-            "bmi": { t:"Body Mass Index", d:"Weight(kg) / Height(m)².<br><b>Asian Cutoffs:</b><br>>23: Overweight<br>>27.5: Obese I<br>>32.5: Obese II" },
-            "vfat": { t:"Visceral Fat", d:"Fat surrounding internal organs.<br><b>Normal:</b> 1-9<br><b>High:</b> 10-14<br><b>Very High:</b> 15+" },
-            "mus": { t:"Skeletal Muscle Mass %", d:"<b>Low (Sarcopenia Risk):</b><br>Men < 32.8%<br>Women < 25.8%" },
-            "fbs": { t:"Fasting Blood Sugar", d:"Glucose after 8h fast.<br><b>Normal:</b> < 5.6 mmol/L<br><b>Pre-DM:</b> 5.6 - 6.9<br><b>Diabetes:</b> ≥ 7.0" },
-            "rbs": { t:"Random Blood Sugar", d:"Glucose without fasting.<br><b>Diabetes:</b> ≥ 11.1 mmol/L with symptoms." },
-            "hba1c": { t:"HbA1c", d:"Average glucose over 3 months.<br><b>Normal:</b> < 5.7%<br><b>Pre-DM:</b> 5.7 - 6.2%<br><b>Diabetes:</b> ≥ 6.3%" },
-            "bp": { t:"Blood Pressure", d:"<b>Normal:</b> < 120/80<br><b>Elevated:</b> 120-129/<80<br><b>HTN Stage 1:</b> 130-139/80-89" },
-            "rhr": { t:"Resting Heart Rate", d:"Used to calculate Heart Rate Reserve (Karvonen) for precise exercise zones." },
-            "ldl": { t:"LDL Cholesterol", d:"'Bad' Cholesterol.<br><b>Optimal:</b> < 2.6 mmol/L<br><b>High Risk:</b> Target < 1.8 or < 1.4 depending on risk profile." },
-            "hdl": { t:"HDL Cholesterol", d:"'Good' Cholesterol.<br><b>Desirable:</b> > 1.0 mmol/L (Men), > 1.3 (Women)." },
-            "tg": { t:"Triglycerides", d:"Fat in blood.<br><b>Normal:</b> < 1.7 mmol/L." },
-            "bmr": { t:"BMR (Mifflin-St Jeor)", d:"Calories burned at complete rest to maintain vital functions." },
-            "tdee": { t:"TDEE", d:"Total Daily Energy Expenditure.<br>BMR x Activity Factor." },
-            "cpg": { t:"CPG Triggers", d:"Clinical Practice Guidelines targets based on comorbidities.<br>e.g., MAFLD requires >10% loss." },
-            "osa": { t:"Obstructive Sleep Apnea", d:"Target 7-11% weight loss to reduce AHI (Apnea-Hypopnea Index)." },
-            "met": { t:"METs (Metabolic Equivalent)", d:"1 MET = Energy cost of sitting quietly. Exercise calorie burn is calculated using MET values." }
-        };
-
-        function showDef(id) {
-            if(defs[id]) {
-                document.getElementById('defTitle').innerHTML = defs[id].t;
-                document.getElementById('defText').innerHTML = defs[id].d;
-                document.getElementById('defModal').classList.remove('hidden');
-            }
-        }
-
+        // GLOBALS
+        let currentTab = 'arashift';
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         const ids = [
             'pId','pName','age','gender','height','weight','waist','bmi','vfat','fat','muscle','docRemarks','activity',
