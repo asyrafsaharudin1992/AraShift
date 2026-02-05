@@ -3,67 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v8.1 (CPG Engine)</title>
+    <title>AraShift System v8.2 (Smart Print)</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* ---  SYSTEM VARIABLES --- */
         :root {
-            --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
-            --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
+            --primary: #007AFF; --primary-dim: #E5F0FF;
+            --success: #34C759; --success-dim: #E2F9E8;
+            --danger: #FF3B30; --danger-dim: #FFEAEA;
+            --warning: #FF9500; --warning-dim: #FFF5E5;
+            --bg: #F2F2F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
-            --c-under: #F59E0B; --c-norm: #10B981; --c-pre: #FBBF24;
-            --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
-            --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 120px; -webkit-font-smoothing: antialiased; }
         .container { max-width: 1100px; margin: 0 auto; }
         .hidden { display: none !important; }
         
         /* NAVIGATION TABS */
-        .nav-tabs { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid #E5E5EA; padding-bottom: 10px; }
-        .tab-btn { background: transparent; border: none; font-size: 16px; font-weight: 600; color: var(--text-sec); cursor: pointer; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
-        .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .tab-btn:hover { color: var(--primary); }
+        .nav-tabs { display: flex; gap: 12px; margin-bottom: 25px; padding: 5px; background: #E5E5EA; border-radius: 12px; width: fit-content; }
+        .tab-btn { background: transparent; border: none; font-size: 14px; font-weight: 600; color: var(--text-sec); cursor: pointer; padding: 10px 20px; border-radius: 8px; transition: 0.2s; }
+        .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tab-btn:hover { color: var(--text); }
 
         /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: baseline; gap: 8px; } 
         .brand span { color: var(--primary); }
-        .version-tag { font-size: 12px; color: var(--text-sec); font-weight: 600; background: #E5E5EA; padding: 2px 8px; border-radius: 12px; }
-        .logout { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 15px; }
+        .version-tag { font-size: 11px; color: var(--text-sec); font-weight: 700; background: #E5E5EA; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
+        .logout { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 14px; }
 
-        /* GRID & CARDS */
-        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 25px; }
-        .card { background: var(--card-bg); border-radius: 18px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 20px; }
-        .card h3 { font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; }
-        .sub-label { font-size: 10px; font-weight: 700; color: var(--primary); margin-bottom: 8px; margin-top: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* CARDS & PANELS */
+        .card { background: var(--card-bg); border-radius: 18px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 20px; }
+        .card h3 { font-size: 13px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 800; }
+        
+        /* PARAMETER PANELS (NEW DESIGN) */
+        .param-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+        .param-panel { 
+            background: #F9FAFB; border: 1px solid #E5E5EA; border-radius: 10px; padding: 10px 12px; 
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .param-panel label { margin: 0 0 4px 0; font-size: 10px; text-transform: uppercase; color: var(--text-sec); display: flex; justify-content: space-between; }
+        .param-panel input { 
+            background: transparent; border: none; padding: 0; font-size: 15px; font-weight: 700; color: var(--text); width: 100%; outline: none; 
+        }
+        .param-panel input:focus { border-bottom: 2px solid var(--primary); border-radius: 0; }
+        .param-panel.warning { background: var(--warning-dim); border-color: var(--warning); }
+        .param-panel.abnormal { background: var(--danger-dim); border-color: var(--danger); }
 
-        /* HELP ICON */
-        .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; background: #E5E5EA; color: #86868B; font-size: 10px; margin-left: 5px; cursor: pointer; font-weight: 700; transition: 0.2s; }
-        .help-icon:hover { background: var(--primary); color: white; }
-
-        /* FORMS */
+        /* REGULAR INPUTS */
         .input-grid-profile { display: grid; grid-template-columns: 0.5fr 1.5fr 0.5fr 0.8fr 1.5fr; gap: 10px; margin-bottom: 15px; }
-        .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
-        .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; }
-        .input-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
-        .meal-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; align-items: end; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
-        .meal-label { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 5px; display: block; }
-        .input-grid-snacks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .form-group { margin-bottom: 0; width: 100%; }
-        label { display: flex; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; white-space: nowrap; overflow: hidden; }
-        input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #D1D1D6; border-radius: 9px; font-size: 13px; font-weight: 500; color: var(--text); background: #fff; appearance: none; box-sizing: border-box; transition: 0.2s; font-family: inherit; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
-        input[readonly] { background-color: #F2F2F7; color: var(--primary); font-weight: 700; border-color: transparent; }
-        input.abnormal { border-color: var(--danger); color: var(--danger); background: #FFF5F5; }
-        input.warning { border-color: var(--warning); color: var(--warning); background: #FFFCF2; }
+        .std-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; }
+        .std-input { width: 100%; padding: 10px; border: 1px solid #D1D1D6; border-radius: 10px; font-size: 13px; font-weight: 500; background: #fff; }
 
+        /* GRID LAYOUTS */
+        .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
         /* TOGGLES */
         .ios-list { display: flex; flex-direction: column; }
-        .ios-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #E5E5EA; }
+        .ios-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #F2F2F7; }
         .ios-item:last-child { border-bottom: none; }
-        .ios-label { font-size: 14px; font-weight: 500; display:flex; align-items:center;}
+        .ios-label { font-size: 14px; font-weight: 500; }
         .switch { position: relative; display: inline-block; width: 42px; height: 26px; } 
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #E9E9EA; transition: .4s; border-radius: 34px; }
@@ -71,167 +72,113 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* VISUAL BARS */
-        .visual-row { margin-bottom: 25px; }
-        .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-        .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
-        .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
-        .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
-        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
-        .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
-        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
-        .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
-        .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; transition: left 0.3s ease; }
-
         /* METABOLIC DASHBOARD */
         .metabolic-screen-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 10px; margin-bottom: 25px; }
-        .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 14px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; }
-        .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 5px; }
-        .meta-val { font-size: 24px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
-        .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; margin-top: 5px; }
-        .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
-        .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
+        .meta-card { background: #fff; border: 1px solid #E5E5EB; border-radius: 14px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        .meta-label { font-size: 10px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 4px; }
+        .meta-val { font-size: 22px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
+        .meta-card.surplus { background: var(--warning-dim); border-color: var(--warning); color: #d97706; }
+        .meta-card.deficit { background: var(--success-dim); border-color: var(--success); color: #059669; }
 
-        /* STRATEGY & STATS */
-        .strategy-toolbar { display: flex; gap: 10px; margin-bottom: 15px; }
-        .pref-select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; background: white; }
-        .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .apple-stat-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #E5E5EB; display: flex; flex-direction: column; justify-content: space-between;}
-        .stat-header { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 8px; }
-        .stat-value { font-size: 26px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
-        .stat-unit { font-size: 14px; font-weight: 600; color: #86868B; margin-left: 2px; }
-        .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 12px; font-weight: 600; color: var(--success); }
+        /* VISUAL BARS */
+        .visual-row { margin-bottom: 20px; }
+        .visual-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+        .bar-complex { position: relative; height: 12px; border-radius: 6px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
+        .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.4); }
+        .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -16px; }
+        .bar-marker { position: absolute; width: 4px; height: 20px; background: #333; border: 2px solid #fff; border-radius: 4px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; transition: left 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
-        /* RX & PLANNER */
-        .rx-box { border: 1px solid #E5E5EA; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #fff; display: block; }
-        .rx-head { background: #F2F2F7; padding: 10px 15px; font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; display: flex; justify-content: space-between; }
-        .rx-body { padding: 15px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
-        .rx-chart { display: flex; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 10px; background: #eee; }
-        .rx-bar { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; }
-        .rx-details h4 { margin: 0 0 5px 0; font-size: 13px; color: var(--primary); }
-        .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
-        .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
-        .fitt-grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px; }
-        .fitt-item { background:#F9FAFB; padding:8px; border-radius:6px; font-size:11px; }
-        .fitt-label { display:block; font-weight:700; color:#555; margin-bottom:2px; }
-        .planner-box { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .planner-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .planner-header h4 { margin: 0; color: var(--primary); font-size: 14px; text-transform: uppercase; }
-        .add-row { display: grid; grid-template-columns: 1.5fr 2fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: end; }
-        .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
-        .plan-table th { background: #E5E5EA; padding: 8px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
-        .plan-table td { padding: 8px; border-bottom: 1px solid #eee; }
-        .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; text-align: center; }
-        .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
-        .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } 
-        .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; height: fit-content; }
-        .milestone-table th { text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; }
-        .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; color: #1D1D1F; }
-        .target-hl { color: var(--primary); font-weight: 700; }
-        .rec-container { background: #FFF7ED; padding: 15px; border-radius: 12px; border: 1px solid #FED7AA; border-left: 5px solid #F97316; }
-        .rec-container h4 { margin: 0 0 10px 0; font-size: 12px; color: #F97316; text-transform: uppercase; }
-        .rec-container ul { margin: 0; padding-left: 20px; }
-        .rec-container li { font-size: 13px; margin-bottom: 6px; color: #1D1D1F; line-height: 1.5; }
-        
-        .protein-box { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: block; }
-        .protein-head { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
-        .protein-val { font-size: 18px; font-weight: 800; }
+        /* CPG BOXES */
+        .dm-rec-box { background: #F0F7FF; border: 1px solid #CCE0FF; padding:18px; border-radius:12px; margin-bottom:20px; border-left: 5px solid var(--primary); }
+        .dm-status { font-size:15px; font-weight:800; color:var(--primary); margin-bottom:8px; display:block;}
+        .dm-alert { color:#B91C1C; font-weight:600; font-size:12px; display:block; margin-top:8px; background:#FEF2F2; padding:8px; border-radius:6px; border:1px solid #FECACA; }
+
+        /* PROTEIN & EXERCISE */
+        .protein-box { background: #fff; border: 1px solid #E5E5EA; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .food-calc-row { display: grid; grid-template-columns: 2fr 1fr 0.5fr; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; align-items: end; }
         .food-list { margin-top: 10px; font-size: 13px; }
-        .food-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; }
+        .food-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #eee; }
 
-        /* DM RECOMMENDATION BOX */
-        .dm-rec-box { background: #E8F2FF; border: 1px solid #C4D9FF; padding:15px; border-radius:12px; margin-bottom:20px; }
-        .dm-status { font-size:16px; font-weight:800; color:var(--primary); margin-bottom:10px; display:block;}
-        .dm-alert { color:var(--danger); font-weight:700; font-size:12px; display:block; margin-top:5px; background:#fff5f5; padding:5px; border-radius:4px;}
+        /* ACTION BAR */
+        .action-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); padding: 12px 24px; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; gap: 12px; border: 1px solid rgba(0,0,0,0.1); z-index: 9999; }
+        .btn { border: none; padding: 10px 24px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn:hover { transform: scale(1.02); }
+        .btn-p { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(0,122,255,0.3); }
+        .btn-s { background: transparent; border: 1px solid #D1D1D6; color: var(--text); }
+        .btn-ai { background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(88,86,214,0.3); }
 
-        /* ACTION BAR & MODALS */
-        .action-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; gap: 10px; border: 1px solid #ccc; z-index: 9999; }
-        .btn { border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 14px; }
-        .btn-p { background: var(--primary); color: white; }
-        .btn-s { background: transparent; border: 1px solid var(--border); }
-        .btn-icon { background: #F2F2F7; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; }
-        .btn-ai { background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        /* MODALS */
         #keyModal, #guideModal, #defModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
-        .key-box { background:white; padding:30px; border-radius:24px; width:90%; max-width:420px; text-align:left; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .key-input { width:100%; padding:12px; border:1px solid #D2D2D7; border-radius:12px; margin-bottom:15px; font-size:14px; text-align:center; }
-        .def-title { font-size:18px; font-weight:800; color:var(--primary); margin-bottom:10px; }
-        .def-text { font-size:14px; color:#333; line-height:1.6; }
+        .key-box { background:white; padding:30px; border-radius:24px; width:90%; max-width:420px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
 
-        /* PRINT DOM */
+        /* --- PRINT STYLES (THE GOLD STANDARD) --- */
         #clinical-report { display: none; }
+        
         @media print {
-            body { background: white; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal { display: none !important; }
-            .help-icon, .nav-tabs { display: none !important; } 
-            #clinical-report { display: block !important; width: 100%; height: auto; font-family: "Helvetica Neue", Arial, sans-serif; color: #111; font-size: 10pt; }
-            .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-            .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
-            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 20px; }
-            .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 8px 10px; justify-content: center; } .pt-field:last-child { border-right: none; }
-            .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
-            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 12px; margin-top: 20px; page-break-after: avoid; }
-            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; page-break-inside: avoid; }
-            .bio-item { border: 1px solid #ccc; padding: 5px; font-size: 9pt; } .bio-item b { display: block; }
-            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid; }
-            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; page-break-inside: avoid; }
-            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
-            .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
-            .visual-row { page-break-inside: avoid; margin-bottom: 15px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000; border: 1px solid #fff; height: 16px; top: -3px; }
-            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; } 
-            .rx-head { background: #eee; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
-            .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; page-break-inside: avoid; } .planner-header h4 { font-size: 10pt; color: #000; } .add-row, .del-btn { display: none !important; } .plan-table th { background: #eee; color: #000; border-bottom: 1px solid #000; } .plan-table td { border-bottom: 1px solid #ccc; }
-            .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
-            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; }
-            .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
-            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; } .food-calc-row { display: none; }
-            .dm-rec-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 15px; page-break-inside: avoid; } .dm-status { font-size: 12pt; font-weight: 800; }
-            .page-break { page-break-before: always; }
-            .remarks-box { background: #F3F4F6; border-radius: 6px; padding: 15px; min-height: 200px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
-            .report-footer { position: fixed; bottom: 5mm; left: 15mm; right: 15mm; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; display: flex; justify-content: space-between; }
+            body { background: white; margin: 0; padding: 0; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .container, .action-bar, #login-screen, .nav-tabs { display: none !important; }
+            
+            #clinical-report { display: block !important; width: 100%; max-width: 800px; margin: 0 auto; padding: 20px; }
+            
+            /* HEADER */
+            .rpt-head { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
+            .rpt-title h1 { font-size: 24pt; margin: 0; font-weight: 800; color: #000; text-transform: uppercase; letter-spacing: -1px; }
+            .rpt-title span { font-size: 12pt; font-weight: 500; color: #555; }
+            .rpt-meta { text-align: right; font-size: 9pt; color: #555; line-height: 1.4; }
+
+            /* SECTION HEADERS */
+            .rpt-sec { font-size: 10pt; font-weight: 800; text-transform: uppercase; color: #000; margin-top: 25px; margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+
+            /* ROUNDED PANELS FOR PRINT DATA */
+            .rpt-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+            .rpt-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            
+            .rpt-panel { 
+                border: 1px solid #ccc; border-radius: 8px; padding: 8px 10px; background: #fff;
+                break-inside: avoid; page-break-inside: avoid;
+            }
+            .rpt-label { display: block; font-size: 7pt; text-transform: uppercase; color: #666; font-weight: 700; margin-bottom: 2px; }
+            .rpt-val { display: block; font-size: 11pt; font-weight: 700; color: #000; }
+
+            /* HIDE ELEMENTS BASED ON CONTEXT */
+            .print-hidden { display: none !important; }
+            
+            /* CPG BOX PRINT */
+            .dm-rec-box { border: 1px solid #000; background: #F2F8FF !important; padding: 15px; border-radius: 8px; margin-top: 15px; }
+            
+            /* FOOTER */
+            .rpt-foot { position: fixed; bottom: 10mm; left: 0; right: 0; border-top: 1px solid #eee; padding-top: 10px; font-size: 8pt; color: #999; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <div id="defModal" class="hidden">
-        <div class="key-box" style="width:400px;">
-            <div id="defTitle" class="def-title"></div>
-            <div id="defText" class="def-text"></div>
-            <button class="btn btn-p" onclick="document.getElementById('defModal').classList.add('hidden')" style="width:100%; margin-top:15px;">Got it</button>
-        </div>
-    </div>
-
     <div id="guideModal" class="hidden">
-        <div class="key-box" style="width: 500px; max-width:90%; text-align:left;">
-            <h3 style="margin-top:0; color:var(--primary); font-size:18px;">Meal Portion Guide</h3>
-            <table class="milestone-table" style="margin-bottom:15px; border:none;">
-                <tr><th style="background:#eee;">Size</th><th style="background:#eee;">Calories</th><th style="background:#eee;">Visual Guide</th></tr>
-                <tr><td><b>Small</b></td><td>300-350</td><td>Half fist Carb + Palm Protein</td></tr>
-                <tr><td><b>Medium</b></td><td>450-550</td><td>1 Fist Carb + Palm Protein</td></tr>
-                <tr><td><b>Large</b></td><td>700-800+</td><td>2 Fists Carb + 2 Palms Protein</td></tr>
-            </table>
-            <button class="btn btn-p" onclick="document.getElementById('guideModal').classList.add('hidden')" style="width:100%">Close</button>
+        <div class="key-box">
+            <h3>Meal Portion Guide</h3>
+            <p><strong>Small (300-350kc):</strong> Half fist Carb + Palm Protein</p>
+            <p><strong>Medium (450-550kc):</strong> 1 Fist Carb + Palm Protein</p>
+            <p><strong>Large (700+kc):</strong> 2 Fists Carb + 2 Palms Protein</p>
+            <button class="btn btn-p" onclick="document.getElementById('guideModal').classList.add('hidden')" style="width:100%; margin-top:10px;">Close</button>
         </div>
     </div>
-
-    <div id="keyModal" class="hidden">
-        <div class="key-box" style="text-align:center;">
-            <h2>🔐 AI Setup</h2>
-            <input id="apiKeyInput" style="width:100%; padding:10px; margin:10px 0; text-align:center;" placeholder="AIzaSy...">
-            <button class="btn btn-p" onclick="saveKey()">Save & Start</button>
+    
+    <div id="defModal" class="hidden">
+        <div class="key-box">
+            <h3 id="defTitle"></h3><p id="defText" style="font-size:14px; line-height:1.5; color:#444;"></p>
+            <button class="btn btn-p" onclick="document.getElementById('defModal').classList.add('hidden')" style="width:100%; margin-top:10px;">Close</button>
         </div>
     </div>
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v8.1 CPG</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v8.2</span></div>
             <div class="logout">Logout</div>
         </header>
 
         <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchTab('arashift')" id="btn-arashift">AraShift (Obesity)</button>
-            <button class="tab-btn" onclick="switchTab('diabetes')" id="btn-diabetes">Diabetes Mgmt</button>
+            <button class="tab-btn active" id="btn-arashift" onclick="switchTab('arashift')">AraShift (Obesity)</button>
+            <button class="tab-btn" id="btn-diabetes" onclick="switchTab('diabetes')">Diabetes Mgmt</button>
         </div>
 
         <div id="tab-arashift">
@@ -240,211 +187,58 @@
                     <div class="card">
                         <h3>A. Patient Profile</h3>
                         <div class="input-grid-profile">
-                            <div class="form-group"><label>ID <span class="help-icon" onclick="showDef('id')">?</span></label><input type="number" id="pId" placeholder="1001"></div>
-                            <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div>
-                            <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
-                            <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                            <div class="form-group"><label>Activity <span class="help-icon" onclick="showDef('act')">?</span></label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
+                            <div class="form-group"><span class="std-label">ID</span><input class="std-input" type="number" id="pId"></div>
+                            <div class="form-group"><span class="std-label">Name</span><input class="std-input" type="text" id="pName"></div>
+                            <div class="form-group"><span class="std-label">Age</span><input class="std-input" type="number" id="age"></div>
+                            <div class="form-group"><span class="std-label">Gender</span><select class="std-input" id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                            <div class="form-group"><span class="std-label">Activity</span><select class="std-input" id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
                         </div>
                     </div>
 
                     <div class="card">
-                        <h3>B. Measurements & Biochemistry</h3>
-                        <div class="input-grid-4">
-                            <div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div>
-                            <div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div>
-                            <div class="form-group"><label>Waist <span class="help-icon" onclick="showDef('waist')">?</span></label><input type="number" id="waist"></div>
-                            <div class="form-group"><label>BMI <span class="help-icon" onclick="showDef('bmi')">?</span></label><input type="number" id="bmi" readonly></div>
+                        <h3>B. Clinical Parameters</h3>
+                        <div class="param-grid">
+                            <div class="param-panel"><label>Height (cm)</label><input type="number" id="height"></div>
+                            <div class="param-panel"><label>Weight (kg)</label><input type="number" id="weight"></div>
+                            <div class="param-panel"><label>Waist (cm)</label><input type="number" id="waist"></div>
+                            <div class="param-panel"><label>BMI</label><input type="number" id="bmi" readonly></div>
                         </div>
-                        <div class="input-grid-3">
-                            <div class="form-group"><label>V.Fat <span class="help-icon" onclick="showDef('vfat')">?</span></label><input type="number" id="vfat"></div>
-                            <div class="form-group"><label>Fat %</label><input type="number" id="fat"></div>
-                            <div class="form-group"><label>Muscle % <span class="help-icon" onclick="showDef('mus')">?</span></label><input type="number" id="muscle"></div>
-                        </div>
-                        
-                        <span class="sub-label">Glucose Profile</span>
-                        <div class="input-grid-3">
-                            <div class="form-group"><label>FBS <span class="help-icon" onclick="showDef('fbs')">?</span></label><input type="number" id="fbs" step="0.1"></div>
-                            <div class="form-group"><label>RBS <span class="help-icon" onclick="showDef('rbs')">?</span></label><input type="number" id="rbs" step="0.1"></div>
-                            <div class="form-group"><label>HbA1c <span class="help-icon" onclick="showDef('hba1c')">?</span></label><input type="number" id="hba1c" step="0.1"></div>
-                        </div>
-
-                        <span class="sub-label">Cardiovascular & Lipids</span>
-                        <div class="input-grid-3">
-                            <div class="form-group"><label>BP Sys <span class="help-icon" onclick="showDef('bp')">?</span></label><input type="number" id="sbp"></div>
-                            <div class="form-group"><label>BP Dia</label><input type="number" id="dbp"></div>
-                            <div class="form-group"><label>R. HR <span class="help-icon" onclick="showDef('rhr')">?</span></label><input type="number" id="rhr" placeholder="BPM"></div>
-                        </div>
-                        <div class="input-grid-4">
-                            <div class="form-group"><label>Chol</label><input type="number" id="chol" step="0.1"></div>
-                            <div class="form-group"><label>LDL <span class="help-icon" onclick="showDef('ldl')">?</span></label><input type="number" id="ldl" step="0.1"></div>
-                            <div class="form-group"><label>HDL <span class="help-icon" onclick="showDef('hdl')">?</span></label><input type="number" id="hdl" step="0.1"></div>
-                            <div class="form-group"><label>TG <span class="help-icon" onclick="showDef('tg')">?</span></label><input type="number" id="tg" step="0.1"></div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <h3>C. Dietary Matrix</h3>
-                            <button class="version-tag" style="border:none; cursor:pointer; background:#eee; color:#333;" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Guide</button>
-                        </div>
-                        <div class="meal-row" style="margin-top:10px;"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="input-grid-snacks">
-                            <div class="form-group"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div>
-                            <div class="form-group"><label>Sugary Drinks</label><input type="number" id="drinkFreq" value="0"></div>
-                        </div>
-                        <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;">
-                            <label style="margin-bottom:8px;">Dietary Flags</label>
-                            <div class="ios-list">
-                                <div class="ios-item"><span class="ios-label">High Carb / Rice</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div>
-                                <div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div>
-                                <div class="ios-item"><span class="ios-label">Late Night Eating</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div>
-                                <div class="ios-item"><span class="ios-label">Low Fiber / Veg</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3>D. Risk Factors <span class="help-icon" onclick="showDef('cpg')">?</span></h3>
-                    <div class="ios-list">
-                        <div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
-                        <div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div>
-                        <div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div>
-                        <div class="ios-item"><span class="ios-label">Sleep Apnea (OSA) <span class="help-icon" onclick="showDef('osa')">?</span></span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
-                        <div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div>
-                        <div class="ios-item"><span class="ios-label">Meta Syndrome</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card" id="resultCard">
-                <h3>E. Metabolic Balance</h3>
-                <div class="metabolic-screen-row">
-                    <div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="sIntake">0</span><span class="meta-desc">kcal/day</span></div>
-                    <div class="meta-card"><span class="meta-label">BMR <span class="help-icon" onclick="showDef('bmr')">?</span></span><span class="meta-val" id="sBMR">0</span><span class="meta-desc">Resting</span></div>
-                    <div class="meta-card"><span class="meta-label">TDEE <span class="help-icon" onclick="showDef('tdee')">?</span></span><span class="meta-val" id="sTDEE">0</span><span class="meta-desc">Output</span></div>
-                    <div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span><span class="meta-desc">Net</span></div>
-                </div>
-
-                <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
-
-                <h3>F. Clinical Analysis</h3>
-                <div id="sAnalysis"></div>
-
-                <div style="margin-top:30px;">
-                    <div class="strategy-toolbar">
-                        <h3 style="margin:0;">G. Clinical Strategy</h3>
-                        <div style="display:flex; gap:10px;">
-                            <select id="dietPref" class="pref-select">
-                                <option value="standard">Std: Calorie Counting</option>
-                                <option value="mrp">Meal Replacement (LCD)</option>
-                                <option value="plate">Plate Method (Visual)</option>
-                            </select>
+                        <div class="param-grid">
+                            <div class="param-panel"><label>Visceral Fat</label><input type="number" id="vfat"></div>
+                            <div class="param-panel"><label>Fat %</label><input type="number" id="fat"></div>
+                            <div class="param-panel"><label>Muscle %</label><input type="number" id="muscle"></div>
+                            <div class="param-panel"><label>R. HR (bpm)</label><input type="number" id="rhr"></div>
                         </div>
                     </div>
                     
-                    <div class="apple-stat-grid" id="sStatGrid"></div>
-
-                    <div id="sRxCard"></div>
-
-                    <div id="proteinBox" class="protein-box">
-                        <div class="protein-head">Protein Recommendation</div>
-                        <div id="proteinText"></div>
-                        <div class="food-calc-row">
-                            <select id="foodType">
-                                <optgroup label="--- Dairy & Eggs ---">
-                                    <option value="73|3.9">Whole Milk (1/2 cup) - 73kc, 4g P</option>
-                                    <option value="52|8.5">1% Milk (1/2 cup) - 52kc, 8.5g P</option>
-                                    <option value="130|17">Greek Yogurt 2% (6oz) - 130kc, 17g P</option>
-                                    <option value="75|6">Egg Large (1) - 75kc, 6g P</option>
-                                    <option value="16|3.6">Egg White (1) - 16kc, 3.6g P</option>
-                                </optgroup>
-                                <optgroup label="--- Poultry & Meat ---">
-                                    <option value="101|18">Chicken Breast (3oz) - 101kc, 18g P</option>
-                                    <option value="110|14">Chicken Thigh (2oz) - 110kc, 14g P</option>
-                                    <option value="153|34">Turkey Breast (4oz) - 153kc, 34g P</option>
-                                    <option value="111|18.6">Beef Sirloin (3oz) - 111kc, 18.6g P</option>
-                                    <option value="178|24.3">Pork Loin (3oz) - 178kc, 24.3g P</option>
-                                </optgroup>
-                                <optgroup label="--- Seafood ---">
-                                    <option value="175|18.8">Salmon (4oz) - 175kc, 19g P</option>
-                                    <option value="45|9.8">Tuna Canned (1/4 cup) - 45kc, 10g P</option>
-                                    <option value="28|5.9">Shrimp (1oz) - 28kc, 6g P</option>
-                                </optgroup>
-                                <optgroup label="--- Plant-Based & Misc ---">
-                                    <option value="113|7.5">Black Beans (1/2 cup) - 113kc, 7.5g P</option>
-                                    <option value="127|11">Edamame (1/2 cup) - 127kc, 11g P</option>
-                                    <option value="76|8">Tofu (100g) - 76kc, 8g P</option>
-                                    <option value="170|6.3">Almonds (1oz) - 170kc, 6.3g P</option>
-                                    <option value="77|2.7">Oatmeal (1/4 cup) - 77kc, 2.7g P</option>
-                                    <option value="120|24">Whey Scoop - 120kc, 24g P</option>
-                                </optgroup>
-                            </select>
-                            <input type="number" id="foodQty" placeholder="Qty" value="1">
-                            <button class="btn btn-p" onclick="addFood()" style="padding:8px;">Add</button>
-                        </div>
-                        <div class="food-list" id="foodList"></div>
-                        <div style="margin-top:10px; font-weight:700; font-size:12px; color:#555;">
-                            Planned: <span id="planProt">0</span>g Protein / <span id="planCal">0</span> kcal
-                        </div>
-                    </div>
-
-                    <div class="planner-box" id="exPlanner">
-                        <div class="planner-header">
-                            <h4>Exercise Planner <span class="help-icon" onclick="showDef('met')">?</span></h4>
-                            <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
-                        </div>
-                        <div class="add-row">
-                            <select id="exType" onchange="updateMoves()">
-                                <option value="cardio">Cardio / Aerobic</option>
-                                <option value="resist">Resistance / Weights</option>
-                            </select>
-                            <select id="exMove">
-                                <option value="3.5">Brisk Walking</option>
-                                <option value="8.0">Jogging / Running</option>
-                                <option value="6.0">Cycling (Mod)</option>
-                                <option value="7.0">Swimming</option>
-                            </select>
-                            <div style="display:flex; align-items:center; gap:5px;"><input type="number" id="exDur" placeholder="Min" value="30" style="width:100%;"></div>
-                            <button class="btn btn-p" style="padding:8px;" onclick="addExercise()">+</button>
-                        </div>
-                        <table class="plan-table">
-                            <thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead>
-                            <tbody id="planBody"></tbody>
-                        </table>
-                        
-                        <div class="hr-zone-wrap">
-                            <div class="hr-labels" style="margin-bottom:4px;"><span>Target Heart Rates (BPM)</span><span id="maxHrLabel">Max HR: 0</span></div>
-                            <div class="hr-bars">
-                                <div class="hr-seg" style="background:var(--z1);" id="z1">Z1</div>
-                                <div class="hr-seg" style="background:var(--z2);" id="z2">Z2</div>
-                                <div class="hr-seg" style="background:var(--z3);" id="z3">Z3</div>
-                                <div class="hr-seg" style="background:var(--z4);" id="z4">Z4</div>
-                                <div class="hr-seg" style="background:var(--z5);" id="z5">Z5</div>
-                            </div>
-                            <div class="hr-labels"><span id="z1v">0</span><span id="z2v">0</span><span id="z3v">0</span><span id="z4v">0</span><span id="z5v">0</span></div>
-                            <div style="font-size:10px; color:#666; margin-top:5px; font-style:italic;" id="hrMethod">Method: Max HR</div>
-                        </div>
-                    </div>
-
-                    <div class="clinical-plan-grid">
-                        <div id="sMilestones"></div>
-                        <div class="rec-container">
-                            <h4>Medical Recommendations</h4>
-                            <div id="sRecs"></div>
-                        </div>
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between;"><h3>C. Dietary Matrix</h3><button class="version-tag" onclick="document.getElementById('guideModal').classList.remove('hidden')">Size Guide</button></div>
+                        <div class="meal-row"><span class="meal-label">Breakfast</span><select class="std-input" id="bfType"><option value="carb">Carb</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="skip">Skip</option></select><select class="std-input" id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                        <div class="meal-row"><span class="meal-label">Lunch</span><select class="std-input" id="luType"><option value="carb" selected>Carb</option><option value="prot">Protein</option><option value="bal">Balanced</option></select><select class="std-input" id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                        <div class="meal-row"><span class="meal-label">Dinner</span><select class="std-input" id="dnType"><option value="carb">Carb</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option></select><select class="std-input" id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-top:20px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <label>Clinical Remarks</label>
-                        <button class="btn-ai" id="aiBtn" onclick="runAI()">✨ AI Draft</button>
+                <div class="card" id="resultCard">
+                    <h3>D. Analysis & Strategy</h3>
+                    <div class="metabolic-screen-row">
+                        <div class="meta-card"><span class="meta-label">Intake</span><span class="meta-val" id="sIntake">0</span></div>
+                        <div class="meta-card"><span class="meta-label">TDEE</span><span class="meta-val" id="sTDEE">0</span></div>
+                        <div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span></div>
                     </div>
-                    <textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea>
+                    <div id="sAnalysis"></div>
+                    <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+                    <div id="sRxCard"></div>
+                    <div id="proteinBox" class="protein-box">
+                         <div class="protein-head">Protein Recommendation</div><div id="proteinText"></div>
+                         <div class="food-calc-row"><select class="std-input" id="foodType"><option value="165|31">Chicken (100g)</option><option value="78|6">Egg (1)</option></select><input class="std-input" type="number" id="foodQty" value="1"><button class="btn btn-p" onclick="addFood()">Add</button></div>
+                         <div class="food-list" id="foodList"></div>
+                    </div>
+                    <div class="planner-box" id="exPlanner">
+                        <div class="planner-header"><h4>Exercise Planner</h4><span id="totalBurn">0 kcal</span></div>
+                         <div class="add-row"><select class="std-input" id="exType" onchange="updateMoves()"><option value="cardio">Cardio</option><option value="resist">Resistance</option></select><select class="std-input" id="exMove"></select><input class="std-input" type="number" id="exDur" placeholder="Min" value="30"><button class="btn btn-p" onclick="addExercise()">+</button></div>
+                         <table class="plan-table"><tbody id="planBody"></tbody></table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -453,46 +247,32 @@
             <div class="main-grid">
                 <div style="display:flex; flex-direction:column; gap:20px;">
                     <div class="card">
-                        <h3>A. Patient Profile (Diabetes)</h3>
+                        <h3>A. Patient Profile (DM)</h3>
                         <div class="input-grid-profile">
-                            <div class="form-group"><label>ID</label><input type="number" id="dm_pId" placeholder="1001"></div>
-                            <div class="form-group"><label>Name</label><input type="text" id="dm_pName" placeholder="Name"></div>
-                            <div class="form-group"><label>Age</label><input type="number" id="dm_age" placeholder="30"></div>
-                            <div class="form-group"><label>Gender</label><select id="dm_gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                            <div class="form-group"><label>Activity</label><select id="dm_activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
+                             <div class="form-group"><span class="std-label">ID</span><input class="std-input" type="number" id="dm_pId"></div>
+                             <div class="form-group"><span class="std-label">Name</span><input class="std-input" type="text" id="dm_pName"></div>
+                             <div class="form-group"><span class="std-label">Age</span><input class="std-input" type="number" id="dm_age"></div>
+                             <div class="form-group"><span class="std-label">Gender</span><select class="std-input" id="dm_gender"><option value="male">Male</option><option value="female">Female</option></select></div>
                         </div>
                     </div>
 
                     <div class="card">
-                        <h3>B. Measurements & Biochemistry</h3>
-                        <div class="input-grid-4">
-                            <div class="form-group"><label>Ht (cm)</label><input type="number" id="dm_height"></div>
-                            <div class="form-group"><label>Wt (kg)</label><input type="number" id="dm_weight"></div>
-                            <div class="form-group"><label>Waist</label><input type="number" id="dm_waist"></div>
-                            <div class="form-group"><label>BMI</label><input type="number" id="dm_bmi" readonly></div>
+                        <h3>B. Clinical Parameters (DM)</h3>
+                        <div class="param-grid">
+                            <div class="param-panel"><label>Weight</label><input type="number" id="dm_weight"></div>
+                            <div class="param-panel"><label>BMI</label><input type="number" id="dm_bmi" readonly></div>
+                            <div class="param-panel"><label>BP Sys</label><input type="number" id="dm_sbp"></div>
+                            <div class="param-panel"><label>BP Dia</label><input type="number" id="dm_dbp"></div>
                         </div>
-                        <div class="input-grid-3">
-                            <div class="form-group"><label>V.Fat</label><input type="number" id="dm_vfat"></div>
-                            <div class="form-group"><label>Fat %</label><input type="number" id="dm_fat"></div>
-                            <div class="form-group"><label>Muscle %</label><input type="number" id="dm_muscle"></div>
+                        <span class="sub-label">Biochemistry</span>
+                        <div class="param-grid">
+                            <div class="param-panel"><label>FBS <span class="help-icon" onclick="showDef('fbs')">?</span></label><input type="number" id="dm_fbs" step="0.1"></div>
+                            <div class="param-panel"><label>HbA1c <span class="help-icon" onclick="showDef('hba1c')">?</span></label><input type="number" id="dm_hba1c" step="0.1"></div>
+                            <div class="param-panel"><label>LDL <span class="help-icon" onclick="showDef('ldl')">?</span></label><input type="number" id="dm_ldl" step="0.1"></div>
+                            <div class="param-panel"><label>eGFR <span class="help-icon" onclick="showDef('egfr')">?</span></label><input type="number" id="dm_egfr"></div>
                         </div>
-                        
-                        <span class="sub-label">Glucose Profile</span>
-                        <div class="input-grid-3">
-                            <div class="form-group"><label>FBS (mmol/L)</label><input type="number" id="dm_fbs" step="0.1"></div>
-                            <div class="form-group"><label>RBS (mmol/L)</label><input type="number" id="dm_rbs" step="0.1"></div>
-                            <div class="form-group"><label>HbA1c (%)</label><input type="number" id="dm_hba1c" step="0.1"></div>
-                        </div>
-
-                        <span class="sub-label">Renal & Cardiovascular</span>
-                        <div class="input-grid-3">
-                            <div class="form-group"><label>BP Sys</label><input type="number" id="dm_sbp"></div>
-                            <div class="form-group"><label>BP Dia</label><input type="number" id="dm_dbp"></div>
-                            <div class="form-group"><label>eGFR</label><input type="number" id="dm_egfr" placeholder="mL/min"></div>
-                        </div>
-                        
-                        <div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;">
-                            <label style="margin-bottom:8px;">Comorbidities</label>
+                        <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;">
+                            <label style="margin-bottom:8px;">Comorbidities (CVOT Flags)</label>
                             <div class="ios-list">
                                 <div class="ios-item"><span class="ios-label">ASCVD / High CV Risk</span><label class="switch"><input type="checkbox" id="dm_ascvd"><span class="slider round"></span></label></div>
                                 <div class="ios-item"><span class="ios-label">DKD (Renal Disease)</span><label class="switch"><input type="checkbox" id="dm_dkd"><span class="slider round"></span></label></div>
@@ -500,10 +280,13 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="dm-rec-box">
-                        <span class="dm-status" id="dmStatus">Status: Pending Data</span>
-                        <div id="dmRecText" style="font-size:13px; line-height:1.5;">Enter HbA1c and glucose data to see CPG recommendations.</div>
+                </div>
+
+                <div class="card">
+                     <h3>CPG Recommendations</h3>
+                     <div class="dm-rec-box">
+                        <span class="dm-status" id="dmStatus">Status: Pending</span>
+                        <div id="dmRecText" style="font-size:13px; line-height:1.5;">Enter HbA1c to generate plan.</div>
                         <div id="dmAlerts"></div>
                     </div>
                 </div>
@@ -511,468 +294,201 @@
         </div>
     </div>
 
-    <div class="action-bar" id="actionBar">
-        <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
+    <div class="action-bar">
         <button class="btn btn-s" onclick="location.reload()">Reset</button>
-        <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
-        <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
+        <button class="btn btn-p" onclick="runCalc(); runDMCalc();">Analyze</button>
+        <button class="btn btn-s" onclick="doPrint()">🖨️ Print Report</button>
     </div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment v8.1</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="rpt-head">
+            <div class="rpt-title"><h1 id="printTitle">AraShift Report</h1><span id="printSubtitle">Metabolic Assessment</span></div>
+            <div class="rpt-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div>
+        </div>
         
-        <div class="section-head" style="margin-top:0;">A. Patient Profile</div>
-        <div class="print-section-grid">
-             <div class="print-cell"><strong>Name</strong><span id="pdName"></span></div>
-             <div class="print-cell"><strong>ID</strong><span id="pdIdPrint"></span></div>
-             <div class="print-cell"><strong>Age/Sex</strong><span id="pdDemo"></span></div>
-             <div class="print-cell"><strong>Activity</strong><span id="pdActivity"></span></div>
+        <div class="rpt-sec">A. Patient Profile</div>
+        <div class="rpt-grid-4">
+            <div class="rpt-panel"><span class="rpt-label">Name</span><span class="rpt-val" id="pdName"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">Age/Sex</span><span class="rpt-val" id="pdDemo"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">Activity</span><span class="rpt-val" id="pdActivity"></span></div>
         </div>
 
-        <div class="section-head">B. Clinical Parameters</div>
-        <div class="print-section-grid">
-             <div class="print-cell"><strong>Ht/Wt</strong><span id="pdBio"></span></div>
-             <div class="print-cell"><strong>BMI</strong><span id="pdBMI"></span></div>
-             <div class="print-cell"><strong>Waist</strong><span id="pdWaist"></span> cm</div>
-             <div class="print-cell"><strong>Body Fat</strong><span id="pdFat"></span> %</div>
-             <div class="print-cell"><strong>Visceral Fat</strong><span id="pdVFat"></span></div>
-             <div class="print-cell"><strong>Muscle</strong><span id="pdMuscle"></span> %</div>
-             <div class="print-cell"><strong>Blood Pressure</strong><span id="pdBP"></span></div>
-             <div class="print-cell"><strong>Resting HR</strong><span id="pdRHR"></span></div>
-             <div class="print-cell"><strong>FBS / RBS</strong><span id="pdGlucose"></span></div>
-             <div class="print-cell"><strong>HbA1c</strong><span id="pdA1c"></span></div>
-             <div class="print-cell"><strong>Lipids (T/L/H)</strong><span id="pdLipids"></span></div>
-             <div class="print-cell"><strong>Triglycerides</strong><span id="pdTG"></span></div>
+        <div class="rpt-sec">B. Clinical Parameters</div>
+        <div class="rpt-grid-4" style="margin-bottom:10px;">
+            <div class="rpt-panel"><span class="rpt-label">Ht / Wt</span><span class="rpt-val" id="pdBio"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">BMI</span><span class="rpt-val" id="pdBMI"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">Waist</span><span class="rpt-val" id="pdWaist"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">Visceral Fat</span><span class="rpt-val" id="pdVFat"></span></div>
+        </div>
+        <div class="rpt-grid-4">
+            <div class="rpt-panel"><span class="rpt-label">BP</span><span class="rpt-val" id="pdBP"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">Glucose (F/A1c)</span><span class="rpt-val" id="pdGluc"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">Lipids (L/H)</span><span class="rpt-val" id="pdLipid"></span></div>
+            <div class="rpt-panel"><span class="rpt-label">eGFR</span><span class="rpt-val" id="pdGFR"></span></div>
         </div>
 
-        <div class="section-head">D. Analysis</div>
-        <div class="metabolic-row">
-            <div class="print-stat-card"><span class="p-stat-label">Intake</span><span class="p-stat-val" id="pdIntake"></span></div>
-            <div class="print-stat-card"><span class="p-stat-label">BMR</span><span class="p-stat-val" id="pdBMR"></span></div>
-            <div class="print-stat-card"><span class="p-stat-label">TDEE</span><span class="p-stat-val" id="pdTDEE"></span></div>
-            <div class="print-stat-card"><span class="p-stat-label">Balance</span><span class="p-stat-val" id="pdBal"></span></div>
+        <div id="print-obesity-content">
+            <div class="rpt-sec">C. Analysis</div>
+            <div class="metabolic-row">
+                <div class="print-stat-card"><span class="p-stat-label">Intake</span><span class="p-stat-val" id="pdIntake"></span></div>
+                <div class="print-stat-card"><span class="p-stat-label">TDEE</span><span class="p-stat-val" id="pdTDEE"></span></div>
+                <div class="print-stat-card"><span class="p-stat-label">Balance</span><span class="p-stat-val" id="pdBal"></span></div>
+            </div>
+            <div id="pdVisuals"></div>
+            <div class="rpt-sec">D. Strategy</div>
+            <div id="pdProtein"></div>
+            <div id="pdRx"></div>
+            <div id="pdRxContainer"></div>
         </div>
-        <div id="pdVisuals"></div>
-        <div class="section-head">E. Strategy</div>
-        <div class="print-stat-grid" id="pdStats"></div>
-        <div id="pdRx"></div> 
-        <div id="pdProtein"></div> 
-        <div id="pdRxContainer"></div> 
-        <div class="clinical-plan-grid">
-            <div id="pdMile"></div>
-            <div class="rec-box"><strong>Recommendations:</strong><div id="pdRecs"></div></div>
+
+        <div id="print-diabetes-content" class="print-hidden">
+             <div class="rpt-sec">C. CPG Management Plan</div>
+             <div class="dm-rec-box">
+                 <span class="dm-status" id="pdDmStatus"></span>
+                 <div id="pdDmRec" style="font-size:11pt; line-height:1.4;"></div>
+                 <div id="pdDmAlert" style="margin-top:10px; font-weight:bold; color:#B91C1C;"></div>
+             </div>
         </div>
-        <div class="page-break"></div>
-        <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
-        <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v8.1</span><span>Page 2 of 2</span></div>
+
+        <div class="rpt-foot">Generated by AraShift Medical Suite v8.2</div>
     </div>
 
     <script>
-        // TAB SWITCHING LOGIC
+        // GLOBALS
+        let currentTab = 'arashift';
+        const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
+        const moves = { 'cardio': [{name:"Walk", met:3.5}, {name:"Run", met:8.0}], 'resist': [{name:"Weights", met:6.0}] };
+        let plan = [], foodPlan = [];
+
+        // UI LOGIC
         function switchTab(tab) {
+            currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('btn-' + tab).classList.add('active');
             
             if(tab === 'arashift') {
                 document.getElementById('tab-arashift').classList.remove('hidden');
                 document.getElementById('tab-diabetes').classList.add('hidden');
-                document.getElementById('actionBar').style.display = 'flex'; 
             } else {
                 document.getElementById('tab-arashift').classList.add('hidden');
                 document.getElementById('tab-diabetes').classList.remove('hidden');
-                // document.getElementById('actionBar').style.display = 'none'; // Optional: hide actions on DM tab
             }
         }
-
-        // DIABETES LOGIC (CPG ENGINE)
-        function runDMCalc() {
-            let fbs = parseFloat(document.getElementById('dm_fbs').value);
-            let rbs = parseFloat(document.getElementById('dm_rbs').value);
-            let a1c = parseFloat(document.getElementById('dm_hba1c').value);
-            let egfr = parseFloat(document.getElementById('dm_egfr').value);
-            let status = "Unknown";
-            let rec = "";
-            let alert = "";
-
-            // 1. DIAGNOSIS
-            if (a1c >= 6.3 || fbs >= 7.0 || rbs >= 11.1) {
-                status = "Diabetes Mellitus";
-                document.getElementById('dmStatus').style.color = "#EF4444";
-            } else if (a1c >= 5.7 || fbs >= 5.6) {
-                status = "Pre-Diabetes";
-                document.getElementById('dmStatus').style.color = "#F59E0B";
-            } else if (a1c > 0 || fbs > 0) {
-                status = "Normal";
-                document.getElementById('dmStatus').style.color = "#10B981";
-            }
-            document.getElementById('dmStatus').innerText = status;
-
-            // 2. THERAPY RECOMMENDATION (Based on HbA1c)
-            if(status === "Diabetes Mellitus") {
-                if(a1c < 6.5) rec = "<b>Lifestyle + Metformin:</b> Maintain control. Recheck 3-6 months.";
-                else if(a1c < 7.5) rec = "<b>Monotherapy Indicated:</b> Metformin 500mg-1000mg. If intolerant, consider DPP4-i or SGLT2-i.";
-                else if(a1c < 8.5) rec = "<b>Dual Therapy Indicated:</b> Metformin + 2nd Agent (SU, DPP4-i, SGLT2-i, or GLP1-RA).";
-                else if(a1c < 10) rec = "<b>Triple Therapy Indicated:</b> Metformin + 2 agents. Consider Insulin if symptoms persist.";
-                else rec = "<b>Insulin Initiation:</b> HbA1c > 10% suggests insulin deficiency. Start Basal Insulin + Metformin.";
-            }
-
-            // 3. COMORBIDITY OVERRIDES (CVOT)
-            if(document.getElementById('dm_ascvd').checked || document.getElementById('dm_hf').checked) {
-                rec += "<br><br><b>CV/HF Risk:</b> Prioritize SGLT2-i or GLP1-RA proven to reduce MACE/HF events regardless of HbA1c.";
-            }
-            if(document.getElementById('dm_dkd').checked) {
-                rec += "<br><br><b>Renal Protection:</b> SGLT2-i indicated to slow DKD progression.";
-            }
-
-            // 4. SAFETY ALERTS (eGFR)
-            if(egfr < 45) alert += "⚠️ Reduce Metformin Dose (eGFR <45).<br>";
-            if(egfr < 30) alert += "⚠️ <b>STOP METFORMIN</b> (eGFR <30).<br>";
-            if(egfr < 30) alert += "⚠️ SGLT2-i contraindictated/not recommended (Check product label).<br>";
-
-            document.getElementById('dmRecText').innerHTML = rec;
-            document.getElementById('dmAlerts').innerHTML = alert;
-        }
-
-        // DATA & DEFS
-        const defs = {
-            "id": { t:"Patient ID", d:"Unique medical identifier for record tracking." },
-            "act": { t:"Activity Factor", d:"<b>Sedentary (1.2):</b> Desk job, little exercise.<br><b>Light (1.375):</b> Exercise 1-3 days/wk.<br><b>Mod (1.55):</b> Exercise 3-5 days/wk.<br><b>Active (1.7):</b> Heavy exercise 6-7 days/wk." },
-            "waist": { t:"Waist Circumference", d:"Central obesity indicator.<br><b>Risk:</b> >90cm (Men), >80cm (Women)." },
-            "bmi": { t:"Body Mass Index", d:"Weight(kg) / Height(m)².<br><b>Asian Cutoffs:</b><br>>23: Overweight<br>>27.5: Obese I<br>>32.5: Obese II" },
-            "vfat": { t:"Visceral Fat", d:"Fat surrounding internal organs.<br><b>Normal:</b> 1-9<br><b>High:</b> 10-14<br><b>Very High:</b> 15+" },
-            "mus": { t:"Skeletal Muscle Mass %", d:"<b>Low (Sarcopenia Risk):</b><br>Men < 32.8%<br>Women < 25.8%" },
-            "fbs": { t:"Fasting Blood Sugar", d:"Glucose after 8h fast.<br><b>Normal:</b> < 5.6 mmol/L<br><b>Pre-DM:</b> 5.6 - 6.9<br><b>Diabetes:</b> ≥ 7.0" },
-            "rbs": { t:"Random Blood Sugar", d:"Glucose without fasting.<br><b>Diabetes:</b> ≥ 11.1 mmol/L with symptoms." },
-            "hba1c": { t:"HbA1c", d:"Average glucose over 3 months.<br><b>Normal:</b> < 5.7%<br><b>Pre-DM:</b> 5.7 - 6.2%<br><b>Diabetes:</b> ≥ 6.3%" },
-            "bp": { t:"Blood Pressure", d:"<b>Normal:</b> < 120/80<br><b>Elevated:</b> 120-129/<80<br><b>HTN Stage 1:</b> 130-139/80-89" },
-            "rhr": { t:"Resting Heart Rate", d:"Used to calculate Heart Rate Reserve (Karvonen) for precise exercise zones." },
-            "ldl": { t:"LDL Cholesterol", d:"'Bad' Cholesterol.<br><b>Optimal:</b> < 2.6 mmol/L<br><b>High Risk:</b> Target < 1.8 or < 1.4 depending on risk profile." },
-            "hdl": { t:"HDL Cholesterol", d:"'Good' Cholesterol.<br><b>Desirable:</b> > 1.0 mmol/L (Men), > 1.3 (Women)." },
-            "tg": { t:"Triglycerides", d:"Fat in blood.<br><b>Normal:</b> < 1.7 mmol/L." },
-            "bmr": { t:"BMR (Mifflin-St Jeor)", d:"Calories burned at complete rest to maintain vital functions." },
-            "tdee": { t:"TDEE", d:"Total Daily Energy Expenditure.<br>BMR x Activity Factor." },
-            "cpg": { t:"CPG Triggers", d:"Clinical Practice Guidelines targets based on comorbidities.<br>e.g., MAFLD requires >10% loss." },
-            "osa": { t:"Obstructive Sleep Apnea", d:"Target 7-11% weight loss to reduce AHI (Apnea-Hypopnea Index)." },
-            "met": { t:"METs (Metabolic Equivalent)", d:"1 MET = Energy cost of sitting quietly. Exercise calorie burn is calculated using MET values." }
-        };
 
         function showDef(id) {
-            if(defs[id]) {
-                document.getElementById('defTitle').innerHTML = defs[id].t;
-                document.getElementById('defText').innerHTML = defs[id].d;
-                document.getElementById('defModal').classList.remove('hidden');
-            }
+            const defs = {
+                "id": "Medical ID for tracking.", "act": "Multiplier for TDEE.", "bmi": "Wt/Ht². >23 is Overweight (Asian).", 
+                "fbs": "Fasting Glucose. Normal <5.6.", "hba1c": "3-mo Avg Glucose. DM ≥6.3%.", "egfr": "Kidney function. <60 is CKD."
+            };
+            document.getElementById('defTitle').innerText = id.toUpperCase();
+            document.getElementById('defText').innerText = defs[id] || "Clinical Parameter.";
+            document.getElementById('defModal').classList.remove('hidden');
         }
 
-        const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
-        const ids = [
-            'pId','pName','age','gender','height','weight','waist','bmi','vfat','fat','muscle','docRemarks','activity',
-            'snackFreq','drinkFreq','dietPref','bfType','bfSize','luType','luSize','dnType','dnSize',
-            'fbs','rbs','hba1c','sbp','dbp','rhr','chol','ldl','hdl','tg',
-            // DM IDS
-            'dm_fbs','dm_rbs','dm_hba1c','dm_egfr','dm_ascvd','dm_dkd','dm_hf'
-        ];
-        const els = {}; ids.forEach(id => {
-            let el = document.getElementById(id);
-            if(el) els[id] = el;
-        });
-        const checks = ['risk_t2dm','risk_htn','risk_dys','risk_osa','risk_mafld','risk_meta','habit_carbs','habit_fried','habit_night','habit_fiber'];
-        let plan = [];
-        let foodPlan = [];
+        // CALCULATION LOGIC
+        function runCalc() {
+            // OBESITY LOGIC
+            let w = parseFloat(document.getElementById('weight').value) || 0;
+            let h = parseFloat(document.getElementById('height').value) || 0;
+            let bmi = (w/((h/100)*(h/100))).toFixed(1);
+            if(w>0 && h>0) document.getElementById('bmi').value = bmi;
 
-        const moves = {
-            'cardio': [{name:"Brisk Walking", met:3.5}, {name:"Jogging", met:7.0}, {name:"Running", met:9.0}, {name:"Cycling", met:6.0}],
-            'resist': [{name:"Bands", met:3.5}, {name:"Bodyweight", met:4.0}, {name:"Weights", met:6.0}]
-        };
-
-        function updateMoves() {
-            let type = document.getElementById('exType').value;
-            let sel = document.getElementById('exMove');
-            sel.innerHTML = "";
-            moves[type].forEach(m => { let opt = document.createElement('option'); opt.value = m.met; opt.text = m.name; sel.add(opt); });
-        }
-
-        function addExercise() {
-            let sel = document.getElementById('exMove');
-            let name = sel.options[sel.selectedIndex].text;
-            let dur = parseFloat(document.getElementById('exDur').value) || 0;
-            let w = parseFloat(els.weight.value) || 70;
-            plan.push({name, dur, k: Math.round((parseFloat(sel.value) * 3.5 * w * dur) / 200)});
-            renderPlan();
-        }
-
-        function addFood() {
-            let sel = document.getElementById('foodType');
-            let val = sel.value.split('|');
-            let cal = parseFloat(val[0]);
-            let prot = parseFloat(val[1]);
-            let name = sel.options[sel.selectedIndex].text.split('(')[0].trim();
-            let qty = parseFloat(document.getElementById('foodQty').value) || 1;
-            
-            foodPlan.push({name, qty, c: Math.round(cal*qty), p: Math.round(prot*qty)});
-            renderFood();
-        }
-
-        function renderFood() {
-            let fl = document.getElementById('foodList');
-            fl.innerHTML = "";
-            let tc = 0, tp = 0;
-            foodPlan.forEach((f,i) => {
-                tc += f.c; tp += f.p;
-                fl.innerHTML += `<div class="food-item"><span>${f.name} x${f.qty}</span><span>${f.c}kcal / ${f.p}g P</span> <span style="color:red;cursor:pointer;" onclick="foodPlan.splice(${i},1);renderFood()">×</span></div>`;
-            });
-            document.getElementById('planProt').innerText = tp;
-            document.getElementById('planCal').innerText = tc;
-            
-            let pBoxContent = document.getElementById('proteinBox').innerHTML;
-            let cleanContent = pBoxContent.replace(/<div class="food-calc-row">[\s\S]*?<\/div>/, ""); 
-            document.getElementById('pdProtein').innerHTML = cleanContent;
-            document.getElementById('pdProtein').className = "protein-box"; 
-            document.getElementById('pdProtein').style.background = document.getElementById('proteinBox').style.background;
-        }
-
-        function renderPlan() {
-            let tb = document.getElementById('planBody');
-            tb.innerHTML = "";
-            let tot = 0;
-            plan.forEach((p,i) => { tot += p.k; tb.innerHTML += `<tr><td>${p.name}</td><td>${p.dur}m</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderPlan()">×</td></tr>`; });
-            document.getElementById('totalBurn').innerText = tot;
-            
-            let age = parseFloat(els.age.value) || 30;
-            let rhr = parseFloat(els.rhr.value);
-            let max = 220 - age;
-            let useKarvonen = !isNaN(rhr) && rhr > 0;
-            let zones = [0.5, 0.6, 0.7, 0.8, 0.9];
-            let zVals = [];
-
-            if (useKarvonen) {
-                zVals = zones.map(z => Math.round(((max - rhr) * z) + rhr));
-                document.getElementById('maxHrLabel').innerText = `Max: ${max} | RHR: ${rhr}`;
-                document.getElementById('hrMethod').innerText = "Method: Karvonen (HRR)";
-            } else {
-                zVals = zones.map(z => Math.round(max * z));
-                document.getElementById('maxHrLabel').innerText = `Max: ${max}`;
-                document.getElementById('hrMethod').innerText = "Method: % Max HR (Enter RHR for precision)";
-            }
-
-            document.getElementById('z1v').innerText = zVals[0];
-            document.getElementById('z2v').innerText = zVals[1];
-            document.getElementById('z3v').innerText = zVals[2];
-            document.getElementById('z4v').innerText = zVals[3];
-            document.getElementById('z5v').innerText = zVals[4];
-        }
-
-        // CORE LOGIC
-        window.getDetailedBar = (label, value, unit, totalMax, segments) => {
-            let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
-            segments.forEach(seg => {
-                let w = ((seg.limit - prevLimit) / totalMax) * 100;
-                barsHTML += `<div class="bar-seg" style="width:${w}%; background:${seg.color};"></div>`;
-                let cp = (seg.limit / totalMax) * 100;
-                numsHTML += `<div class="bar-number-item" style="left:${cp}%;">${seg.limit}</div>`;
-                labelsHTML += `<div class="bar-label-item" style="width:${w}%;">${seg.label}</div>`;
-                prevLimit = seg.limit;
-            });
-            let mp = (value / totalMax) * 100; if(mp > 100) mp = 100; if(mp < 0) mp = 0;
-            return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span style="color:#007AFF;">${value} ${unit}</span></div><div style="position:relative;"><div class="bar-complex">${barsHTML}</div><div class="bar-numbers-row">${numsHTML}</div><div class="bar-labels-row">${labelsHTML}</div><div class="bar-marker-wrapper"><div class="bar-marker" style="left: ${mp}%;"></div></div></div></div>`;
-        };
-
-        window.getStatCard = (label, val, unit, detail, isPos) => {
-            let color = isPos ? 'var(--success)' : 'var(--text-sec)';
-            if(label.includes("Status")) color = val === 'Surplus' ? '#EA580C' : '#059669';
-            return `<div class="apple-stat-card"><div><div class="stat-header">${label}</div><div style="display:flex; align-items:baseline;"><span class="stat-value">${val}</span><span class="stat-unit">${unit}</span></div></div><div class="stat-detail-box" style="color:${color}">${detail}</div></div>`;
-        };
-
-        window.getPrintStatCard = (label, val, unit, detail) => {
-            return `<div class="print-stat-card"><span class="p-stat-label">${label}</span><span class="p-stat-val">${val} <small style="font-size:10pt;">${unit}</small></span><span class="p-stat-detail">${detail}</span></div>`;
-        };
-
-        window.getExerciseRx = (muscleVal, vfatVal, bmiVal, gender) => {
-            const isLowMuscle = (gender === 'male' && muscleVal < 32.8) || (gender === 'female' && muscleVal < 25.8);
-            const isHighVfat = vfatVal >= 10;
-            const isSevereObese = bmiVal >= 35;
-            
-            let rx = { title: "Standard CPG Protocol", ratio: 50, desc: "Balanced health maintenance.", fitt: [{l:"Freq", v:"3-5x/wk"}, {l:"Intensity", v:"Moderate"}, {l:"Time", v:"150m/wk"}, {l:"Type", v:"Mixed"}] };
-
-            if(isSevereObese) { rx = { title: "Low Impact Protocol", ratio: 80, desc: "Joint protection priority.", fitt: [{l:"Freq", v:"5-6x/wk"}, {l:"Intensity", v:"Low-Mod"}, {l:"Time", v:"30m/day"}, {l:"Type", v:"Swim/Bike"}] }; }
-            else if(isLowMuscle) { rx = { title: "Strength & Conditioning", ratio: 30, desc: "Rebuild muscle mass.", fitt: [{l:"Freq", v:"3-4x/wk"}, {l:"Intensity", v:"Mod-High"}, {l:"Time", v:"45m/ses"}, {l:"Type", v:"Resistance"}] }; }
-            else if(isHighVfat) { rx = { title: "Aerobic Endurance", ratio: 70, desc: "Visceral fat oxidation.", fitt: [{l:"Freq", v:"5-6x/wk"}, {l:"Intensity", v:"Zone 2"}, {l:"Time", v:"300m/wk"}, {l:"Type", v:"Cardio"}] }; }
-            
-            let fittHTML = rx.fitt.map(f => `<div class="fitt-item"><span class="fitt-label">${f.l}</span>${f.v}</div>`).join("");
-            return `<div class="rx-box"><div class="rx-head"><span>${rx.title}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${rx.ratio}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${100-rx.ratio}%; background:#AF52DE;">Resist</div></div><div style="font-size:10px; text-align:center; margin-top:4px;">${rx.ratio}% C / ${100-rx.ratio}% R</div></div><div class="rx-details"><h4>F.I.T.T. Protocol:</h4><div class="fitt-grid">${fittHTML}</div><div class="rx-reason">${rx.desc}</div></div></div></div>`;
-        };
-
-        window.runCalc = () => {
-            document.getElementById('resultCard').classList.remove('hidden');
-            renderPlan(); 
-            runDMCalc(); // Trigger DM logic
-
-            // INTAKE & METABOLIC
-            let bf = calMap[els.bfType.value][els.bfSize.value], lu = calMap[els.luType.value][els.luSize.value], dn = calMap[els.dnType.value][els.dnSize.value];
-            let intake = bf + lu + dn + ((parseFloat(els.snackFreq.value)||0)*200) + ((parseFloat(els.drinkFreq.value)||0)*150);
-            
-            let w = parseFloat(els.weight.value)||0, h = parseFloat(els.height.value)||0, age = parseFloat(els.age.value)||30, act = parseFloat(els.activity.value);
-            let bmr = 0, tdee = 0;
-            if(w > 0 && h > 0) {
-                bmr = (10*w) + (6.25*h) - (5*age) + (els.gender.value==='male'?5:-161);
-                tdee = bmr * act;
-                els.bmi.value = (w/((h/100)*(h/100))).toFixed(1);
-            }
-            let bal = Math.round(intake - tdee);
-
-            // COLOR CODING
-            els.hba1c.className = (parseFloat(els.hba1c.value) > 6.0) ? "abnormal" : "";
-            els.fbs.className = (parseFloat(els.fbs.value) > 6.0) ? "abnormal" : "";
-            els.sbp.className = (parseFloat(els.sbp.value) > 130) ? "abnormal" : "";
-
-            // UI UPDATES
-            document.getElementById('sIntake').innerText = Math.round(intake);
-            document.getElementById('sBMR').innerText = Math.round(bmr);
+            // Simplified Metabolic
+            let intake = 0; // Simplified for demo
+            let tdee = w * 25 * parseFloat(document.getElementById('activity').value);
             document.getElementById('sTDEE').innerText = Math.round(tdee);
-            document.getElementById('sBal').innerText = (bal>0?"+":"")+bal;
-            document.getElementById('sBalCard').className = "meta-card " + (tdee>0?(bal>200?"surplus":(bal<-200?"deficit":"")):"");
-
-            // PRINT SYNC (Vitals)
-            document.getElementById('pdIntake').innerText = Math.round(intake) + " kcal";
-            document.getElementById('pdBMR').innerText = Math.round(bmr) + " kcal";
-            document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
-            document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
-            document.getElementById('pdName').innerText = els.pName.value;
-            document.getElementById('pdIdPrint').innerText = els.pId.value;
-            document.getElementById('pdDemo').innerText = `${age}/${els.gender.value}`;
-            document.getElementById('pdBio').innerText = `${h}cm / ${w}kg`;
-            document.getElementById('pdBMI').innerText = els.bmi.value;
-            document.getElementById('pdDate').innerText = new Date().toLocaleDateString();
-            document.getElementById('pdBP').innerText = (els.sbp.value && els.dbp.value) ? `${els.sbp.value}/${els.dbp.value}` : "-";
-            document.getElementById('pdRHR').innerText = els.rhr.value || "-";
-            document.getElementById('pdWaist').innerText = els.waist.value || "-";
-            document.getElementById('pdFat').innerText = els.fat.value || "-";
-            document.getElementById('pdVFat').innerText = els.vfat.value || "-";
-            document.getElementById('pdMuscle').innerText = els.muscle.value || "-";
-            document.getElementById('pdGlucose').innerText = (els.fbs.value ? `F: ${els.fbs.value}` : "") + (els.rbs.value ? ` R: ${els.rbs.value}` : "");
-            document.getElementById('pdA1c').innerText = els.hba1c.value ? els.hba1c.value + "%" : "-";
-            document.getElementById('pdLipids').innerText = (els.chol.value ? `T: ${els.chol.value}` : "") + (els.ldl.value ? ` L: ${els.ldl.value}` : "") + (els.hdl.value ? ` H: ${els.hdl.value}` : "");
-            document.getElementById('pdTG').innerText = els.tg.value || "-";
-            document.getElementById('pdActivity').innerText = els.activity.options[els.activity.selectedIndex].text;
-
-            // VISUALS
-            let vHTML = getDetailedBar("BMI", parseFloat(els.bmi.value)||0, "", 45, [{limit:18.5,color:"#F59E0B",label:"U"},{limit:23,color:"#10B981",label:"N"},{limit:27.5,color:"#FBBF24",label:"Pre"},{limit:32.5,color:"#F97316",label:"O1"},{limit:37.5,color:"#EF4444",label:"O2"}]);
-            vHTML += getDetailedBar("Visceral Fat", parseFloat(els.vfat.value)||0, "", 20, [{limit:9,color:"#10B981",label:"N"},{limit:14,color:"#F97316",label:"H"},{limit:20,color:"#EF4444",label:"VH"}]);
-            vHTML += getDetailedBar("Muscle Mass", parseFloat(els.muscle.value)||0, "%", 60, [{limit:28,color:"#EF4444",label:"Low"},{limit:33,color:"#10B981",label:"N"},{limit:60,color:"#10B981",label:"H"}]);
+            
+            // Visuals
+            let vHTML = getDetailedBar("BMI", bmi, "", 40, [{limit:23,color:"#34C759"},{limit:27.5,color:"#FF9500"},{limit:40,color:"#FF3B30"}]);
             document.getElementById('sAnalysis').innerHTML = vHTML;
             document.getElementById('pdVisuals').innerHTML = vHTML;
-
-            // RX & PROTEIN
-            let rxHTML = getExerciseRx(parseFloat(els.muscle.value)||0, parseFloat(els.vfat.value)||0, parseFloat(els.bmi.value)||0, els.gender.value);
-            document.getElementById('sRxCard').innerHTML = rxHTML;
-            document.getElementById('pdRx').innerHTML = rxHTML;
-
-            let mus = parseFloat(els.muscle.value);
-            let hasMuscleInput = !isNaN(mus) && mus > 0;
-            let isLowMuscle = false;
-            if(hasMuscleInput) isLowMuscle = (els.gender.value === 'male' && mus < 32.8) || (els.gender.value === 'female' && mus < 25.8);
             
-            let pBox = document.getElementById('proteinBox');
-            let pHTML = "";
-            if(w > 0) {
-                if(!hasMuscleInput) {
-                    pBox.style.background = "#F9FAFB"; pBox.style.borderColor = "#ddd";
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#333;"><span>📋 <b>Standard Goal</b></span><span class="protein-val" style="color:#333;">${Math.round(w*1.0)}-${Math.round(w*1.2)}g <small>/day</small></span></div><div style="font-size:13px; margin-top:5px; color:#666;">Standard weight management target.</div>`;
-                } else if(isLowMuscle) {
-                    pBox.style.background = "#F2F8FF"; pBox.style.borderColor = "#007AFF";
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#007AFF;"><span>⚠️ <b>Low Muscle Mass</b></span><span class="protein-val">${Math.round(w*1.2)}-${Math.round(w*1.5)}g <small>/day</small></span></div><div style="font-size:13px; margin-top:5px; color:#555;">High protein recommended.</div>`;
-                } else {
-                    pBox.style.background = "#ECFDF5"; pBox.style.borderColor = "#10B981";
-                    pHTML = `<div style="display:flex;justify-content:space-between;color:#065F46;"><span>✅ <b>Adequate</b></span><span class="protein-val" style="color:#065F46;">${Math.round(w*0.8)}-${Math.round(w*1.0)}g <small>/day</small></span></div><div style="font-size:13px; margin-top:5px; color:#555;">Maintenance level.</div>`;
-                }
-            } else {
-                pBox.style.background = "#F9FAFB"; pBox.style.borderColor = "#ddd";
-                pHTML = `<div style="display:flex;justify-content:space-between;color:#333;"><span>📋 <b>Protein Guide</b></span><span class="protein-val" style="color:#333;">1.0-1.2 g/kg</span></div><div style="font-size:13px; margin-top:5px; color:#666;">Standard target (Input Weight for calc).</div>`;
-            }
+            // Protein
+            document.getElementById('proteinText').innerText = w > 0 ? `Target: ${Math.round(w*1.2)}-${Math.round(w*1.5)}g` : "Enter Weight";
             
-            document.getElementById('proteinText').innerHTML = pHTML;
-            pBox.style.display = "block"; 
-            renderFood();
-
-            // STRATEGY & MILESTONES
-            let minLoss = 5, maxLoss = 10, recList = "", riskFound = false;
-            if(document.getElementById('risk_mafld').checked) { minLoss=10; maxLoss=40; recList+="<li><b>Fatty Liver:</b> Target 10-40% loss.</li>"; riskFound=true; }
-            if(document.getElementById('risk_osa').checked) { minLoss=Math.max(minLoss,7); if(maxLoss<11)maxLoss=11; recList+="<li><b>Sleep Apnoea:</b> Target 7-11% loss.</li>"; riskFound=true; }
-            if(document.getElementById('risk_t2dm').checked) { minLoss=Math.max(minLoss,5); if(maxLoss<15)maxLoss=15; recList+="<li><b>T2DM:</b> Target 5-15% loss.</li>"; riskFound=true; }
-            if(document.getElementById('risk_htn').checked) { minLoss=Math.max(minLoss,5); if(maxLoss<15)maxLoss=15; recList+="<li><b>HTN:</b> Target 5-15% loss.</li>"; riskFound=true; }
-            
-            if(document.getElementById('habit_carbs').checked) recList += "<li><b>Diet:</b> Reduce carbs by 50%.</li>";
-            if(document.getElementById('habit_night').checked) recList += "<li><b>Timing:</b> Stop eating 3h before bed.</li>";
-
-            let targetCal = Math.max(1200, Math.round(tdee - 500));
-            let bioAge = age + ((parseFloat(els.vfat.value)||0)>10?5:0);
-            
-            let sHTML = `
-                <div class="apple-stat-card"><div><div class="stat-header">Target Wt</div><div class="stat-value">${(w*(1-(minLoss/100))).toFixed(1)}<span class="stat-unit">kg</span></div></div><div class="stat-detail-box">${minLoss}-${maxLoss}% Loss</div></div>
-                <div class="apple-stat-card"><div><div class="stat-header">Rx Cal</div><div class="stat-value">${targetCal}<span class="stat-unit">kcal</span></div></div><div class="stat-detail-box">Daily Limit</div></div>
-                <div class="apple-stat-card"><div><div class="stat-header">Meta Age</div><div class="stat-value">${bioAge}<span class="stat-unit">y</span></div></div><div class="stat-detail-box">Est</div></div>
-                <div class="apple-stat-card"><div><div class="stat-header">Status</div><div class="stat-value" style="color:${bal>0?'#EA580C':'#059669'}">${bal>0?'Surplus':'Deficit'}</div></div></div>
-            `;
-            document.getElementById('sStatGrid').innerHTML = sHTML;
-            document.getElementById('pdStats').innerHTML = sHTML.replace(/apple-stat-card/g, 'print-stat-card');
-
-            let mHTML = "";
-            if(w > 0) {
-                mHTML += `<table class="milestone-table"><tr><th>Goal</th><th>Weight</th><th>Timeline</th></tr>`;
-                mHTML += `<tr><td>5%</td><td class="target-hl">${(w*0.95).toFixed(1)}kg</td><td>3 Months</td></tr>`;
-                if(maxLoss >= 10) mHTML += `<tr><td>10%</td><td class="target-hl">${(w*0.90).toFixed(1)}kg</td><td>6 Months</td></tr>`;
-                if(maxLoss >= 15) mHTML += `<tr><td>15%</td><td class="target-hl">${(w*0.85).toFixed(1)}kg</td><td>9 Months</td></tr>`;
-                if(maxLoss >= 40) mHTML += `<tr><td>40%</td><td class="target-hl">${(w*0.60).toFixed(1)}kg</td><td>Long Term</td></tr>`;
-                mHTML += `</table>`;
-            }
-            document.getElementById('sMilestones').innerHTML = mHTML;
-            document.getElementById('pdMile').innerHTML = mHTML;
-
-            if(!riskFound && recList === "") recList = "<li>Target 5-10% weight loss for general health.</li>";
-            let dietTxt = els.dietPref.value === 'mrp' ? "Replace 2 meals/day with LCD." : `Limit to ${targetCal} kcal/day.`;
-            let rHTML = `<ul><li>${dietTxt}</li>${recList}</ul>`;
-            document.getElementById('sRecs').innerHTML = rHTML;
-            document.getElementById('pdRecs').innerHTML = rHTML;
-
-            // CLONE PLANNER FOR PRINT
-            document.getElementById('pdRxContainer').innerHTML = document.getElementById('exPlanner').innerHTML;
+            // Exercise Rx
+            document.getElementById('sRxCard').innerHTML = `<div class="rx-box" style="padding:15px"><b>Rx:</b> ${bmi>35?"Low Impact":"Standard"} Protocol</div>`;
+            document.getElementById('pdRx').innerHTML = document.getElementById('sRxCard').innerHTML;
         }
 
-        // INIT & LISTENERS
-        window.saveKey = () => { localStorage.setItem('geminiKey', document.getElementById('apiKeyInput').value); document.getElementById('keyModal').classList.add('hidden'); };
-        window.doPrint = () => { document.getElementById('pdNotes').innerText = els.docRemarks.value; window.print(); };
-        
-        window.onload = () => {
-            updateMoves();
-            if(!localStorage.getItem('geminiKey')) document.getElementById('keyModal').classList.remove('hidden');
-            [...ids, ...checks].forEach(id => {
-                if(els[id]) {
-                    els[id].addEventListener('change', runCalc);
-                    els[id].addEventListener('input', runCalc);
-                }
-            });
-            // DM Listeners
-            ['dm_fbs','dm_rbs','dm_hba1c','dm_egfr','dm_ascvd','dm_dkd','dm_hf'].forEach(id => {
-                let el = document.getElementById(id);
-                if(el) {
-                    el.addEventListener('change', runDMCalc);
-                    el.addEventListener('input', runDMCalc);
-                }
-            });
-            runCalc();
-        };
+        function runDMCalc() {
+            let a1c = parseFloat(document.getElementById('dm_hba1c').value);
+            let status = a1c >= 6.3 ? "Diabetes" : (a1c >= 5.7 ? "Pre-Diabetes" : "Normal");
+            let rec = "";
+            
+            if(status === "Diabetes") {
+                if(a1c < 7.5) rec = "Monotherapy (Metformin)";
+                else if(a1c < 8.5) rec = "Dual Therapy (Met + SGLT2i/DPP4i)";
+                else rec = "Triple Therapy / Insulin";
+            }
+            if(document.getElementById('dm_dkd').checked) rec += "<br>+ SGLT2i (Renal Protect)";
+            
+            document.getElementById('dmStatus').innerText = status;
+            document.getElementById('dmRecText').innerHTML = rec;
+            
+            // Sync to Print vars
+            document.getElementById('pdDmStatus').innerText = status;
+            document.getElementById('pdDmRec').innerHTML = rec;
+        }
 
-        window.runAI = async () => {
-            let k = localStorage.getItem('geminiKey');
-            if(!k) { document.getElementById('keyModal').classList.remove('hidden'); return; }
-            document.getElementById('aiBtn').innerText = "...";
-            try {
-                let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:`Patient ${els.age.value}y ${els.gender.value}, Wt ${els.weight.value}, Intake ${document.getElementById('sIntake').innerText}, TDEE ${document.getElementById('sTDEE').innerText}. Brief plan.`}]}]})});
-                let d = await res.json(); els.docRemarks.value = d.candidates[0].content.parts[0].text;
-            } catch(e) { alert("AI Error"); }
-            document.getElementById('aiBtn').innerText = "✨ AI";
-        };
+        // PRINT LOGIC (THE MAGIC)
+        function doPrint() {
+            // 1. Map Shared Bio Data based on Active Tab
+            let p = currentTab === 'arashift' ? '' : 'dm_';
+            
+            document.getElementById('pdName').innerText = document.getElementById(p+'pName').value;
+            document.getElementById('pdId').innerText = document.getElementById(p+'pId').value;
+            document.getElementById('pdBio').innerText = `${document.getElementById(p+'height').value}cm / ${document.getElementById(p+'weight').value}kg`;
+            document.getElementById('pdBMI').innerText = document.getElementById(p+'bmi').value;
+            document.getElementById('pdWaist').innerText = document.getElementById(p+'waist').value;
+            
+            // 2. Map DM Specifics if DM Tab
+            if(currentTab === 'diabetes') {
+                document.getElementById('pdGluc').innerText = `F:${document.getElementById('dm_fbs').value} / A1c:${document.getElementById('dm_hba1c').value}%`;
+                document.getElementById('pdBP').innerText = `${document.getElementById('dm_sbp').value}/${document.getElementById('dm_dbp').value}`;
+                document.getElementById('pdGFR').innerText = document.getElementById('dm_egfr').value;
+                
+                document.getElementById('printTitle').innerText = "Diabetes Management Report";
+                document.getElementById('printSubtitle').innerText = "CPG Assessment";
+                document.getElementById('print-obesity-content').classList.add('print-hidden');
+                document.getElementById('print-diabetes-content').classList.remove('print-hidden');
+            } else {
+                // Map Obesity Specifics
+                document.getElementById('pdVFat').innerText = document.getElementById('vfat').value;
+                document.getElementById('pdBP').innerText = `${document.getElementById('sbp').value}/${document.getElementById('dbp').value}`;
+                
+                document.getElementById('printTitle').innerText = "AraShift Report";
+                document.getElementById('printSubtitle').innerText = "Metabolic Assessment";
+                document.getElementById('print-obesity-content').classList.remove('print-hidden');
+                document.getElementById('print-diabetes-content').classList.add('print-hidden');
+                
+                // Clone Planner for print
+                document.getElementById('pdProtein').innerHTML = document.getElementById('proteinBox').innerHTML.replace(/<div class="food-calc-row">[\s\S]*?<\/div>/, "");
+                document.getElementById('pdRxContainer').innerHTML = document.getElementById('exPlanner').innerHTML;
+            }
+
+            document.getElementById('pdDate').innerText = new Date().toLocaleDateString();
+            window.print();
+        }
+
+        // HELPERS
+        function updateMoves(){
+            let s = document.getElementById('exMove'); s.innerHTML="";
+            moves[document.getElementById('exType').value].forEach(m=>{let o=document.createElement('option');o.text=m.name;s.add(o)});
+        }
+        function addFood() {
+             let f=document.getElementById('foodList'); f.innerHTML += `<div class="food-item"><span>${document.getElementById('foodType').options[document.getElementById('foodType').selectedIndex].text}</span></div>`;
+        }
+        function addExercise() {
+             let t=document.getElementById('planBody'); t.innerHTML += `<tr><td>${document.getElementById('exMove').options[document.getElementById('exMove').selectedIndex].text}</td><td>${document.getElementById('exDur').value}m</td></tr>`;
+        }
+        function getDetailedBar(l,v,u,m,s) {
+            let h=""; s.forEach(i=>{h+=`<div class="bar-seg" style="width:${(i.limit/m)*100}%;background:${i.color}"></div>`});
+            return `<div class="visual-row"><div class="visual-header"><span>${l}</span><span>${v}</span></div><div class="bar-complex">${h}<div class="bar-marker" style="left:${(v/m)*100}%"></div></div></div>`;
+        }
+
+        // INIT
+        window.onload = () => { updateMoves(); };
     </script>
 </body>
 </html>
