@@ -114,6 +114,12 @@
         .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
         .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
         
+        /* DAY PILLS */
+        .day-pills-container { display:flex; justify-content:space-between; gap:5px; margin-bottom:15px; margin-top:10px; }
+        .day-pill { flex:1; text-align:center; padding:8px 0; border:1px solid #D1D1D6; border-radius:8px; font-size:11px; font-weight:700; color:#86868B; cursor:pointer; transition:0.2s; background:#fff; }
+        .day-pill:hover { border-color:var(--primary); color:var(--primary); }
+        .day-pill.active { background:var(--primary); color:white; border-color:var(--primary); box-shadow:0 2px 5px rgba(0,122,255,0.3); }
+
         .fitt-grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px; }
         .fitt-item { background:#F9FAFB; padding:8px; border-radius:6px; font-size:11px; }
         .fitt-label { display:block; font-weight:700; color:#555; margin-bottom:2px; }
@@ -199,12 +205,19 @@
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; } 
             .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
             
-            /* CLEAN PRINT - HIDE INPUTS */
+            /* A4 EXERCISE PLANNER - CLEAN */
             .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; break-inside: avoid; page-break-inside: avoid; } 
             .planner-header h4 { font-size: 10pt; color: #000; }
             
-            .add-row, .del-btn, .clear-btn { display: none !important; }
-            .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 5px; } .plan-table td { border-bottom: 1px solid #ccc; padding: 5px; }
+            /* HIDE INPUTS & PILLS FOR PRINT */
+            .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
+            
+            .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
+            .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 5px; } 
+            .plan-table td { padding: 5px; border-bottom: 1px solid #ccc; }
+            /* Hide the Delete Column in Print */
+            .plan-table th:last-child, .plan-table td:last-child { display: none; }
+
             .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
             
             .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; break-inside: avoid; }
@@ -253,7 +266,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v9.99</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.0</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -425,6 +438,16 @@
                             <h4>Exercise Planner <span class="help-icon" onclick="showDef('met')">?</span></h4>
                             <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
                             <span class="clear-btn" onclick="clearPlan()">Clear All</span>
+                        </div>
+
+                        <div class="day-pills-container" id="dayPills">
+                            <div class="day-pill" onclick="toggleDay(this)">Mon</div>
+                            <div class="day-pill" onclick="toggleDay(this)">Tue</div>
+                            <div class="day-pill" onclick="toggleDay(this)">Wed</div>
+                            <div class="day-pill" onclick="toggleDay(this)">Thu</div>
+                            <div class="day-pill" onclick="toggleDay(this)">Fri</div>
+                            <div class="day-pill" onclick="toggleDay(this)">Sat</div>
+                            <div class="day-pill" onclick="toggleDay(this)">Sun</div>
                         </div>
 
                         <div class="add-row">
@@ -632,7 +655,7 @@
         const checks = ['risk_t2dm','risk_htn','risk_dys','risk_osa','risk_mafld','risk_meta','habit_carbs','habit_fried','habit_night','habit_fiber'];
         let plan = [], foodPlan = [];
 
-        // --- FULL EXERCISE DATABASE (HARVARD SOURCE) ---
+        // --- FULL EXERCISE DATABASE ---
         const moves = {
             'gym': [
                 {name:"Weight Lifting: general", factor:1.59}, {name:"Weight Lifting: vigorous", factor:3.17},
@@ -985,16 +1008,30 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // Clone planner, remove input rows
-                let plannerHTML = document.getElementById('exPlanner').innerHTML;
-                plannerHTML = plannerHTML.replace(/<div class="add-row">[\s\S]*?<\/div>/, "").replace(/<span class="clear-btn"[\s\S]*?<\/span>/, "");
+                // --- CLEAN PRINT LOGIC (v10.0) ---
+                let clone = document.getElementById('exPlanner').cloneNode(true);
                 
-                document.getElementById('pdRxContainer').innerHTML = plannerHTML;
+                // 1. Remove Inputs, Pills, Buttons
+                let toRemove = clone.querySelectorAll('.add-row, .day-pills-container, .clear-btn, .del-btn');
+                toRemove.forEach(el => el.remove());
+                
+                // 2. Clean Table Columns (remove delete button column)
+                let ths = clone.querySelectorAll('th');
+                if(ths.length > 0) ths[ths.length-1].remove(); 
+                let trs = clone.querySelectorAll('tbody tr');
+                trs.forEach(tr => {
+                    let tds = tr.querySelectorAll('td');
+                    if(tds.length > 0) tds[tds.length-1].remove();
+                });
+
+                document.getElementById('pdRxContainer').innerHTML = clone.innerHTML;
                 document.getElementById('pdProtein').innerHTML = document.getElementById('proteinBox').innerHTML.replace(/<div class="food-calc-row">[\s\S]*?<\/div>/, "");
             }
             document.getElementById('bioGrid').innerHTML = bioHTML;
             window.print();
         }
+
+        function toggleDay(el) { el.classList.toggle('active'); }
 
         function addExercise() {
             let sel = document.getElementById('exMove');
@@ -1030,7 +1067,6 @@
              let f=document.getElementById('foodList'); f.innerHTML += `<div class="food-item"><span>${document.getElementById('foodType').options[document.getElementById('foodType').selectedIndex].text}</span></div>`;
         }
         
-        // NEW GET DETAILED BAR WITH LABELS
         function getDetailedBar(label, value, unit, totalMax, segments) {
             let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
             let currentStatus = "Unknown";
