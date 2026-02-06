@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v9.97 (Text Schedule)</title>
+    <title>AraShift System v9.98 (Streamlined)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -114,12 +114,6 @@
         .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
         .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
         
-        /* DAY PILLS */
-        .day-pills-container { display:flex; justify-content:space-between; gap:5px; margin-bottom:15px; margin-top:10px; }
-        .day-pill { flex:1; text-align:center; padding:8px 0; border:1px solid #D1D1D6; border-radius:8px; font-size:11px; font-weight:700; color:#86868B; cursor:pointer; transition:0.2s; background:#fff; }
-        .day-pill:hover { border-color:var(--primary); color:var(--primary); }
-        .day-pill.active { background:var(--primary); color:white; border-color:var(--primary); box-shadow:0 2px 5px rgba(0,122,255,0.3); }
-
         .fitt-grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px; }
         .fitt-item { background:#F9FAFB; padding:8px; border-radius:6px; font-size:11px; }
         .fitt-label { display:block; font-weight:700; color:#555; margin-bottom:2px; }
@@ -207,17 +201,17 @@
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; } 
             .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
             
-            /* CLEAN A4 EXERCISE PLANNER */
+            /* A4 EXERCISE PLANNER - STREAMLINED */
             .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; page-break-inside: avoid; } 
             .planner-header h4 { font-size: 10pt; color: #000; }
             
-            .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
+            .add-row, .del-btn, .clear-btn { display: none !important; }
             .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; } .plan-table td { border-bottom: 1px solid #ccc; }
             .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
             
             .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; }
             .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; }
-            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; } .food-calc-row { display: none; }
+            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; break-inside: avoid; } .food-calc-row { display: none; }
             
             .dm-rec-box { border: 1px solid #000; background: #E8F2FF !important; padding: 10px; border-radius: 8px; margin-bottom: 15px; page-break-inside: avoid; } .dm-status { font-size: 12pt; font-weight: 800; }
             
@@ -261,7 +255,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v9.97</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v9.98</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -433,16 +427,6 @@
                             <h4>Exercise Planner <span class="help-icon" onclick="showDef('met')">?</span></h4>
                             <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
                             <span class="clear-btn" onclick="clearPlan()">Clear All</span>
-                        </div>
-
-                        <div class="day-pills-container" id="dayPills">
-                            <div class="day-pill" onclick="toggleDay(this)">Mon</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Tue</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Wed</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Thu</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Fri</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Sat</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Sun</div>
                         </div>
 
                         <div class="add-row">
@@ -633,7 +617,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v9.97</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v9.98</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -746,6 +730,7 @@
             }
         }
 
+        // TABS
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -770,6 +755,7 @@
             document.getElementById('defModal').classList.remove('hidden');
         }
 
+        // SMART Rx GENERATOR
         function getSmartRx(mus, vfat, bmi, sex) {
             let isLowMus = (sex==='male' && mus<32.8) || (sex==='female' && mus<25.8);
             let isHighVfat = vfat >= 10;
@@ -821,6 +807,7 @@
             </div>`;
         }
 
+        // CALCULATION LOGIC
         function runCalc() {
             let w = parseFloat(document.getElementById('weight').value) || 0;
             let h = parseFloat(document.getElementById('height').value) || 0;
@@ -847,6 +834,7 @@
             document.getElementById('sBal').innerText = (bal>0?"+":"")+bal;
             document.getElementById('sBalCard').className = "meta-card " + (tdee>0?(bal>200?"surplus":(bal<-200?"deficit":"")):"");
             
+            // VISUALS
             let vHTML = getDetailedBar("BMI", bmiVal, "", 40, [
                 {limit:18.5,color:"#F59E0B",label:"Underweight"},
                 {limit:23,color:"#34C759",label:"Normal"},
@@ -868,6 +856,7 @@
             document.getElementById('sAnalysis').innerHTML = vHTML;
             document.getElementById('pdVisuals').innerHTML = vHTML;
             
+            // Protein
             let pBox = document.getElementById('proteinBox');
             let pText = document.getElementById('proteinText');
             if(w>0) { pText.innerText = `Target: ${Math.round(w*1.2)}-${Math.round(w*1.5)}g`; pBox.style.display = 'block'; }
@@ -880,6 +869,7 @@
             document.getElementById('sRxCard').innerHTML = rxHTML;
             document.getElementById('pdRx').innerHTML = rxHTML;
             
+            // Rec Logic
             let minLoss = 5;
             let recList = "";
             let milestones = [{p:0.05, l:"3 Months"}, {p:0.10, l:"6 Months"}];
@@ -887,7 +877,9 @@
             let sHTML = "";
             let mHTML = "";
 
+            // BMI CHECK for Maintenance
             if (bmiVal > 0 && bmiVal < 23) {
+                 // Maintenance Mode
                  sHTML = `
                     <div class="apple-stat-card"><div><div class="stat-header">Goal</div><div class="stat-value" style="font-size:18px; color:#34C759;">Maintenance</div></div><div class="stat-detail-box">Normal BMI</div></div>
                     <div class="apple-stat-card"><div><div class="stat-header">Rx Cal</div><div class="stat-value">${Math.round(tdee)}<span class="stat-unit">kcal</span></div></div><div class="stat-detail-box">Maintain</div></div>
@@ -895,6 +887,7 @@
                 mHTML = `<div style="padding:15px; text-align:center; font-weight:bold; color:#34C759; background:#fff; border:1px solid #ddd; border-radius:12px;">Healthy Weight - Maintenance Recommended</div>`;
                 recList = "<li>Maintain current activity levels.</li><li>Monitor annual metabolic markers.</li>";
             } else {
+                 // Weight Loss Mode
                  if(document.getElementById('risk_mafld').checked) {
                     recList += "<li style='color:#b91c1c; font-weight:bold;'>Fatty Liver Protocol: Target 10-40% loss.</li>";
                     milestones.push({p:0.15, l:"9 Months"}, {p:0.20, l:"12 Months"}, {p:0.40, l:"Long Term"});
@@ -924,11 +917,13 @@
             document.getElementById('sMilestones').innerHTML = mHTML;
             document.getElementById('pdMile').innerHTML = mHTML;
 
+            // Sync Print
             document.getElementById('pdIntake').innerText = Math.round(intake) + " kcal";
             document.getElementById('pdBMR').innerText = bmr + " kcal";
             document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
             document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
             
+            // HR CALC
             let age = parseFloat(document.getElementById('age').value) || 30;
             let rhr = parseFloat(document.getElementById('rhr').value);
             let maxHR = 220 - age;
@@ -997,32 +992,16 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- NEW TEXT-BASED SCHEDULE GENERATOR ---
-                let pills = document.querySelectorAll('.day-pill');
-                let activeDays = [];
-                let restDays = [];
-                pills.forEach(p => {
-                    if(p.classList.contains('active')) activeDays.push(p.innerText);
-                    else restDays.push(p.innerText);
-                });
-
-                let scheduleText = "";
-                if(activeDays.length > 0) scheduleText += `<div style="margin-bottom:5px; font-size:10pt;"><b>Scheduled Days:</b> ${activeDays.join(", ")}</div>`;
-                scheduleText += `<div style="margin-bottom:15px; font-size:10pt; color:#555;"><b>Rest Days:</b> ${restDays.length > 0 ? restDays.join(", ") : "None"}</div>`;
-
+                // Clone planner, remove input rows
                 let plannerHTML = document.getElementById('exPlanner').innerHTML;
-                plannerHTML = plannerHTML.replace(/<div class="add-row">[\s\S]*?<\/div>/, "")
-                                         .replace(/<div class="day-pills-container"[\s\S]*?<\/div>/, "") 
-                                         .replace(/<span class="clear-btn"[\s\S]*?<\/span>/, "");
-
-                document.getElementById('pdRxContainer').innerHTML = scheduleText + plannerHTML;
+                plannerHTML = plannerHTML.replace(/<div class="add-row">[\s\S]*?<\/div>/, "").replace(/<span class="clear-btn"[\s\S]*?<\/span>/, "");
+                
+                document.getElementById('pdRxContainer').innerHTML = plannerHTML;
                 document.getElementById('pdProtein').innerHTML = document.getElementById('proteinBox').innerHTML.replace(/<div class="food-calc-row">[\s\S]*?<\/div>/, "");
             }
             document.getElementById('bioGrid').innerHTML = bioHTML;
             window.print();
         }
-
-        function toggleDay(el) { el.classList.toggle('active'); }
 
         function addExercise() {
             let sel = document.getElementById('exMove');
@@ -1058,6 +1037,7 @@
              let f=document.getElementById('foodList'); f.innerHTML += `<div class="food-item"><span>${document.getElementById('foodType').options[document.getElementById('foodType').selectedIndex].text}</span></div>`;
         }
         
+        // NEW GET DETAILED BAR WITH LABELS
         function getDetailedBar(label, value, unit, totalMax, segments) {
             let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
             let currentStatus = "Unknown";
