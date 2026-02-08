@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v10.0 (Clean Print)</title>
+    <title>AraShift System v10.1 (Layout Fixed)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -114,12 +114,6 @@
         .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
         .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
         
-        /* DAY PILLS */
-        .day-pills-container { display:flex; justify-content:space-between; gap:5px; margin-bottom:15px; margin-top:10px; }
-        .day-pill { flex:1; text-align:center; padding:8px 0; border:1px solid #D1D1D6; border-radius:8px; font-size:11px; font-weight:700; color:#86868B; cursor:pointer; transition:0.2s; background:#fff; }
-        .day-pill:hover { border-color:var(--primary); color:var(--primary); }
-        .day-pill.active { background:var(--primary); color:white; border-color:var(--primary); box-shadow:0 2px 5px rgba(0,122,255,0.3); }
-
         .fitt-grid { display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px; }
         .fitt-item { background:#F9FAFB; padding:8px; border-radius:6px; font-size:11px; }
         .fitt-label { display:block; font-weight:700; color:#555; margin-bottom:2px; }
@@ -142,7 +136,7 @@
         .food-list { margin-top: 10px; font-size: 13px; }
         .food-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; }
 
-        .hr-zone-wrap { margin-top: 15px; }
+        .hr-zone-wrap { margin-top: 25px; position: relative; }
         .hr-bars { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
         .hr-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #1D1D1F; border-right: 1px solid rgba(255,255,255,0.5); }
         .hr-labels { display: flex; justify-content: space-between; font-size: 9px; color: #666; font-weight: 600; }
@@ -178,57 +172,59 @@
         /* PRINT DOM */
         #clinical-report { display: none; }
         @media print {
-            @page { size: A4; margin: 10mm; }
-            html, body { width: 100%; height: 100%; overflow: visible; background: white; color: black; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { size: A4 portrait; margin: 10mm; }
+            html, body { width: 100%; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal, .nav-tabs, .help-icon { display: none !important; }
             #clinical-report { display: block !important; width: 100%; }
             
-            .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+            /* GLOBAL CONTAINER */
+            .report-container { width: 100%; box-sizing: border-box; }
+
+            .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; width: 100%; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
-            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 20px; }
+            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 20px; width: 100%; }
             .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 8px 10px; justify-content: center; } .pt-field:last-child { border-right: none; }
             .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
             
             .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 12px; margin-top: 20px; page-break-after: avoid; }
-            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; page-break-inside: avoid; }
+            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; page-break-inside: avoid; width: 100%; }
             .bio-item { border: 1px solid #ccc; border-radius: 8px; padding: 8px; font-size: 9pt; background: #f9f9f9 !important; } .bio-item b { display: block; font-size: 11pt; }
             
-            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid; }
-            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; page-break-inside: avoid; }
+            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 20px; page-break-inside: avoid; width: 100%; }
+            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; page-break-inside: avoid; width: 100%; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
             
             .visual-row { page-break-inside: avoid; margin-bottom: 15px; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000 !important; border: 1px solid #fff; height: 16px; top: -3px; }
             .bar-status-label { font-size: 8pt; font-weight: 700; margin-top: 2px; text-align: right; }
 
-            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; } 
+            .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; width: 100%; } 
             .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
             
-            /* A4 EXERCISE PLANNER - CLEAN */
-            .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; break-inside: avoid; page-break-inside: avoid; } 
+            /* A4 CLEAN EXERCISE PLANNER - NO BREAK */
+            .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; break-inside: avoid; page-break-inside: avoid; width: 100%; box-sizing: border-box; } 
             .planner-header h4 { font-size: 10pt; color: #000; }
             
-            /* HIDE INPUTS & PILLS FOR PRINT */
             .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
             
             .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
             .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 5px; } 
             .plan-table td { padding: 5px; border-bottom: 1px solid #ccc; }
-            /* Hide the Delete Column in Print */
-            .plan-table th:last-child, .plan-table td:last-child { display: none; }
+            .plan-table th:last-child, .plan-table td:last-child { display: none; } /* Hide Del Column */
 
-            .hr-zone-wrap { margin-top: 10px; } .hr-bars { border: 1px solid #000; height: 20px; }
+            .hr-zone-wrap { margin-top: 25px; position: relative; } 
+            .hr-bars { border: 1px solid #000; height: 20px; }
             
-            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; break-inside: avoid; }
+            .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; page-break-inside: avoid; break-inside: avoid; width: 100%; }
             .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid; }
-            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid; } .food-calc-row { display: none; }
+            .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid; width: 100%; box-sizing: border-box; } .food-calc-row { display: none; }
             
-            .dm-rec-box { border: 1px solid #000; background: #E8F2FF !important; padding: 10px; border-radius: 8px; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid; } .dm-status { font-size: 12pt; font-weight: 800; }
+            .dm-rec-box { border: 1px solid #000; background: #E8F2FF !important; padding: 10px; border-radius: 8px; margin-bottom: 15px; page-break-inside: avoid; break-inside: avoid; width: 100%; } .dm-status { font-size: 12pt; font-weight: 800; }
             
             .print-hidden { display: none !important; }
             .page-break { page-break-before: always; }
-            .remarks-box { background: #F3F4F6 !important; border-radius: 6px; padding: 15px; min-height: 150px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; }
+            .remarks-box { background: #F3F4F6 !important; border-radius: 6px; padding: 15px; min-height: 150px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
             .report-footer { position: fixed; bottom: 5mm; width: 100%; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; }
         }
     </style>
@@ -477,17 +473,24 @@
                             <tbody id="planBody"></tbody>
                         </table>
                         
-                        <div class="hr-zone-wrap">
+                        <div class="hr-zone-wrap" style="position: relative; margin-top: 25px;">
                             <div class="hr-labels" style="margin-bottom:4px;"><span>Target Heart Rates (BPM)</span><span id="maxHrLabel">Max HR: 0</span></div>
-                            <div class="hr-bars">
+                            <div class="hr-bars" style="display: flex; width: 100%;">
                                 <div class="hr-seg" style="background:var(--z1);" id="z1">Z1</div>
                                 <div class="hr-seg" style="background:var(--z2);" id="z2">Z2</div>
                                 <div class="hr-seg" style="background:var(--z3);" id="z3">Z3</div>
                                 <div class="hr-seg" style="background:var(--z4);" id="z4">Z4</div>
                                 <div class="hr-seg" style="background:var(--z5);" id="z5">Z5</div>
                             </div>
-                            <div class="hr-labels"><span id="z1v">0</span><span id="z2v">0</span><span id="z3v">0</span><span id="z4v">0</span><span id="z5v">0</span></div>
-                            <div style="font-size:10px; color:#666; margin-top:5px; font-style:italic;" id="hrMethod">Method: Max HR</div>
+                            <div class="hr-numbers" style="position: relative; height: 15px; margin-top: 5px; font-size: 9px; color: #666; font-weight: 700;">
+                                <span id="z1v" style="position: absolute; left: 0%; transform: translateX(-50%);">0</span>
+                                <span id="z2v" style="position: absolute; left: 20%; transform: translateX(-50%);">0</span>
+                                <span id="z3v" style="position: absolute; left: 40%; transform: translateX(-50%);">0</span>
+                                <span id="z4v" style="position: absolute; left: 60%; transform: translateX(-50%);">0</span>
+                                <span id="z5v" style="position: absolute; left: 80%; transform: translateX(-50%);">0</span>
+                                <span id="z6v" style="position: absolute; left: 100%; transform: translateX(-50%);">0</span>
+                            </div>
+                            <div style="font-size:10px; color:#666; margin-top:15px; font-style:italic;" id="hrMethod">Method: Max HR</div>
                         </div>
                     </div>
 
@@ -638,7 +641,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v10.0</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v10.1</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -655,7 +658,7 @@
         const checks = ['risk_t2dm','risk_htn','risk_dys','risk_osa','risk_mafld','risk_meta','habit_carbs','habit_fried','habit_night','habit_fiber'];
         let plan = [], foodPlan = [];
 
-        // --- FULL EXERCISE DATABASE ---
+        // --- FULL EXERCISE DATABASE (HARVARD SOURCE) ---
         const moves = {
             'gym': [
                 {name:"Weight Lifting: general", factor:1.59}, {name:"Weight Lifting: vigorous", factor:3.17},
@@ -940,10 +943,11 @@
             document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
             document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
             
+            // HR CALC (Corrected v10.1 Logic)
             let age = parseFloat(document.getElementById('age').value) || 30;
             let rhr = parseFloat(document.getElementById('rhr').value);
             let maxHR = 220 - age;
-            let zones = [0.5, 0.6, 0.7, 0.8, 0.9];
+            let zones = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]; // 6 Points for boundaries
             let zVals = [];
             
             if (!isNaN(rhr) && rhr > 0) {
@@ -956,11 +960,13 @@
                 document.getElementById('maxHrLabel').innerText = `Max: ${maxHR}`;
             }
             
-            document.getElementById('z1v').innerText = zVals[0];
-            document.getElementById('z2v').innerText = zVals[1];
-            document.getElementById('z3v').innerText = zVals[2];
-            document.getElementById('z4v').innerText = zVals[3];
-            document.getElementById('z5v').innerText = zVals[4];
+            // Correct mapping to 6 labels
+            document.getElementById('z1v').innerText = zVals[0]; // 50%
+            document.getElementById('z2v').innerText = zVals[1]; // 60%
+            document.getElementById('z3v').innerText = zVals[2]; // 70%
+            document.getElementById('z4v').innerText = zVals[3]; // 80%
+            document.getElementById('z5v').innerText = zVals[4]; // 90%
+            document.getElementById('z6v').innerText = zVals[5]; // 100%
 
             recalcPlan();
             runDMCalc();
@@ -1008,7 +1014,7 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- CLEAN PRINT LOGIC (v10.0) ---
+                // --- CLEAN PRINT LOGIC (v10.1) ---
                 let clone = document.getElementById('exPlanner').cloneNode(true);
                 
                 // 1. Remove Inputs, Pills, Buttons
