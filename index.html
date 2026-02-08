@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v10.2 (Layout Perfected)</title>
+    <title>AraShift System v10.3 (Print Fixed)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -136,8 +136,7 @@
         .food-list { margin-top: 10px; font-size: 13px; }
         .food-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; }
 
-        /* HR ZONE VISUALS */
-        .hr-zone-wrap { margin-top: 25px; position: relative; }
+        .hr-zone-wrap { margin-top: 15px; }
         .hr-bars { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
         .hr-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #1D1D1F; border-right: 1px solid rgba(255,255,255,0.5); }
         .hr-labels { display: flex; justify-content: space-between; font-size: 9px; color: #666; font-weight: 600; }
@@ -182,12 +181,10 @@
             @page { size: A4 portrait; margin: 10mm; }
             html, body { width: 100%; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; box-sizing: border-box !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
-            /* HIDE UI ELEMENTS */
+            /* HIDE UI */
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal, .nav-tabs, .help-icon { display: none !important; }
-            
-            #clinical-report { display: block !important; width: 100%; max-width: 100%; overflow: hidden; }
-            
-            /* GLOBAL CONTAINER */
+            #clinical-report { display: block !important; width: 100%; max-width: 100%; overflow: visible; }
+
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; width: 100%; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
             .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
@@ -209,17 +206,17 @@
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; width: 100%; box-sizing: border-box; } 
             .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
             
-            /* CLEAN PRINT - HIDE INPUTS & BUTTONS */
+            /* A4 CLEAN EXERCISE PLANNER - CLEAN */
             .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; break-inside: avoid; page-break-inside: avoid; width: 100%; box-sizing: border-box; } 
             .planner-header h4 { font-size: 10pt; color: #000; }
             
-            /* IMPORTANT: HIDE NON-PRINT ELEMENTS */
+            /* REMOVE INPUTS FOR PRINT */
             .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
             
             .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
             .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 5px; } 
             .plan-table td { padding: 5px; border-bottom: 1px solid #ccc; }
-            /* Hide Delete Column */
+            /* Hide Del Column */
             .plan-table th:last-child, .plan-table td:last-child { display: none !important; width: 0; padding: 0; }
 
             .hr-zone-wrap { margin-top: 25px; position: relative; } 
@@ -271,7 +268,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.0</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.2</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -650,7 +647,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v10.0</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v10.2</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -667,7 +664,7 @@
         const checks = ['risk_t2dm','risk_htn','risk_dys','risk_osa','risk_mafld','risk_meta','habit_carbs','habit_fried','habit_night','habit_fiber'];
         let plan = [], foodPlan = [];
 
-        // --- FULL EXERCISE DATABASE (HARVARD SOURCE) ---
+        // --- FULL EXERCISE DATABASE ---
         const moves = {
             'gym': [
                 {name:"Weight Lifting: general", factor:1.59}, {name:"Weight Lifting: vigorous", factor:3.17},
@@ -952,11 +949,11 @@
             document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
             document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
             
-            // HR CALC (Corrected v10.1 Logic)
+            // HR CALC (v10.2 Fix)
             let age = parseFloat(document.getElementById('age').value) || 30;
             let rhr = parseFloat(document.getElementById('rhr').value);
             let maxHR = 220 - age;
-            let zones = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]; // 6 Points for boundaries
+            let zones = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0]; 
             let zVals = [];
             
             if (!isNaN(rhr) && rhr > 0) {
@@ -969,13 +966,12 @@
                 document.getElementById('maxHrLabel').innerText = `Max: ${maxHR}`;
             }
             
-            // Correct mapping to 6 labels
-            document.getElementById('z1v').innerText = zVals[0]; // 50%
-            document.getElementById('z2v').innerText = zVals[1]; // 60%
-            document.getElementById('z3v').innerText = zVals[2]; // 70%
-            document.getElementById('z4v').innerText = zVals[3]; // 80%
-            document.getElementById('z5v').innerText = zVals[4]; // 90%
-            document.getElementById('z6v').innerText = zVals[5]; // 100%
+            document.getElementById('z1v').innerText = zVals[0]; 
+            document.getElementById('z2v').innerText = zVals[1]; 
+            document.getElementById('z3v').innerText = zVals[2]; 
+            document.getElementById('z4v').innerText = zVals[3]; 
+            document.getElementById('z5v').innerText = zVals[4]; 
+            document.getElementById('z6v').innerText = zVals[5]; 
 
             recalcPlan();
             runDMCalc();
@@ -1023,10 +1019,10 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- CLEAN PRINT LOGIC (v10.0) ---
+                // --- CLEAN PRINT LOGIC (v10.2 DOM CLEANING) ---
                 let clone = document.getElementById('exPlanner').cloneNode(true);
                 
-                // 1. Remove Inputs, Pills, Buttons
+                // 1. Remove Inputs, Pills, Buttons using remove()
                 let toRemove = clone.querySelectorAll('.add-row, .day-pills-container, .clear-btn, .del-btn');
                 toRemove.forEach(el => el.remove());
                 
