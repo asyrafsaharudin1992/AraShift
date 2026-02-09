@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v10.6 (Final Polish)</title>
+    <title>AraShift System v10.7 (Refined)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -178,22 +178,22 @@
         /* PRINT DOM */
         #clinical-report { display: none; }
         @media print {
-            @page { size: A4 portrait; margin: 0; }
+            @page { size: A4 portrait; margin: 10mm; }
             html, body { width: 100%; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; box-sizing: border-box !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
             /* HIDE UI ELEMENTS */
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal, .nav-tabs, .help-icon { display: none !important; }
             
-            #clinical-report { display: block !important; width: 100%; max-width: 210mm; padding: 15mm; margin: 0 auto; box-sizing: border-box; overflow: visible; }
+            #clinical-report { display: block !important; width: 100%; max-width: 210mm; padding: 10mm; margin: 0 auto; box-sizing: border-box; overflow: visible; }
             
             /* GLOBAL CONTAINER */
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; width: 100%; break-inside: avoid; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
-            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 20px; width: 100%; box-sizing: border-box; break-inside: avoid; }
-            .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 8px 10px; justify-content: center; } .pt-field:last-child { border-right: none; }
+            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 15px; width: 100%; box-sizing: border-box; break-inside: avoid; }
+            .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 5px 10px; justify-content: center; } .pt-field:last-child { border-right: none; }
             .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
             
-            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 15px; page-break-after: avoid; break-after: avoid; }
+            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px; margin-top: 15px; page-break-after: avoid; break-after: avoid; }
             
             /* PREVENT SPLITTING OF BOXES */
             .card, .planner-box, .rx-box, .protein-box, .clinical-plan-grid, .metabolic-row, .rec-container {
@@ -206,25 +206,25 @@
                 page-break-after: avoid !important;
             }
 
-            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; width: 100%; }
-            .bio-item { border: 1px solid #ccc; border-radius: 8px; padding: 8px; font-size: 9pt; background: #f9f9f9 !important; } .bio-item b { display: block; font-size: 11pt; }
+            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; width: 100%; }
+            .bio-item { border: 1px solid #ccc; border-radius: 8px; padding: 5px 8px; font-size: 9pt; background: #f9f9f9 !important; } .bio-item b { display: block; font-size: 11pt; }
             
-            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 10px; border-radius: 6px; margin-bottom: 15px; width: 100%; }
-            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; width: 100%; }
-            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
+            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px; width: 100%; }
+            .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px; width: 100%; }
+            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 6px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
             
-            .visual-row { margin-bottom: 15px; break-inside: avoid; } .bar-complex { border: 1px solid #999; height: 10px; } .bar-marker { background: #000 !important; border: 1px solid #fff; height: 16px; top: -3px; }
+            .visual-row { margin-bottom: 12px; break-inside: avoid; } .bar-complex { border: 1px solid #999; height: 8px; } .bar-marker { background: #000 !important; border: 1px solid #fff; height: 14px; top: -3px; }
             .bar-status-label { font-size: 8pt; font-weight: 700; margin-top: 2px; text-align: right; }
 
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 15px; display: block; width: 100%; box-sizing: border-box; } 
-            .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
+            .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 4px; } .rx-chart { border: 1px solid #000; height: 12px; } 
             
             /* A4 CLEAN EXERCISE PLANNER - NO BREAK */
             .planner-box { 
                 border: 1px solid #000; 
                 background: #fff; 
-                padding: 10px; 
+                padding: 8px; 
                 margin-bottom: 15px; 
                 width: 100%; 
                 box-sizing: border-box; 
@@ -236,25 +236,25 @@
             /* REMOVE INPUTS FOR PRINT */
             .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
             
-            .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
-            .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 5px; } 
-            .plan-table td { padding: 5px; border-bottom: 1px solid #ccc; }
+            .plan-table { width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; margin-top: 8px; }
+            .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 4px; } 
+            .plan-table td { padding: 4px; border-bottom: 1px solid #ccc; }
             /* Hide Del Column */
             .plan-table th:last-child, .plan-table td:last-child { display: none !important; width: 0; padding: 0; }
 
-            .hr-zone-wrap { margin-top: 20px; position: relative; } 
-            .hr-bars { border: 1px solid #000; height: 20px; }
+            .hr-zone-wrap { margin-top: 15px; position: relative; } 
+            .hr-bars { border: 1px solid #000; height: 18px; }
             
             .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
-            .rec-box { border: 1px solid #000; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+            .rec-box { border: 1px solid #000; padding: 8px; border-radius: 6px; margin-bottom: 15px; }
             .protein-box { display: block !important; border: 1px solid #000; margin-bottom: 15px; width: 100%; box-sizing: border-box; } .food-calc-row { display: none; }
             
-            .dm-rec-box { border: 1px solid #000; background: #E8F2FF !important; padding: 10px; border-radius: 8px; margin-bottom: 15px; width: 100%; } .dm-status { font-size: 12pt; font-weight: 800; }
+            .dm-rec-box { border: 1px solid #000; background: #E8F2FF !important; padding: 8px; border-radius: 8px; margin-bottom: 15px; width: 100%; } .dm-status { font-size: 12pt; font-weight: 800; }
             
             .print-hidden { display: none !important; }
             .page-break { page-break-before: always; }
-            .remarks-box { background: #F3F4F6 !important; border-radius: 6px; padding: 15px; min-height: 150px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
-            .report-footer { position: fixed; bottom: 5mm; left: 0; right: 0; width: 100%; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; background: white; }
+            .remarks-box { background: #F3F4F6 !important; border-radius: 6px; padding: 10px; min-height: 100px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
+            .report-footer { position: fixed; bottom: 5mm; width: 100%; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; }
         }
     </style>
 </head>
@@ -291,7 +291,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.6</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.7</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -670,7 +670,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v10.6</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v10.7</span></div>
     </div>
 
     <script>
@@ -687,7 +687,7 @@
         const checks = ['risk_t2dm','risk_htn','risk_dys','risk_osa','risk_mafld','risk_meta','habit_carbs','habit_fried','habit_night','habit_fiber'];
         let plan = [], foodPlan = [];
 
-        // --- FULL EXERCISE DATABASE (HARVARD SOURCE) ---
+        // --- FULL EXERCISE DATABASE ---
         const moves = {
             'gym': [
                 {name:"Weight Lifting: general", factor:1.59}, {name:"Weight Lifting: vigorous", factor:3.17},
@@ -783,7 +783,6 @@
             }
         }
 
-        // TABS
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -887,6 +886,15 @@
             document.getElementById('sBal').innerText = (bal>0?"+":"")+bal;
             document.getElementById('sBalCard').className = "meta-card " + (tdee>0?(bal>200?"surplus":(bal<-200?"deficit":"")):"");
             
+            // CPG 2023 RISK LOGIC
+            let risk = "Unknown";
+            if(bmiVal < 18.5) risk = "Low (Risk of other clinical problems)";
+            else if(bmiVal < 23.0) risk = "Increasing but acceptable risk";
+            else if(bmiVal < 27.5) risk = "Increased";
+            else if(bmiVal < 35.0) risk = "High";
+            else if(bmiVal < 40.0) risk = "Very High";
+            else risk = "Extremely High";
+
             // VISUALS - UPDATED WITH CPG 2023 LOGIC
             let vHTML = getDetailedBar("BMI", bmiVal, "", 50, [
                 {limit:18.5,color:"#F59E0B",label:"Underweight"},
@@ -895,7 +903,8 @@
                 {limit:34.9,color:"#F97316",label:"Obese I"},
                 {limit:39.9,color:"#EF4444",label:"Obese II"},
                 {limit:50,color:"#991B1B",label:"Obese III"}
-            ]);
+            ], risk); // Pass risk as custom status
+            
             vHTML += getDetailedBar("Visceral Fat", parseFloat(document.getElementById('vfat').value)||0, "", 20, [
                 {limit:9,color:"#34C759",label:"Normal"},
                 {limit:14,color:"#F97316",label:"High"},
@@ -973,7 +982,7 @@
             document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
             document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
             
-            // HR CALC (v10.6 Fix - Using 6 points to align with color junctions)
+            // HR CALC
             let age = parseFloat(document.getElementById('age').value) || 30;
             let rhr = parseFloat(document.getElementById('rhr').value);
             let maxHR = 220 - age;
@@ -990,7 +999,6 @@
                 document.getElementById('maxHrLabel').innerText = `Max: ${maxHR}`;
             }
             
-            // Assign labels to absolute positions
             document.getElementById('z1v').innerText = zVals[0]; 
             document.getElementById('z2v').innerText = zVals[1]; 
             document.getElementById('z3v').innerText = zVals[2]; 
@@ -1044,14 +1052,10 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- CLEAN PRINT LOGIC (v10.6 DOM CLEANING) ---
+                // --- CLEAN PRINT LOGIC (v10.6) ---
                 let clone = document.getElementById('exPlanner').cloneNode(true);
-                
-                // 1. Remove Inputs, Pills, Buttons using remove()
                 let toRemove = clone.querySelectorAll('.add-row, .day-pills-container, .clear-btn, .del-btn');
                 toRemove.forEach(el => el.remove());
-                
-                // 2. Clean Table Columns (remove delete button column)
                 let ths = clone.querySelectorAll('th');
                 if(ths.length > 0) ths[ths.length-1].remove(); 
                 let trs = clone.querySelectorAll('tbody tr');
@@ -1096,14 +1100,15 @@
                 tot += p.k; 
                 tb.innerHTML += `<tr><td>${p.name}</td><td>${p.dur}m</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderPlan()">×</td></tr>`; 
             });
-            document.getElementById('totalBurn').innerText = tot + " kcal";
+            document.getElementById('totalBurn').innerText = tot;
         }
 
         function addFood() {
              let f=document.getElementById('foodList'); f.innerHTML += `<div class="food-item"><span>${document.getElementById('foodType').options[document.getElementById('foodType').selectedIndex].text}</span></div>`;
         }
         
-        function getDetailedBar(label, value, unit, totalMax, segments) {
+        // VISUAL BAR LOGIC UPDATED TO ACCEPT CUSTOM RISK
+        function getDetailedBar(label, value, unit, totalMax, segments, customStatus = null) {
             let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
             let currentStatus = "Unknown";
             
@@ -1119,6 +1124,8 @@
             });
             if(value > prevLimit) currentStatus = segments[segments.length-1].label;
             
+            let displayStatus = customStatus ? "Risk: " + customStatus : "Status: " + currentStatus;
+            
             let mp = (value / totalMax) * 100; if(mp > 100) mp = 100; if(mp < 0) mp = 0;
             
             return `
@@ -1130,7 +1137,7 @@
                     <div class="bar-labels-row">${labelsHTML}</div>
                     <div class="bar-marker-wrapper"><div class="bar-marker" style="left: ${mp}%;"></div></div>
                 </div>
-                <div class="bar-status-label" style="color:${segments.find(s=>s.label===currentStatus)?.color || '#333'}">Risk: ${currentStatus}</div>
+                <div class="bar-status-label" style="color:${segments.find(s=>s.label===currentStatus)?.color || '#333'}">${displayStatus}</div>
             </div>`;
         }
 
