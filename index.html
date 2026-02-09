@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v14.0 (WYSIWYG)</title>
+    <title>AraShift System v13.0 (Stable Core)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -12,8 +12,6 @@
             --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
-            --c-under: #F59E0B; --c-norm: #10B981; --c-pre: #FBBF24;
-            --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
             --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
@@ -21,285 +19,184 @@
         .container { max-width: 1100px; margin: 0 auto; }
         .hidden { display: none !important; }
         
-        /* NAVIGATION TABS */
+        /* HEADER & TABS */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; } .brand span { color: var(--primary); }
+        .logout { color: var(--primary); cursor: pointer; font-weight: 500; }
         .nav-tabs { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid #E5E5EA; padding-bottom: 10px; }
         .tab-btn { background: transparent; border: none; font-size: 16px; font-weight: 600; color: var(--text-sec); cursor: pointer; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
         .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .tab-btn:hover { color: var(--primary); }
 
-        /* HEADER */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; display: flex; align-items: baseline; gap: 8px; } 
-        .brand span { color: var(--primary); }
-        .version-tag { font-size: 12px; color: var(--text-sec); font-weight: 600; background: #E5E5EA; padding: 2px 8px; border-radius: 12px; }
-        .logout { color: var(--primary); cursor: pointer; font-weight: 500; font-size: 15px; }
-
-        /* GRID & CARDS */
+        /* CARDS & GRID */
         .main-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 25px; }
-        .card { background: var(--card-bg); border-radius: 18px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 20px; }
-        .card h3 { font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; letter-spacing: 0.05em; font-weight: 700; }
-        .sub-label { font-size: 10px; font-weight: 700; color: var(--primary); margin-bottom: 8px; margin-top: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        /* HELP ICON */
-        .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; background: #E5E5EA; color: #86868B; font-size: 10px; margin-left: 5px; cursor: pointer; font-weight: 700; transition: 0.2s; }
-        .help-icon:hover { background: var(--primary); color: white; }
+        .card { background: #fff; border-radius: 18px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); margin-bottom: 20px; }
+        .card h3 { font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; font-weight: 700; }
+        .sub-label { font-size: 10px; font-weight: 700; color: var(--primary); margin: 8px 0; display: block; text-transform: uppercase; }
 
         /* FORMS */
         .input-grid-profile { display: grid; grid-template-columns: 0.5fr 1.5fr 0.5fr 0.8fr 1.5fr; gap: 10px; margin-bottom: 15px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 8px; }
         .input-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
-        .meal-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; align-items: end; margin-bottom: 12px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
-        .meal-label { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 5px; display: block; }
+        .meal-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; align-items: end; margin-bottom: 12px; border-bottom: 1px dashed #eee; }
         .input-grid-snacks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .form-group { margin-bottom: 0; width: 100%; }
-        label { display: flex; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; white-space: nowrap; overflow: hidden; }
-        
-        /* Input Styling */
-        input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #D1D1D6; border-radius: 9px; font-size: 13px; font-weight: 500; color: var(--text); background: #fff; appearance: none; box-sizing: border-box; transition: 0.2s; font-family: inherit; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
+        label { display: flex; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #D1D1D6; border-radius: 9px; font-size: 13px; font-weight: 500; background: #fff; box-sizing: border-box; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
         input[readonly] { background-color: #F2F2F7; color: var(--primary); font-weight: 700; border-color: transparent; }
-        
+
         /* TOGGLES */
         .ios-list { display: flex; flex-direction: column; }
         .ios-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #E5E5EA; }
-        .ios-item:last-child { border-bottom: none; }
-        .ios-label { font-size: 14px; font-weight: 500; display:flex; align-items:center;}
         .switch { position: relative; display: inline-block; width: 42px; height: 26px; } 
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #E9E9EA; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* VISUAL BARS */
+        /* VISUAL BARS (Screen) */
         .visual-row { margin-bottom: 25px; }
         .visual-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
         .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
         .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
-        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
+        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; }
         .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
-        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
+        .bar-label-item { font-size: 9px; color: #666; text-align: center; font-weight: 600; border-right: 1px solid #eee; }
         .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
-        .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; transition: left 0.3s ease; }
+        .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); transition: left 0.3s ease; }
         .bar-status-label { text-align: right; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
-        /* METABOLIC DASHBOARD */
+        /* MODULES */
         .metabolic-screen-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 10px; margin-bottom: 25px; }
-        .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 14px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; box-sizing: border-box; }
-        .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 5px; }
-        .meta-val { font-size: 24px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
-        .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; margin-top: 5px; }
+        .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 14px; padding: 15px; text-align: center; }
+        .meta-val { font-size: 24px; font-weight: 800; color: #1D1D1F; }
         .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
         .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
 
-        /* STRATEGY & STATS */
-        .strategy-toolbar { display: flex; gap: 10px; margin-bottom: 15px; }
-        .pref-select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; background: white; }
         .apple-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .apple-stat-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #E5E5EB; display: flex; flex-direction: column; justify-content: space-between;}
-        .stat-header { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 8px; }
-        .stat-value { font-size: 26px; font-weight: 800; color: #1D1D1F; line-height: 1.1; }
-        .stat-unit { font-size: 14px; font-weight: 600; color: #86868B; margin-left: 2px; }
-        .stat-detail-box { margin-top: 10px; padding-top: 8px; border-top: 1px solid #F2F2F7; font-size: 12px; font-weight: 600; color: var(--success); }
+        .apple-stat-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border: 1px solid #E5E5EB; }
+        .stat-value { font-size: 26px; font-weight: 800; color: #1D1D1F; }
 
-        /* RX */
-        .rx-box { border: 1px solid #E5E5EA; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #fff; display: block; }
-        .rx-head { background: #F2F2F7; padding: 10px 15px; font-size: 12px; font-weight: 700; color: #555; text-transform: uppercase; display: flex; justify-content: space-between; }
-        .rx-body { padding: 15px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 15px; }
-        .rx-chart { display: flex; height: 20px; border-radius: 10px; overflow: hidden; margin-bottom: 10px; background: #eee; }
-        .rx-bar { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; }
-        .rx-details h4 { margin: 0 0 5px 0; font-size: 13px; color: var(--primary); }
-        .rx-details ul { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.5; }
-        .rx-reason { grid-column: 1 / -1; font-size: 12px; color: #666; font-style: italic; border-top: 1px solid #eee; padding-top: 10px; margin-top: 5px; }
-        
-        /* PLANNER & PROTEIN */
-        .planner-box, .protein-box { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
-        .protein-box { background: #fff; border: 1px solid #ddd; }
-        .planner-header, .protein-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .planner-header h4, .protein-head { margin: 0; color: var(--primary); font-size: 14px; text-transform: uppercase; font-weight:700; }
-        
-        .add-row { display: grid; grid-template-columns: 1.5fr 2fr 1fr 0.8fr; gap: 10px; margin-bottom: 10px; align-items: end; }
-        .ex-label { font-size:11px; color:#666; font-weight:600; margin-bottom:3px; display:block;}
-        .food-calc-row { display: grid; grid-template-columns: 2fr 1fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: end; }
-        
-        /* UNIFIED TABLE STYLE */
+        /* PLANNER & TABLES (Screen) */
+        .planner-box { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 8px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
         .plan-table td { padding: 8px; border-bottom: 1px solid #eee; }
-        .plan-table tfoot { font-weight: 800; background: #F9FAFB; }
-        .plan-table tfoot td { padding: 8px; border-top: 2px solid #E5E5EA; }
-
         .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; text-align: center; }
-        .clear-btn { font-size:11px; color:#FF3B30; cursor:pointer; font-weight:600; text-decoration:underline; }
-
-        .day-pills-container { display:flex; justify-content:space-between; gap:5px; margin-bottom:15px; margin-top:10px; }
-        .day-pill { flex:1; text-align:center; padding:8px 0; border:1px solid #D1D1D6; border-radius:8px; font-size:11px; font-weight:700; color:#86868B; cursor:pointer; transition:0.2s; background:#fff; }
-        .day-pill:hover { border-color:var(--primary); color:var(--primary); }
-        .day-pill.active { background:var(--primary); color:white; border-color:var(--primary); box-shadow:0 2px 5px rgba(0,122,255,0.3); }
+        
+        .day-pills-container { display:flex; justify-content:space-between; gap:5px; margin-bottom:15px; }
+        .day-pill { flex:1; text-align:center; padding:8px 0; border:1px solid #D1D1D6; border-radius:8px; font-size:11px; font-weight:700; color:#86868B; cursor:pointer; background:#fff; }
+        .day-pill.active { background:var(--primary); color:white; border-color:var(--primary); }
 
         .hr-zone-wrap { margin-top: 25px; position: relative; }
         .hr-bars { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
         .hr-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #1D1D1F; border-right: 1px solid rgba(255,255,255,0.5); }
-        .hr-labels { display: flex; justify-content: space-between; font-size: 9px; color: #666; font-weight: 600; }
+        .hr-numbers { position: relative; height: 15px; margin-top: 5px; font-size: 9px; color: #666; font-weight: 700; }
 
-        .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } 
-        .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; height: fit-content; }
-        .milestone-table th { text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; }
-        .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; color: #1D1D1F; }
-        .target-hl { color: var(--primary); font-weight: 700; }
+        .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; }
+        .milestone-table th { padding: 12px; background: #F2F2F7; font-size: 11px; font-weight: 700; text-align: left; }
+        .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; }
         .rec-container { background: #FFF7ED; padding: 15px; border-radius: 12px; border: 1px solid #FED7AA; border-left: 5px solid #F97316; }
-        .rec-container h4 { margin: 0 0 10px 0; font-size: 12px; color: #F97316; text-transform: uppercase; }
-        .rec-container ul { margin: 0; padding-left: 20px; }
-        .rec-container li { font-size: 13px; margin-bottom: 6px; color: #1D1D1F; line-height: 1.5; }
 
-        .dm-rec-box { background: #E8F2FF; border: 1px solid #C4D9FF; padding:15px; border-radius:12px; margin-bottom:20px; }
-        .dm-status { font-size:16px; font-weight:800; color:var(--primary); margin-bottom:10px; display:block;}
-        .dm-alert { color:var(--danger); font-weight:700; font-size:12px; display:block; margin-top:5px; background:#fff5f5; padding:5px; border-radius:4px;}
-
-        /* ACTION BAR & MODALS */
         .action-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; gap: 10px; border: 1px solid #ccc; z-index: 9999; }
         .btn { border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 14px; }
         .btn-p { background: var(--primary); color: white; }
         .btn-s { background: transparent; border: 1px solid var(--border); }
-        .btn-icon { background: #F2F2F7; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; }
-        .btn-ai { background: linear-gradient(135deg, #AF52DE 0%, #5856D6 100%); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
-        #keyModal, #guideModal, #defModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center; backdrop-filter: blur(5px); }
-        .key-box { background:white; padding:30px; border-radius:24px; width:90%; max-width:420px; text-align:left; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .key-input { width:100%; padding:12px; border:1px solid #D2D2D7; border-radius:12px; margin-bottom:15px; font-size:14px; text-align:center; }
-        .def-title { font-size:18px; font-weight:800; color:var(--primary); margin-bottom:10px; }
-        .def-text { font-size:14px; color:#333; line-height:1.6; }
 
-        /* ---------------- WYSIWYG PRINT CSS ---------------- */
+        #clinical-report { display: none; }
+
+        /* ---------------- PRINT CSS (The "Brick" Strategy) ---------------- */
         @media print {
-            @page { margin: 10mm; } /* Slight margin for printer safety */
+            @page { size: A4 portrait; margin: 0; }
+            html, body { width: 210mm; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
-            body { 
-                background: white; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-            }
-
-            .container { 
-                width: 100% !important; 
-                max-width: 100% !important; 
-                margin: 0 !important; 
-            }
-
-            /* --- HIDE NON-PRINTABLE ELEMENTS --- */
-            .action-bar, 
-            .logout, 
-            .nav-tabs, 
-            .version-tag, 
-            .help-icon,
-            .add-row, 
-            .food-calc-row,
-            .del-btn,
-            .clear-btn,
-            #aiBtn { 
-                display: none !important; 
-            }
-
-            /* --- STYLE INPUTS AS TEXT --- */
-            input, select, textarea {
-                border: none !important;
-                background: transparent !important;
-                box-shadow: none !important;
-                padding: 0 !important;
-                color: #000 !important;
-                font-weight: 700 !important;
-                -webkit-appearance: none;
-                appearance: none;
-            }
-            /* Hide dropdown arrows */
-            select { background-image: none !important; }
-            ::placeholder { color: transparent; }
-
-            /* --- LAYOUT ADJUSTMENTS --- */
-            /* Prevent Cards from Splitting */
-            .card, .planner-box, .protein-box, .rec-container, .clinical-plan-grid {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-                border: 1px solid #ddd !important; /* Make boxes look like report sections */
-                box-shadow: none !important;
-                margin-bottom: 20px !important;
-            }
-
-            /* Headers */
-            h3, h4, .planner-header h4, .protein-head {
-                color: #000 !important;
-                border-bottom: 2px solid #000 !important;
-                padding-bottom: 5px !important;
-                margin-bottom: 10px !important;
-            }
+            /* Hide UI */
+            .container, .action-bar, #login-screen, .nav-tabs, .help-icon { display: none !important; }
             
-            /* Table Adjustments */
-            .plan-table th { background: #eee !important; color: #000 !important; border: 1px solid #ccc !important; }
-            .plan-table td { border: 1px solid #ccc !important; }
-            /* Hide Delete Column */
-            .plan-table th:last-child, .plan-table td:last-child { display: none !important; }
-
-            /* Grid Adjustments */
-            .main-grid, .clinical-plan-grid { display: block !important; } /* Stack content vertically */
-            .card, .planner-box, .protein-box { width: 100% !important; box-sizing: border-box; }
+            /* Show Report */
+            #clinical-report { display: block !important; width: 100%; padding: 15mm; box-sizing: border-box; }
             
-            /* Visual Bars */
-            .bar-complex { border: 1px solid #999; }
-            .bar-marker { background: #000 !important; border: 1px solid #fff; }
+            /* Unbreakable Bricks */
+            .unbreakable-box { page-break-inside: avoid !important; break-inside: avoid !important; display: block; width: 100%; margin-bottom: 20px; border: 1px solid transparent; }
+            
+            /* Header/Footer */
+            .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+            .report-footer { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; border-top: 1px solid #000; padding: 5px; background: white; font-size: 8pt; }
+            
+            /* Strip */
+            .patient-strip { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; border: 2px solid #000; margin-bottom: 15px; }
+            .pt-field { padding: 5px; border-right: 1px solid #000; } .pt-field:last-child { border-right: none; }
+            .pt-val { font-weight: bold; font-size: 10pt; }
 
-            /* Hide Total Burn in Header (Since it's in footer now) */
-            .planner-header div { display: none !important; }
+            /* Grids */
+            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
+            .bio-item { border: 1px solid #ccc; padding: 5px; background: #f9f9f9 !important; border-radius: 4px; }
+            .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #f0f0f0 !important; padding: 10px; border-radius: 6px; margin-bottom: 15px; }
+            
+            /* Charts */
+            .visual-row { margin-bottom: 10px; page-break-inside: avoid; }
+            .bar-complex { border: 1px solid #666; height: 8px; }
+            .bar-marker { background: #000 !important; border: 1px solid #fff; height: 14px; top: -3px; }
+
+            /* Custom Tables for Print */
+            .print-table { width: 100%; border-collapse: collapse; font-size: 10pt; border: 1px solid #999; margin-top: 5px; }
+            .print-table th { background: #E0E0E0 !important; color: #000; padding: 6px; text-align: left; border: 1px solid #999; font-weight: 800; }
+            .print-table td { padding: 6px; border: 1px solid #999; }
+            .print-table tfoot { background: #D3D3D3 !important; font-weight: 800; }
+
+            .planner-box, .protein-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 0; }
+            .planner-header h4, .protein-head { font-weight: 900; text-transform: uppercase; border-bottom: 2px solid #000; display: inline-block; margin-bottom: 5px; }
+            
+            .hr-bars { border: 1px solid #000; height: 15px; }
+            
+            /* Hide Junk */
+            .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
+            .food-calc-row { display: none !important; }
+            .planner-header div { display: none !important; } /* Hide screen total */
         }
     </style>
 </head>
 <body>
 
-    <div id="defModal" class="hidden"><div class="key-box" style="width:400px;"><div id="defTitle" class="def-title"></div><div id="defText" class="def-text"></div><button class="btn btn-p" onclick="document.getElementById('defModal').classList.add('hidden')" style="width:100%; margin-top:15px;">Got it</button></div></div>
-    <div id="guideModal" class="hidden"><div class="key-box" style="width: 500px; max-width:90%; text-align:left;"><h3 style="margin-top:0; color:var(--primary); font-size:18px;">Meal Portion Guide</h3><table class="milestone-table" style="margin-bottom:15px; border:none;"><tr><th style="background:#eee;">Size</th><th style="background:#eee;">Calories</th><th style="background:#eee;">Visual Guide</th></tr><tr><td><b>Small</b></td><td>300-350</td><td>Half fist Carb + Palm Protein</td></tr><tr><td><b>Medium</b></td><td>450-550</td><td>1 Fist Carb + Palm Protein</td></tr><tr><td><b>Large</b></td><td>700-800+</td><td>2 Fists Carb + 2 Palms Protein</td></tr></table><button class="btn btn-p" onclick="document.getElementById('guideModal').classList.add('hidden')" style="width:100%">Close</button></div></div>
     <div id="keyModal" class="hidden"><div class="key-box" style="text-align:center;"><h2>🔐 AI Setup</h2><input id="apiKeyInput" style="width:100%; padding:10px; margin:10px 0; text-align:center;" placeholder="AIzaSy..."><button class="btn btn-p" onclick="saveKey()">Save & Start</button></div></div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v14.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v13.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active" onclick="switchTab('arashift')" id="btn-arashift">AraShift (Obesity)</button><button class="tab-btn" onclick="switchTab('diabetes')" id="btn-diabetes">Diabetes Mgmt</button></div>
 
         <div id="tab-arashift">
             <div class="main-grid">
-                <div style="display:flex; flex-direction:column; gap:20px;">
-                    <div class="card"><h3>A. Patient Profile</h3><div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div><div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div><div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div><div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div><div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div></div></div>
-                    <div class="card">
-                        <h3>B. Measurements</h3><div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
-                        <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
-                        <span class="sub-label">Glucose Profile</span><div class="input-grid-3"><div class="form-group"><label>FBS</label><input type="number" id="fbs" step="0.1"></div><div class="form-group"><label>RBS</label><input type="number" id="rbs" step="0.1"></div><div class="form-group"><label>HbA1c</label><input type="number" id="hba1c" step="0.1"></div></div>
-                        <span class="sub-label">Cardiovascular</span><div class="input-grid-3"><div class="form-group"><label>BP Sys</label><input type="number" id="sbp"></div><div class="form-group"><label>BP Dia</label><input type="number" id="dbp"></div><div class="form-group"><label>R. HR</label><input type="number" id="rhr" placeholder="BPM"></div></div>
-                        <div class="input-grid-4"><div class="form-group"><label>Chol</label><input type="number" id="chol" step="0.1"></div><div class="form-group"><label>LDL</label><input type="number" id="ldl" step="0.1"></div><div class="form-group"><label>HDL</label><input type="number" id="hdl" step="0.1"></div><div class="form-group"><label>TG</label><input type="number" id="tg" step="0.1"></div></div>
-                    </div>
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center;"><h3>C. Dietary Matrix</h3><button class="version-tag" style="border:none; cursor:pointer; background:#eee; color:#333;" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Guide</button></div>
-                        <div class="meal-row" style="margin-top:10px;"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="input-grid-snacks"><div class="form-group"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div><div class="form-group"><label>Sugary Drinks</label><input type="number" id="drinkFreq" value="0"></div></div>
-                        <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;"><label style="margin-bottom:8px;">Dietary Flags</label><div class="ios-list"><div class="ios-item"><span class="ios-label">High Carb / Rice</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Late Night Eating</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Low Fiber / Veg</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div></div></div>
-                    </div>
-                </div>
-
                 <div class="card">
-                    <h3>D. Risk Factors</h3>
-                    <div class="ios-list"><div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Sleep Apnea (OSA)</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Meta Syndrome</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div></div>
+                    <h3>A. Patient Profile</h3>
+                    <div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div><div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div><div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div><div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div><div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div></div>
+                </div>
+                <div class="card">
+                    <h3>B. Measurements & Biochemistry</h3>
+                    <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
+                    <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
                 </div>
             </div>
 
-            <div class="card" id="resultCard">
+            <div class="card">
+                <h3>D. Risk Factors</h3>
+                <div class="ios-list">
+                    <div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div>
+                    <div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div>
+                    <div class="ios-item"><span class="ios-label">Sleep Apnea (OSA)</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div>
+                </div>
+            </div>
+
+            <div class="card">
                 <h3>E. Metabolic Balance</h3>
                 <div class="metabolic-screen-row"><div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="sIntake">0</span><span class="meta-desc">kcal/day</span></div><div class="meta-card"><span class="meta-label">BMR</span><span class="meta-val" id="sBMR">0</span></div><div class="meta-card"><span class="meta-label">TDEE</span><span class="meta-val" id="sTDEE">0</span></div><div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span></div></div>
-                <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
                 <h3>F. Clinical Analysis</h3><div id="sAnalysis"></div>
+                
                 <div style="margin-top:30px;">
-                    <div class="strategy-toolbar"><h3 style="margin:0;">G. Clinical Strategy</h3><div style="display:flex; gap:10px;"><select id="dietPref" class="pref-select"><option value="standard">Std: Calorie Counting</option><option value="mrp">Meal Replacement (LCD)</option><option value="plate">Plate Method</option></select></div></div>
+                    <h3>G. Clinical Strategy</h3>
                     <div class="apple-stat-grid" id="sStatGrid"></div>
                     <div id="sRxCard"></div>
                     
@@ -307,8 +204,8 @@
                         <div class="protein-head">Protein Recommendation</div>
                         <div id="proteinText"></div>
                         <div class="food-calc-row">
-                            <select id="foodType"><optgroup label="--- Dairy & Eggs ---"><option value="73|3.9">Whole Milk</option><option value="75|6">Egg Large</option></optgroup><optgroup label="--- Poultry & Meat ---"><option value="101|18">Chicken Breast</option><option value="111|18.6">Beef Sirloin</option></optgroup></select>
-                            <input type="number" id="foodQty" placeholder="Qty" value="1">
+                            <select id="foodType"><option value="73|3.9">Whole Milk</option><option value="101|18">Chicken Breast</option><option value="175|18.8">Salmon</option><option value="75|6">Egg</option></select>
+                            <input type="number" id="foodQty" value="1">
                             <button class="btn btn-p" onclick="addFood()">Add</button>
                         </div>
                         <table class="plan-table" style="margin-top:10px;"><thead><tr><th>Food Item</th><th>Qty</th><th>Nutrients</th><th></th></tr></thead><tbody id="foodTableBody"></tbody><tfoot><tr><td colspan="2" style="text-align:right;">TOTAL</td><td><span id="planProt">0</span>g Prot / <span id="planCal">0</span> kcal</td><td></td></tr></tfoot></table>
@@ -316,22 +213,48 @@
 
                     <div class="planner-box" id="exPlanner">
                         <div class="planner-header"><h4>Exercise Planner</h4><div style="font-size:12px;font-weight:700;">Total Burn: <span id="totalBurn">0</span> kcal</div><span class="clear-btn" onclick="clearPlan()">Clear All</span></div>
-                        <div class="day-pills-container"><div class="day-pill" onclick="toggleDay(this)">Mon</div><div class="day-pill" onclick="toggleDay(this)">Tue</div><div class="day-pill" onclick="toggleDay(this)">Wed</div><div class="day-pill" onclick="toggleDay(this)">Thu</div><div class="day-pill" onclick="toggleDay(this)">Fri</div><div class="day-pill" onclick="toggleDay(this)">Sat</div><div class="day-pill" onclick="toggleDay(this)">Sun</div></div>
-                        <div class="add-row"><div style="display:flex; flex-direction:column;"><span class="ex-label">Category</span><select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option></select></div><div style="display:flex; flex-direction:column;"><span class="ex-label">Activity</span><select id="exMove"></select></div><div style="display:flex; flex-direction:column;"><span class="ex-label">Duration (mins)</span><input type="number" id="exDur" placeholder="Min" value="30"></div><button class="btn btn-p" onclick="addExercise()">+</button></div>
-                        <table class="plan-table"><thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead><tbody id="planBody"></tbody><tfoot><tr><td colspan="2" style="text-align:right;">TOTAL</td><td id="tableTotalBurn">0</td><td></td></tr></tfoot></table>
+                        <div class="add-row"><select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option></select><select id="exMove"></select><input type="number" id="exDur" value="30"><button class="btn btn-p" onclick="addExercise()">+</button></div>
+                        <table class="plan-table"><thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead><tbody id="planBody"></tbody></table>
                         <div class="hr-zone-wrap" style="position:relative; margin-top:20px;"><div class="hr-labels"><span>Target Heart Rates</span><span id="maxHrLabel">Max HR: 0</span></div><div class="hr-bars" style="display:flex; width:100%;"><div class="hr-seg" style="background:var(--z1);flex:1;"></div><div class="hr-seg" style="background:var(--z2);flex:1;"></div><div class="hr-seg" style="background:var(--z3);flex:1;"></div><div class="hr-seg" style="background:var(--z4);flex:1;"></div><div class="hr-seg" style="background:var(--z5);flex:1;"></div></div><div class="hr-numbers" style="position:relative; height:15px; margin-top:5px; font-size:9px; font-weight:700; color:#666;"><span id="z1v" style="position:absolute; left:0%;">0</span><span id="z2v" style="position:absolute; left:20%;">0</span><span id="z3v" style="position:absolute; left:40%;">0</span><span id="z4v" style="position:absolute; left:60%;">0</span><span id="z5v" style="position:absolute; left:80%;">0</span><span id="z6v" style="position:absolute; left:100%; transform:translateX(-100%);">0</span></div></div>
                     </div>
-
-                    <div class="clinical-plan-grid"><div id="sMilestones"></div><div class="rec-container"><h4>Medical Recommendations</h4><div id="sRecs"></div></div></div>
                 </div>
-                <div class="form-group" style="margin-top:20px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><label>Clinical Remarks</label><button class="btn-ai" id="aiBtn" onclick="runAI()">✨ AI Draft</button></div><textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea></div>
             </div>
         </div>
         
-        <div id="tab-diabetes" class="hidden"><div class="main-grid"><div class="card"><h3>A. Patient Profile (DM)</h3><div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="dm_pId"></div></div></div><div class="card"><h3>CPG Recommendations</h3><div class="dm-rec-box"><span class="dm-status" id="dmStatus">Pending</span><div id="dmRecText">Enter data...</div></div></div></div></div>
+        <div id="tab-diabetes" class="hidden"><div>Diabetes Module (Placeholder)</div></div>
     </div>
 
-    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-p" onclick="runCalc()">Update</button><button class="btn btn-s" onclick="window.print()">🖨️ Print</button></div>
+    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-p" onclick="runCalc()">Update</button><button class="btn btn-s" onclick="doPrint()">🖨️ Print</button></div>
+
+    <div id="clinical-report">
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span></div></div>
+        <div class="patient-strip"><div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div><div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdId"></span></div><div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="pdDemo"></span></div><div class="pt-field"><span class="pt-label">Ht/Wt</span><span class="pt-val" id="pdBio"></span></div><div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="pdBMI"></span></div></div>
+        
+        <div class="section-head">D. Analysis</div>
+        <div class="metabolic-row"><div class="print-stat-card"><span class="p-stat-label">Intake</span><span class="p-stat-val" id="pdIntake"></span></div><div class="print-stat-card"><span class="p-stat-label">BMR</span><span class="p-stat-val" id="pdBMR"></span></div><div class="print-stat-card"><span class="p-stat-label">TDEE</span><span class="p-stat-val" id="pdTDEE"></span></div><div class="print-stat-card"><span class="p-stat-label">Balance</span><span class="p-stat-val" id="pdBal"></span></div></div>
+        <div id="pdVisuals"></div>
+        
+        <div class="section-head">E. Strategy</div>
+        <div class="print-stat-grid" id="pdStats"></div>
+        <div class="unbreakable-box" id="pdRx"></div>
+        
+        <div class="unbreakable-box">
+            <div class="protein-box">
+                <div class="protein-head">Protein Recommendation</div>
+                <div id="pdProteinTable"></div>
+            </div>
+        </div>
+
+        <div class="unbreakable-box">
+            <div class="planner-box">
+                <div class="planner-header"><h4>Exercise Planner</h4></div>
+                <div id="pdExerciseTable"></div>
+                <div id="pdHR"></div>
+            </div>
+        </div>
+        
+        <div class="report-footer">AraShift System v13.0</div>
+    </div>
 
     <script>
         const moves = {'gym':[{name:"Weights",factor:3},{name:"Cardio",factor:4}],'sport':[{name:"Badminton",factor:4}]};
@@ -361,36 +284,32 @@
             let act = parseFloat(document.getElementById('activity').value);
             let tdee = Math.round(w * 25 * act);
             let bmr = Math.round(tdee / act);
-            let intake = 1600; 
+            let intake = 1600; // Simplified for demo
             
             document.getElementById('sIntake').innerText = intake;
             document.getElementById('sBMR').innerText = bmr;
             document.getElementById('sTDEE').innerText = tdee;
             document.getElementById('sBal').innerText = (intake - tdee);
 
-            // CPG 2023 RISK LOGIC
-            let risk = "Unknown";
-            if(bmiVal < 18.5) risk = "Low Risk";
-            else if(bmiVal < 23.0) risk = "Acceptable";
-            else if(bmiVal < 27.5) risk = "Increased";
-            else if(bmiVal < 35.0) risk = "High";
-            else if(bmiVal < 40.0) risk = "Very High";
-            else risk = "Extremely High";
+            // Print Sync
+            document.getElementById('pdIntake').innerText = intake + " kcal";
+            document.getElementById('pdBMR').innerText = bmr + " kcal";
+            document.getElementById('pdTDEE').innerText = tdee + " kcal";
+            document.getElementById('pdBal').innerText = (intake - tdee) + " kcal";
 
             // Visuals
-            let vHTML = getBar("BMI", bmiVal, 50, [
-                {limit:18.5,color:"#F59E0B",label:"Underweight"}, {limit:22.9,color:"#34C759",label:"Normal"}, {limit:27.4,color:"#FBBF24",label:"Overweight"}, {limit:34.9,color:"#F97316",label:"Obese I"}, {limit:39.9,color:"#EF4444",label:"Obese II"}, {limit:50,color:"#991B1B",label:"Obese III"}
-            ], risk);
+            let risk = bmiVal >= 40 ? "Extremely High" : (bmiVal >= 35 ? "Very High" : (bmiVal >= 27.5 ? "High" : (bmiVal >= 23 ? "Increased" : "Normal")));
+            let vHTML = getBar("BMI", bmiVal, 50, risk);
             document.getElementById('sAnalysis').innerHTML = vHTML;
+            document.getElementById('pdVisuals').innerHTML = vHTML;
 
-            // Recs
+            // Recs (Fatty Liver Logic)
             let isFatty = document.getElementById('risk_mafld').checked;
             let targetCal = Math.max(1200, tdee - 500);
-            let sHTML = `<div class="apple-stat-card"><div class="stat-header">Target Wt</div><div class="stat-value">${(w*(isFatty?0.9:0.95)).toFixed(1)}kg</div><div class="stat-detail-box">${isFatty?"10% Loss":"5% Loss"}</div></div>`;
+            let sHTML = `<div class="apple-stat-card"><div class="stat-header">Target Wt</div><div class="stat-value">${(w*(isFatty?0.9:0.95)).toFixed(1)}kg</div><div class="stat-detail-box">${isFatty?"10% Loss (Fatty Liver)":"5% Loss"}</div></div>`;
             sHTML += `<div class="apple-stat-card"><div class="stat-header">Rx Cal</div><div class="stat-value">${targetCal}</div><div class="stat-detail-box">kcal/day</div></div>`;
             document.getElementById('sStatGrid').innerHTML = sHTML;
-            document.getElementById('sMilestones').innerHTML = `<table class="milestone-table"><tr><th>Goal</th><th>Weight</th><th>Time</th></tr><tr><td>5%</td><td>${(w*0.95).toFixed(1)}kg</td><td>3 Mo</td></tr></table>`;
-            document.getElementById('sRecs').innerHTML = "<ul><li>Calorie Deficit</li><li>Monitor Wt</li></ul>";
+            document.getElementById('pdStats').innerHTML = sHTML.replace(/apple-stat-card/g, 'print-stat-card');
 
             // HR Logic
             let age = parseFloat(document.getElementById('age').value) || 30;
@@ -399,12 +318,10 @@
             [0.5, 0.6, 0.7, 0.8, 0.9, 1.0].forEach((p, i) => {
                 document.getElementById('z'+(i+1)+'v').innerText = Math.round(maxHR * p);
             });
-            recalcPlan();
         }
 
-        function getBar(label, val, max, segments, customStatus) {
+        function getBar(label, val, max, status) {
             let pct = Math.min((val/max)*100, 100);
-            let status = customStatus || "Unknown";
             return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span>${val}</span></div><div class="bar-complex"><div class="bar-seg" style="width:100%; background:linear-gradient(90deg, #F59E0B 0%, #34C759 40%, #EF4444 100%);"></div><div class="bar-marker" style="left:${pct}%"></div></div><div class="bar-status-label">${status}</div></div>`;
         }
 
@@ -448,14 +365,37 @@
             document.getElementById('tableTotalBurn').innerText = tk;
         }
 
+        function doPrint() {
+            document.getElementById('pdName').innerText = document.getElementById('pName').value;
+            document.getElementById('pdId').innerText = document.getElementById('pId').value;
+            document.getElementById('pdDate').innerText = new Date().toLocaleDateString();
+
+            // 1. Generate Clean Protein Table for Print
+            let pTbl = `<table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Protein</th><th style="width:25%">Qty</th><th style="width:25%">Prot (g)</th></tr></thead><tbody>`;
+            let tp = 0;
+            foodPlan.forEach((f,i) => { tp+=f.p; pTbl += `<tr><td>${i+1}</td><td>${f.n}</td><td>${f.q}</td><td>${f.p}g</td></tr>`; });
+            pTbl += `</tbody><tfoot><tr><td colspan="3" style="text-align:right">Total Protein</td><td>${tp}g</td></tr></tfoot></table>`;
+            document.getElementById('pdProteinTable').innerHTML = pTbl;
+
+            // 2. Generate Clean Exercise Table for Print
+            let eTbl = `<table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Exercise</th><th style="width:25%">Time (m)</th><th style="width:25%">Burn (kc)</th></tr></thead><tbody>`;
+            let tk = 0;
+            plan.forEach((p,i) => { tk+=p.k; eTbl += `<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td></tr>`; });
+            eTbl += `</tbody><tfoot><tr><td colspan="3" style="text-align:right">Total Burn</td><td>${tk}</td></tr></tfoot></table>`;
+            document.getElementById('pdExerciseTable').innerHTML = eTbl;
+            
+            document.getElementById('pdHR').innerHTML = document.querySelector('.hr-zone-wrap').outerHTML;
+            
+            window.print();
+        }
+
         function saveKey() { document.getElementById('keyModal').classList.add('hidden'); }
-        function toggleDay(el) { el.classList.toggle('active'); }
-        async function runAI() {}
 
         window.onload = () => { updateMoves(); runCalc(); 
-            [...ids, ...checks].forEach(id => {
-                let el = document.getElementById(id);
-                if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); }
+            // Attach Listeners
+            ['weight','height','risk_mafld'].forEach(id => {
+                document.getElementById(id).addEventListener('input', runCalc);
+                document.getElementById(id).addEventListener('change', runCalc);
             });
         };
     </script>
