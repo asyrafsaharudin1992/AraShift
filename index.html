@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v27.0 (Layout Perfected)</title>
+    <title>AraShift System v27.1 (Mifflin-St Jeor)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -128,10 +128,9 @@
 
         #clinical-report { display: none; }
         
-        /* ---------------- PRINT CSS - PERFECT LAYOUT ---------------- */
+        /* ---------------- PRINT CSS - WYSIWYG FIXED ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
-            
             body { 
                 background: white; 
                 -webkit-print-color-adjust: exact; 
@@ -142,7 +141,7 @@
             }
             .container { max-width: 100% !important; margin: 0 !important; width: 100%; }
             
-            /* --- 1. LAYOUT STRUCTURE (The Grid Fix) --- */
+            /* --- 1. LAYOUT STRUCTURE (Print Layout) --- */
             .layout-grid {
                 display: grid !important;
                 grid-template-columns: 1fr 1.5fr; /* A(Small) | B(Wide) */
@@ -157,7 +156,7 @@
                     "areaI areaI";
             }
             
-            /* --- 2. SECTION A (PROFILE) - VERTICAL LIST STYLE --- */
+            /* --- 2. SECTION A (PROFILE) - VERTICAL LIST --- */
             #card-profile .input-grid-profile {
                 display: flex !important;
                 flex-direction: column;
@@ -172,43 +171,51 @@
             #card-profile label { width: 50%; }
             #card-profile input, #card-profile select { width: 50%; text-align: right; }
 
-            /* --- 3. CLEAN UP & HIDE --- */
+            /* --- 3. HIDE UI JUNK --- */
             .action-bar, .logout, .nav-tabs, .help-icon, .add-row, .food-calc-row, .del-btn, .version-tag, .day-pills-container { display: none !important; }
             
-            /* --- 4. TABLE STYLING --- */
+            /* --- 4. BEAUTIFY TABLES --- */
             .plan-table { border: 1px solid #ccc; font-size: 10pt; }
             .plan-table th { background-color: #EFEFEF !important; color: #000 !important; border: 1px solid #ccc !important; }
             .plan-table td { border: 1px solid #ccc !important; }
             .plan-table tfoot td { background-color: #A9A9A9 !important; color: #fff !important; font-weight: bold; border: 1px solid #ccc !important; }
-            .plan-table th:last-child, .plan-table td:last-child { display: none !important; } /* Hide Delete Col */
-
-            /* --- 5. VISUALS --- */
-            .card, .planner-box, .protein-box { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; }
-            input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; appearance: none; resize: none; }
+            .plan-table th:last-child, .plan-table td:last-child { display: none !important; } /* Hide Delete */
+            
+            /* --- 5. CLEAN CONTAINERS & INPUTS --- */
+            .card, .planner-box, .protein-box {
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            input, select, textarea { 
+                border: none !important; 
+                background: transparent !important; 
+                padding: 0 !important; 
+                color: #000 !important; 
+                font-weight: 700 !important; 
+                appearance: none; 
+                resize: none; 
+            }
             select { background-image: none !important; } 
             ::placeholder { color: transparent; }
-            .planner-header div { display: none !important; } /* Hide header total */
+            
+            .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
+            .bar-marker { background: #000 !important; border: 2px solid #fff; }
         }
     </style>
 </head>
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v27.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v27.1</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
             <div class="layout-grid">
-                
                 <div class="card" id="card-profile">
                     <h3>A. Patient Profile</h3>
-                    <div class="input-grid-profile">
-                        <div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div>
-                        <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div>
-                        <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
-                        <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
-                        <div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
-                    </div>
+                    <div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div><div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div><div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div><div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div><div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div></div>
                 </div>
 
                 <div class="card" id="card-bio">
@@ -278,7 +285,7 @@
                                 <button class="btn btn-p" onclick="addExercise()">+</button>
                             </div>
                             <table class="plan-table">
-                                <thead><tr><th style="width:5%">No</th><th style="width:50%">Exercise</th><th style="width:20%">Duration</th><th style="width:25%">Burn (kcal)</th><th></th></tr></thead>
+                                <thead><tr><th style="width:5%">No</th><th style="width:50%">Exercise</th><th style="width:20%">Duration (min)</th><th style="width:25%">kcal burnt</th><th></th></tr></thead>
                                 <tbody id="planBody"></tbody>
                                 <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalBurn">0</td><td></td></tr></tfoot>
                             </table>
@@ -299,10 +306,10 @@
         </div>
     </div>
 
-    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Screen</button></div>
+    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button></div>
 
     <script>
-        // --- HARVARD & PROTEIN DATA ---
+        // --- DATABASES ---
         const proteinDB = [
             {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, p:8}, {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, p:8}, {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, p:17}, {cat:"Dairy", name:"Cottage Cheese (1/2 cup)", cal:110, p:14}, {cat:"Dairy", name:"Cheddar Cheese (1oz)", cal:115, p:7}, {cat:"Dairy", name:"Egg Large (1)", cal:75, p:6},
             {cat:"Meat", name:"Chicken Breast (3oz)", cal:140, p:26}, {cat:"Meat", name:"Chicken Thigh (3oz)", cal:170, p:22}, {cat:"Meat", name:"Beef Steak (3oz)", cal:155, p:23}, {cat:"Meat", name:"Ground Beef 90% (3oz)", cal:180, p:22}, {cat:"Meat", name:"Turkey Breast (3oz)", cal:125, p:26}, {cat:"Meat", name:"Pork Chop (3oz)", cal:180, p:24},
@@ -355,34 +362,44 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. Metabolic
-            let bf = parseFloat(document.getElementById('fat').value) || 0;
-            let bmr = 0;
-            if(bf > 0) {
-                let lbm = w * (1 - (bf/100));
-                bmr = 370 + (21.6 * lbm);
-            } else {
-                if (gender === 'male') bmr = 88.362 + (13.397*w) + (4.799*h) - (5.677*age);
-                else bmr = 447.593 + (9.247*w) + (3.098*h) - (4.330*age);
-            }
-            bmr = Math.round(bmr);
+            // 2. Metabolic (Mifflin-St Jeor)
+            // Mifflin: (10*w) + (6.25*h) - (5*age) + s
+            // Men: s = +5, Women: s = -161
+            let s = (gender === 'male' ? 5 : -161);
+            let bmrMifflin = (10 * w) + (6.25 * h) - (5 * age) + s;
             
-            // Metabolic Age
+            // Determine "Effective BMR" for display
+            // If body fat% is known, Katch-McArdle is "truer" for metabolic age calculation
+            let bf = parseFloat(document.getElementById('fat').value) || 0;
+            let effectiveBMR = bmrMifflin; // Default to Mifflin
+            
+            if (bf > 0) {
+                let lbm = w * (1 - (bf/100));
+                effectiveBMR = 370 + (21.6 * lbm); // Katch-McArdle
+            }
+            
+            // Display BMR: Use the one we calculated (usually Mifflin unless specifically overridden)
+            // CPGs often use Mifflin.
+            let displayBMR = Math.round(bmrMifflin); 
+            document.getElementById('sBMR').innerText = displayBMR;
+
+            // Metabolic Age (Reverse Mifflin using Effective BMR)
+            // We ask: "For a person of this height/weight/gender, what AGE would result in this Effective BMR?"
+            // Formula: 5*Age = (10*w) + (6.25*h) + s - EffectiveBMR
             let metAge = age; 
-            if(w > 0 && bmr > 0) {
-                 if(gender === 'male') metAge = Math.round((88.362 + (13.397*w) + (4.799*h) - bmr) / 5.677);
-                 else metAge = Math.round((447.593 + (9.247*w) + (3.098*h) - bmr) / 4.330);
-                 if(metAge < 0) metAge = 0; 
+            if (w > 0 && effectiveBMR > 0) {
+                 metAge = Math.round( ((10 * w) + (6.25 * h) + s - effectiveBMR) / 5 );
+                 if(metAge < 12) metAge = 12; // Cap low
+                 if(metAge > 90) metAge = 90; // Cap high
             }
             document.getElementById('sMetAge').innerText = metAge;
 
-            let tdee = Math.round(bmr * act);
+            let tdee = Math.round(displayBMR * act);
             let intake = 0;
             ['bf','lu','dn'].forEach(m => { intake += calMap[document.getElementById(m+'Type').value][document.getElementById(m+'Size').value]; });
             intake += (parseFloat(document.getElementById('snackFreq').value)||0)*200 + (parseFloat(document.getElementById('drinkFreq').value)||0)*150;
             
             document.getElementById('sIntake').innerText = Math.round(intake);
-            document.getElementById('sBMR').innerText = bmr;
             document.getElementById('sTDEE').innerText = tdee;
             document.getElementById('sBal').innerText = (intake - tdee);
 
@@ -415,7 +432,7 @@
 
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // 4. Recommendations
+            // 4. Recommendations (CPG 2023)
             let isMafld = document.getElementById('risk_mafld').checked;
             let hasComorbid = (document.getElementById('risk_t2dm').checked || document.getElementById('risk_htn').checked || document.getElementById('risk_dys').checked || document.getElementById('risk_osa').checked);
             
@@ -481,12 +498,9 @@
             document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
         }
 
-        // Dynamic Recalc
         function recalcExercises(newWeight) {
             if(!newWeight) newWeight = parseFloat(document.getElementById('weight').value) || 70;
-            plan.forEach(p => {
-                p.k = Math.round(p.f * newWeight * (p.d / 60));
-            });
+            plan.forEach(p => { p.k = Math.round(p.f * newWeight * (p.d / 60)); });
             renderEx();
         }
 
