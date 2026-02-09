@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v10.3 (Print Fixed)</title>
+    <title>AraShift System v10.3 (Page Break Fixed)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -181,10 +181,12 @@
             @page { size: A4 portrait; margin: 10mm; }
             html, body { width: 100%; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; box-sizing: border-box !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
-            /* HIDE UI */
+            /* HIDE UI ELEMENTS */
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal, .nav-tabs, .help-icon { display: none !important; }
+            
             #clinical-report { display: block !important; width: 100%; max-width: 100%; overflow: visible; }
-
+            
+            /* GLOBAL CONTAINER */
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; width: 100%; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
             .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
@@ -206,9 +208,25 @@
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 20px; page-break-inside: avoid; display: block; width: 100%; box-sizing: border-box; } 
             .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 5px; } .rx-chart { border: 1px solid #000; height: 15px; } 
             
-            /* A4 CLEAN EXERCISE PLANNER - CLEAN */
-            .planner-box { border: 1px solid #000; background: #fff; padding: 10px; margin-bottom: 20px; break-inside: avoid; page-break-inside: avoid; width: 100%; box-sizing: border-box; } 
-            .planner-header h4 { font-size: 10pt; color: #000; }
+            /* A4 CLEAN EXERCISE PLANNER - NO BREAK */
+            .planner-box { 
+                border: 1px solid #000; 
+                background: #fff; 
+                padding: 10px; 
+                margin-bottom: 20px; 
+                break-inside: avoid !important; /* Forces block to stay together */
+                page-break-inside: avoid !important;
+                width: 100%; 
+                box-sizing: border-box;
+                display: block;
+                position: relative;
+            } 
+            .planner-header { 
+                font-size: 10pt; 
+                color: #000; 
+                break-after: avoid; 
+                page-break-after: avoid; 
+            }
             
             /* REMOVE INPUTS FOR PRINT */
             .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
@@ -268,7 +286,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.2</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.3</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -647,7 +665,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v10.2</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v10.3</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -949,7 +967,7 @@
             document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
             document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
             
-            // HR CALC (v10.2 Fix)
+            // HR CALC (v10.3 Fix)
             let age = parseFloat(document.getElementById('age').value) || 30;
             let rhr = parseFloat(document.getElementById('rhr').value);
             let maxHR = 220 - age;
@@ -1019,10 +1037,10 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- CLEAN PRINT LOGIC (v10.2 DOM CLEANING) ---
+                // --- CLEAN PRINT LOGIC (v10.3) ---
                 let clone = document.getElementById('exPlanner').cloneNode(true);
                 
-                // 1. Remove Inputs, Pills, Buttons using remove()
+                // 1. Remove Inputs, Pills, Buttons
                 let toRemove = clone.querySelectorAll('.add-row, .day-pills-container, .clear-btn, .del-btn');
                 toRemove.forEach(el => el.remove());
                 
