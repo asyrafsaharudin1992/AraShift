@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v11.2 (Unified Tables)</title>
+    <title>AraShift System v11.3 (Data Fixed)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -127,6 +127,7 @@
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 8px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
         .plan-table td { padding: 8px; border-bottom: 1px solid #eee; }
+        /* Footer for Totals */
         .plan-table tfoot { font-weight: 800; background: #F9FAFB; }
         .plan-table tfoot td { padding: 8px; border-top: 2px solid #E5E5EA; }
 
@@ -138,8 +139,6 @@
         .protein-val { font-size: 18px; font-weight: 800; }
         .food-calc-row { display: grid; grid-template-columns: 2fr 1fr 0.5fr; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; align-items: end; }
         
-        /* Removed old .food-list style, replaced with table in HTML structure */
-
         .hr-zone-wrap { margin-top: 25px; position: relative; }
         .hr-bars { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
         .hr-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #1D1D1F; border-right: 1px solid rgba(255,255,255,0.5); }
@@ -216,16 +215,16 @@
             
             /* PREVENT SPLITTING OF BOXES - THE "BRICK" STRATEGY */
             .unbreakable-box, .card, .planner-box, .rx-box, .protein-box, .clinical-plan-grid, .metabolic-row, .rec-container {
-                page-break-inside: avoid !important;
                 break-inside: avoid !important;
+                page-break-inside: avoid !important;
                 display: block; 
                 width: 100%;
                 margin-bottom: 15px;
             }
             
             h3, h4, .planner-header, .protein-head, .rx-head {
-                page-break-after: avoid !important;
                 break-after: avoid !important;
+                page-break-after: avoid !important;
             }
 
             .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; width: 100%; }
@@ -233,7 +232,7 @@
             
             .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px; width: 100%; }
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px; width: 100%; }
-            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
+            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 6px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
             
             .visual-row { margin-bottom: 12px; break-inside: avoid; } .bar-complex { border: 1px solid #999; height: 8px; } .bar-marker { background: #000 !important; border: 1px solid #fff; height: 14px; top: -3px; }
@@ -257,19 +256,25 @@
             
             /* REMOVE INPUTS FOR PRINT */
             .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
-            /* Hide Total in Header */
+            /* Hide Total in Header for Print */
             .planner-header div { display: none !important; } 
             .planner-header h4 { display: block !important; margin: 0; }
             
-            /* Unified Table Style for Print */
             .plan-table { width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; margin-top: 8px; }
             .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 4px; } 
             .plan-table td { padding: 4px; border-bottom: 1px solid #ccc; }
-            /* Hide Del Column */
-            .plan-table th:last-child, .plan-table td:last-child { display: none !important; width: 0; padding: 0; }
             
+            /* HIDE DEL COLUMN (4th Column) in Print */
+            .plan-table th:nth-child(4), .plan-table td:nth-child(4) { display: none !important; width: 0; padding: 0; }
+            
+            /* TABLE LAYOUT */
+            .plan-table th:nth-child(1) { width: 50%; }
+            .plan-table th:nth-child(2) { width: 25%; }
+            .plan-table th:nth-child(3) { width: 25%; }
+
             /* Footer Total */
-            .plan-table tfoot { display: table-row-group !important; } 
+            .plan-table tfoot { display: table-row-group !important; font-weight: 800; background: #F9FAFB; }
+            .plan-table tfoot td { border-top: 2px solid #E5E5EA; }
 
             .hr-zone-wrap { margin-top: 15px; position: relative; } 
             .hr-bars { border: 1px solid #000; height: 18px; }
@@ -323,7 +328,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v11.2</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v11.3</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -733,7 +738,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v11.2</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v11.3</span><span>Page 2 of 2</span></div>
     </div>
 
     <script>
@@ -1116,27 +1121,19 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- CLEAN PRINT LOGIC (v10.6 DOM CLEANING) ---
+                // --- CLEAN PRINT LOGIC (v10.8) ---
                 let clone = document.getElementById('exPlanner').cloneNode(true);
-                
-                // 1. Remove Inputs, Pills, Buttons using remove()
                 let toRemove = clone.querySelectorAll('.add-row, .day-pills-container, .clear-btn, .del-btn');
                 toRemove.forEach(el => el.remove());
                 
-                // 2. Clean Table Columns (remove delete button column)
-                let ths = clone.querySelectorAll('th');
-                if(ths.length > 0) ths[ths.length-1].remove(); 
-                let trs = clone.querySelectorAll('tbody tr');
-                trs.forEach(tr => {
-                    let tds = tr.querySelectorAll('td');
-                    if(tds.length > 0) tds[tds.length-1].remove();
-                });
-
+                // Remove the "Delete" column via CSS nth-child in the head, no JS manipulation needed for columns here
+                
                 document.getElementById('pdRxContainer').innerHTML = clone.innerHTML;
                 
-                // --- PROTEIN BOX CLONE (Now wraps in .unbreakable-box) ---
+                // PROTEIN BOX CLONE
                 let pClone = document.getElementById('proteinBox').cloneNode(true);
-                // Hide input via class (CSS handles .food-calc-row: none)
+                // Hide input row via class, no need to strip HTML string
+                // The print CSS handles hiding .food-calc-row
                 document.getElementById('pdProtein').innerHTML = pClone.innerHTML;
             }
             document.getElementById('bioGrid').innerHTML = bioHTML;
@@ -1192,27 +1189,16 @@
         
         function renderFood() {
             let fl = document.getElementById('foodList');
-            // USE TABLE ROWS INSTEAD OF DIVS FOR UNIFIED LOOK
-            let tableHTML = "";
+            fl.innerHTML = "";
             let tc = 0, tp = 0;
-            
             foodPlan.forEach((f,i) => {
                 tc += f.c; tp += f.p;
-                tableHTML += `<tr>
-                    <td>${f.name}</td>
-                    <td>${f.qty}</td>
-                    <td>${f.c}kcal / ${f.p}g P</td>
-                    <td class="del-btn" onclick="foodPlan.splice(${i},1);renderFood()">×</td>
-                </tr>`;
+                fl.innerHTML += `<div class="food-item"><span>${f.name} x${f.qty}</span><span>${f.c}kcal / ${f.p}g P</span> <span style="color:red;cursor:pointer;" onclick="foodPlan.splice(${i},1);renderFood()">×</span></div>`;
             });
-            
-            document.getElementById('foodTableBody').innerHTML = tableHTML;
             document.getElementById('planProt').innerText = tp;
             document.getElementById('planCal').innerText = tc;
-            
-            // Update Footer Values
-            document.getElementById('totalProtVal').innerText = tp;
-            document.getElementById('totalCalVal').innerText = tc;
+            // Update Summary Box for Print
+            document.getElementById('proteinSummary').innerText = `Total Planned: ${tp}g Protein / ${tc} kcal`;
         }
         
         function getDetailedBar(label, value, unit, totalMax, segments, customStatus = null) {
