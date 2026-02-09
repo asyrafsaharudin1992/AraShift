@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v19.0 (Complete Restoration)</title>
+    <title>AraShift System v20.0 (Precision Logic)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -70,7 +70,7 @@
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
         input[readonly] { background-color: #F2F2F7; color: var(--primary); font-weight: 700; border-color: transparent; }
         
-        .small-input input { width: 60px; text-align: center; } /* For snacks */
+        .small-input input { width: 60px; text-align: center; } 
         
         /* TOGGLES */
         .ios-list { display: flex; flex-direction: column; }
@@ -82,27 +82,37 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* VISUALS */
-        .visual-row { margin-bottom: 20px; }
-        .visual-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-        .bar-complex { position: relative; height: 12px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
-        .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.3); }
-        .bar-numbers-row { display: flex; width: 100%; margin-top: 2px; position: relative; height: 12px; }
-        .bar-number-item { position: absolute; transform: translateX(-100%); font-size: 10px; color: var(--text); font-weight: 700; border-right: 1px solid #ccc; padding-right: 2px; height: 6px; }
-        .bar-labels-row { display: flex; width: 100%; margin-top: 2px; }
-        .bar-label-item { font-size: 9px; color: #666; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; border-right: 1px solid #eee; }
-        .bar-marker-wrapper { position: relative; height: 0; width: 100%; top: -30px; }
-        .bar-marker { position: absolute; width: 4px; height: 20px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -4px; transition: left 0.3s ease; }
-        .bar-status-label { text-align: right; font-size: 11px; font-weight: 700; margin-top: 4px; }
-
-        /* METABOLIC */
+        /* --- SECTION E: METABOLIC (UPDATED LAYOUT) --- */
         .metabolic-screen-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
-        .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 12px; padding: 15px; text-align: center; }
-        .meta-label { font-size: 10px; text-transform: uppercase; color: #86868B; font-weight: 700; margin-bottom: 4px; }
-        .meta-val { font-size: 22px; font-weight: 800; color: #1D1D1F; }
-        .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; margin-top: 3px; }
+        .meta-card { 
+            background: #F8F9FA; 
+            border: 1px solid #E5E5EB; 
+            border-radius: 12px; 
+            padding: 15px; 
+            text-align: center; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+        }
+        /* New Order: Value First, Details Below */
+        .meta-val { font-size: 26px; font-weight: 800; color: #1D1D1F; order: 1; line-height: 1.1; margin-bottom: 4px; }
+        .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; order: 2; }
+        .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; order: 3; margin-top: 2px; }
+        
         .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
         .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
+
+        /* --- SECTION F: DETAILED VISUALS --- */
+        .visual-row { margin-bottom: 30px; }
+        .visual-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+        .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
+        .bar-seg { height: 100%; border-right: 1px solid rgba(255,255,255,0.4); }
+        .bar-numbers-row { display: flex; width: 100%; margin-top: 4px; position: relative; height: 14px; }
+        .bar-number-item { position: absolute; transform: translateX(-50%); font-size: 10px; color: #666; font-weight: 700; }
+        .bar-label-item { font-size: 9px; color: #888; text-align: center; overflow: hidden; text-transform: uppercase; font-weight: 600; }
+        .bar-marker { position: absolute; width: 4px; height: 22px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -4px; transition: left 0.3s ease; z-index: 10; }
+        .bar-status-label { text-align: right; font-size: 11px; font-weight: 700; margin-top: 4px; }
 
         /* PLANNING (G) */
         .planning-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -114,14 +124,13 @@
         .add-row { grid-template-columns: 1.5fr 2fr 1fr 0.8fr; }
         .food-calc-row { grid-template-columns: 2fr 1fr 0.8fr; }
 
-        /* UNIFIED TABLE STYLE */
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
         .plan-table td { padding: 10px; border-bottom: 1px solid #eee; }
         .plan-table tfoot td { font-weight: 800; background: #F9FAFB; padding: 10px; border-top: 2px solid #E5E5EA; }
         .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; text-align: center; }
 
-        /* RECS & REMARKS */
+        /* --- SECTION H: RECS --- */
         .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #E5E5EA; margin-bottom: 15px; }
         .milestone-table th { padding: 10px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; text-align: left; }
         .milestone-table td { padding: 10px; font-size: 13px; border-bottom: 1px solid #eee; }
@@ -132,10 +141,8 @@
         .btn { border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 14px; }
         .btn-p { background: var(--primary); color: white; }
         .btn-s { background: transparent; border: 1px solid var(--border); }
-        .btn-icon { background: #F2F2F7; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 50%; border: 1px solid var(--border); cursor: pointer; }
 
-        /* MODAL */
-        #guideModal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:2000; display:flex; justify-content:center; align-items:center; }
+        #clinical-report { display: none; }
         
         /* ---------------- WYSIWYG PRINT CSS ---------------- */
         @media print {
@@ -158,26 +165,21 @@
             
             /* Container Adjustments */
             .card, .planner-box, .protein-box { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
-            .layout-grid { display: block; } /* Linearize for print if needed, or keep grid if it fits */
+            .layout-grid { display: block; } /* Linearize for print */
             
-            /* Hide Delete Column in Tables (4th col) */
+            /* Hide Delete Column in Tables */
             .plan-table th:last-child, .plan-table td:last-child { display: none !important; }
+            
+            /* Show Visuals Clearly */
+            .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
 
-    <div id="guideModal" class="hidden">
-        <div style="background:white; padding:30px; border-radius:18px; width:90%; max-width:500px;">
-            <h3 style="margin-top:0;">Meal Portion Guide</h3>
-            <table class="milestone-table"><tr><th>Size</th><th>Calories</th><th>Guide</th></tr><tr><td>Small</td><td>300-350</td><td>1/2 Fist Carb + Palm Prot</td></tr><tr><td>Medium</td><td>450-550</td><td>1 Fist Carb + Palm Prot</td></tr><tr><td>Large</td><td>700-800+</td><td>2 Fists Carb + 2 Palms</td></tr></table>
-            <button class="btn btn-p" onclick="document.getElementById('guideModal').classList.add('hidden')" style="width:100%">Close</button>
-        </div>
-    </div>
-
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v19.0</span></div><div class="logout">Logout</div></header>
-        <div class="nav-tabs"><button class="tab-btn active" onclick="switchTab('arashift')" id="btn-arashift">AraShift (Obesity)</button><button class="tab-btn" onclick="switchTab('diabetes')" id="btn-diabetes">Diabetes Mgmt</button></div>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v20.0</span></div><div class="logout">Logout</div></header>
+        <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
             <div class="layout-grid">
@@ -195,15 +197,15 @@
                 <div class="card" id="card-bio">
                     <h3>B. Biochemistry</h3>
                     <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
-                    <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle</label><input type="number" id="muscle"></div></div>
+                    <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
                 </div>
 
                 <div class="card" id="card-diet">
-                    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>C. Dietary Matrix</h3><button class="version-tag" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Guide</button></div>
+                    <h3>C. Dietary Matrix</h3>
                     <div class="meal-row"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
                     <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
                     <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                    <div class="input-grid-snacks"><div class="form-group small-input"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div><div class="form-group small-input"><label>Drinks (150kc)</label><input type="number" id="drinkFreq" value="0"></div></div>
+                    <div class="input-grid-snacks" style="margin-top:10px;"><div class="form-group small-input"><label>Snacks</label><input type="number" id="snackFreq" value="0"></div><div class="form-group small-input"><label>Drinks</label><input type="number" id="drinkFreq" value="0"></div></div>
                 </div>
 
                 <div class="card" id="card-risk">
@@ -221,11 +223,11 @@
                 <div class="card" id="card-meta">
                     <h3>E. Metabolic Balance</h3>
                     <div class="metabolic-screen-row">
-                        <div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="sIntake">0</span><span class="meta-desc">kcal</span></div>
-                        <div class="meta-card"><span class="meta-label">BMR</span><span class="meta-val" id="sBMR">0</span><span class="meta-desc">kcal</span></div>
-                        <div class="meta-card"><span class="meta-label">TDEE</span><span class="meta-val" id="sTDEE">0</span><span class="meta-desc">kcal</span></div>
-                        <div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span><span class="meta-desc">Net</span></div>
-                        <div class="meta-card"><span class="meta-label">Metabolic Age</span><span class="meta-val" id="sMetAge">-</span><span class="meta-desc">Years</span></div>
+                        <div class="meta-card"><div class="meta-val" id="sIntake">0</div><div class="meta-label">Est. Intake</div><div class="meta-desc">kcal/day</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sBMR">0</div><div class="meta-label">BMR</div><div class="meta-desc">kcal</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sTDEE">0</div><div class="meta-label">TDEE</div><div class="meta-desc">kcal</div></div>
+                        <div class="meta-card" id="sBalCard"><div class="meta-val" id="sBal">0</div><div class="meta-label">Balance</div><div class="meta-desc">Net</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Metabolic Age</div><div class="meta-desc">Years</div></div>
                     </div>
                 </div>
 
@@ -237,17 +239,16 @@
                 <div class="card" id="card-planning" style="grid-column: 1 / -1;">
                     <div class="planning-wrapper">
                         <div class="protein-box">
-                            <div class="box-head">Protein Recommendation (Sources)</div>
+                            <div class="box-head">Protein Recommendation</div>
                             <div class="food-calc-row">
-                                <select id="foodType">
-                                    </select>
+                                <select id="foodType"></select>
                                 <input type="number" id="foodQty" placeholder="Qty" value="1">
                                 <button class="btn btn-p" onclick="addFood()">Add</button>
                             </div>
                             <table class="plan-table">
-                                <thead><tr><th style="width:5%">#</th><th style="width:50%">Protein Source</th><th style="width:20%">Size x No</th><th style="width:25%">Amount (g)</th><th></th></tr></thead>
+                                <thead><tr><th style="width:5%">#</th><th style="width:50%">Protein</th><th style="width:20%">meal size x number of meal</th><th style="width:25%">Protein amount (gram)</th><th></th></tr></thead>
                                 <tbody id="foodTableBody"></tbody>
-                                <tfoot><tr><td colspan="3" style="text-align:right">TOTAL</td><td id="totalProtVal">0g</td><td></td></tr></tfoot>
+                                <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalProtVal">0g</td><td></td></tr></tfoot>
                             </table>
                         </div>
                         
@@ -260,9 +261,9 @@
                                 <button class="btn btn-p" onclick="addExercise()">+</button>
                             </div>
                             <table class="plan-table">
-                                <thead><tr><th style="width:5%">#</th><th style="width:50%">Exercise</th><th style="width:20%">Duration</th><th style="width:25%">kcal Burnt</th><th></th></tr></thead>
+                                <thead><tr><th style="width:5%">#</th><th style="width:50%">Exercise</th><th style="width:20%">Duration (min)</th><th style="width:25%">kcal burnt</th><th></th></tr></thead>
                                 <tbody id="planBody"></tbody>
-                                <tfoot><tr><td colspan="3" style="text-align:right">TOTAL</td><td id="totalBurn">0</td><td></td></tr></tfoot>
+                                <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalBurn">0</td><td></td></tr></tfoot>
                             </table>
                         </div>
                     </div>
@@ -270,13 +271,7 @@
 
                 <div class="card" id="card-recs" style="grid-column: 1 / -1;">
                     <h3>H. Weight Loss Recommendation</h3>
-                    <div class="clinical-plan-grid">
-                        <div id="sMilestones"></div>
-                        <div class="rec-container">
-                            <h4>Clinical Strategy</h4>
-                            <div id="sRecs"></div>
-                        </div>
-                    </div>
+                    <div id="hContent"></div>
                 </div>
 
                 <div class="card" id="card-remarks" style="grid-column: 1 / -1;">
@@ -285,85 +280,36 @@
                 </div>
             </div>
         </div>
-        
-        <div id="tab-diabetes" class="hidden"><div>Diabetes Module Placeholder</div></div>
     </div>
 
-    <div class="action-bar">
-        <button class="btn btn-s" onclick="location.reload()">Reset</button>
-        <button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button>
-    </div>
+    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button></div>
 
     <script>
-        // --- DATA & CONFIG ---
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         
-        // EXTENSIVE DATABASES
+        // DATABASES
         const proteinDB = [
-            {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, p:8},
-            {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, p:8},
-            {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, p:17},
-            {cat:"Dairy", name:"Cottage Cheese (1/2 cup)", cal:110, p:14},
-            {cat:"Dairy", name:"Cheddar Cheese (1oz)", cal:115, p:7},
-            {cat:"Meat", name:"Chicken Breast (3oz)", cal:140, p:26},
-            {cat:"Meat", name:"Chicken Thigh (3oz)", cal:170, p:22},
-            {cat:"Meat", name:"Beef Steak (3oz)", cal:155, p:23},
-            {cat:"Meat", name:"Ground Beef 90% (3oz)", cal:180, p:22},
-            {cat:"Seafood", name:"Salmon (3oz)", cal:175, p:19},
-            {cat:"Seafood", name:"Tuna Canned (3oz)", cal:100, p:22},
-            {cat:"Seafood", name:"Shrimp (3oz)", cal:85, p:18},
-            {cat:"Plant", name:"Tofu (1/2 cup)", cal:95, p:10},
-            {cat:"Plant", name:"Edamame (1/2 cup)", cal:100, p:9},
-            {cat:"Plant", name:"Lentils (1/2 cup)", cal:115, p:9},
-            {cat:"Plant", name:"Black Beans (1/2 cup)", cal:110, p:7},
-            {cat:"Plant", name:"Peanut Butter (2tbsp)", cal:190, p:8},
-            {cat:"Supp", name:"Whey Protein (1 scoop)", cal:120, p:24}
+            {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, p:8}, {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, p:17},
+            {cat:"Meat", name:"Chicken Breast (3oz)", cal:140, p:26}, {cat:"Meat", name:"Beef Steak (3oz)", cal:155, p:23},
+            {cat:"Seafood", name:"Salmon (3oz)", cal:175, p:19}, {cat:"Plant", name:"Tofu (1/2 cup)", cal:95, p:10}
         ];
-
-        const moves = {
-            'gym': [ {name:"Weight Lifting: general", factor:3}, {name:"Weight Lifting: vigorous", factor:6}, {name:"Aerobics: water", factor:4}, {name:"Aerobics: high impact", factor:7}, {name:"Rowing: moderate", factor:7}, {name:"Elliptical", factor:5}, {name:"Cycling: stationary", factor:7} ],
-            'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball", factor:6}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming", factor:6}, {name:"Golf", factor:4} ],
-            'outdoor': [ {name:"Walking (Brisk)", factor:3.5}, {name:"Running (6mph)", factor:10}, {name:"Cycling", factor:8}, {name:"Hiking", factor:6}, {name:"Gardening", factor:4} ],
-            'home': [ {name:"Cleaning", factor:3}, {name:"Cooking", factor:2}, {name:"Child Care", factor:3}, {name:"Moving Furniture", factor:6} ],
-            'repair': [ {name:"Car Repair", factor:3}, {name:"Painting", factor:4}, {name:"Carpentry", factor:3.5} ],
-            'occupational': [ {name:"Desk Work", factor:1.5}, {name:"Standing Work", factor:2.5}, {name:"Heavy Lifting", factor:8}, {name:"Farming", factor:8} ]
-        };
+        const moves = { 'gym':[{name:"Weights",factor:3},{name:"Cardio",factor:4}],'sport':[{name:"Badminton",factor:4}]};
 
         let plan = [], foodPlan = [];
 
-        // --- CORE FUNCTIONS ---
         function init() {
-            // Populate Protein
-            let pSel = document.getElementById('foodType');
-            pSel.innerHTML = "";
+            let pSel = document.getElementById('foodType'); pSel.innerHTML = "";
             let cats = [...new Set(proteinDB.map(i=>i.cat))];
             cats.forEach(c => {
                 let grp = document.createElement('optgroup'); grp.label = c;
-                proteinDB.filter(i=>i.cat===c).forEach(i => {
-                    let opt = document.createElement('option');
-                    opt.value = `${i.cal}|${i.p}`;
-                    opt.text = i.name;
-                    grp.appendChild(opt);
-                });
+                proteinDB.filter(i=>i.cat===c).forEach(i => { let opt = document.createElement('option'); opt.value = `${i.cal}|${i.p}`; opt.text = i.name; grp.appendChild(opt); });
                 pSel.appendChild(grp);
             });
-
-            // Populate Exercises
             updateMoves();
-            
             // Listeners
-            const inputs = ['pId','pName','age','gender','height','weight','waist','vfat','fat','muscle','activity','snackFreq','drinkFreq','bfType','bfSize','luType','luSize','dnType','dnSize'];
-            inputs.forEach(id => {
-                let el = document.getElementById(id);
-                if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); }
-            });
-            // Toggles
-            const toggles = ['risk_mafld','risk_t2dm','risk_htn','risk_dys','risk_osa','risk_meta'];
-            toggles.forEach(id => {
-                document.getElementById(id).addEventListener('change', runCalc);
-            });
-            
-            runCalc(); // Initial run
+            const inputs = ['pId','pName','age','gender','height','weight','waist','vfat','fat','muscle','activity','snackFreq','drinkFreq','bfType','bfSize','luType','luSize','dnType','dnSize','risk_mafld','risk_t2dm','risk_htn','risk_dys','risk_osa','risk_meta'];
+            inputs.forEach(id => { let el = document.getElementById(id); if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); } });
+            runCalc();
         }
 
         function updateMoves() {
@@ -379,40 +325,23 @@
             let age = parseFloat(document.getElementById('age').value) || 30;
             let act = parseFloat(document.getElementById('activity').value);
             
-            // 1. BMI
+            // 1. BMI & Metabolic
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
-
-            // 2. Metabolic
-            let tdee = Math.round(w * 25 * act); // Simplified Harris-Benedict proxy
+            let tdee = Math.round(w * 25 * act); 
             let bmr = Math.round(tdee / act);
-            
-            // Metabolic Age (Proxy)
-            let metAge = age;
-            if(w > 0) {
-                // If BMR is lower than expected for weight, MetAge increases
-                let expBMR = w * 22; // Rough standard
-                if(bmr < expBMR) metAge = Math.round(age * (expBMR/bmr));
-                else metAge = Math.round(age * 0.9);
-            }
+            let metAge = age; if(w > 0 && bmr < (w*22)) metAge = Math.round(age * 1.1);
             document.getElementById('sMetAge').innerText = metAge;
-
-            // Diet Calc
-            let intake = 0;
-            ['bf','lu','dn'].forEach(m => {
-                let t = document.getElementById(m+'Type').value;
-                let s = document.getElementById(m+'Size').value;
-                intake += calMap[t][s];
-            });
-            intake += (parseFloat(document.getElementById('snackFreq').value)||0)*200;
-            intake += (parseFloat(document.getElementById('drinkFreq').value)||0)*150;
-
+            
+            // 2. Intake
+            let intake = 0; ['bf','lu','dn'].forEach(m => { intake += calMap[document.getElementById(m+'Type').value][document.getElementById(m+'Size').value]; });
+            intake += (parseFloat(document.getElementById('snackFreq').value)||0)*200 + (parseFloat(document.getElementById('drinkFreq').value)||0)*150;
             document.getElementById('sIntake').innerText = Math.round(intake);
             document.getElementById('sBMR').innerText = bmr;
             document.getElementById('sTDEE').innerText = tdee;
             document.getElementById('sBal').innerText = (intake - tdee);
 
-            // 3. Analysis (CPG 2023)
+            // 3. BMI Bar (CPG 2023)
             let risk = "Unknown";
             if(bmiVal < 18.5) risk = "Low Risk";
             else if(bmiVal < 23.0) risk = "Acceptable";
@@ -420,68 +349,67 @@
             else if(bmiVal < 35.0) risk = "High";
             else if(bmiVal < 40.0) risk = "Very High";
             else risk = "Extremely High";
-
-            let vHTML = getBar("BMI", bmiVal, 50, [
-                {limit:18.5,c:"#F59E0B",l:"Under"}, {limit:22.9,c:"#34C759",l:"Norm"}, {limit:27.4,c:"#FBBF24",l:"Over"}, {limit:34.9,c:"#F97316",l:"Ob I"}, {limit:39.9,c:"#EF4444",l:"Ob II"}, {limit:50,c:"#991B1B",l:"Ob III"}
+            
+            // Create the Detailed Bar
+            let vHTML = getDetailedBar("BMI Classification (CPG 2023)", bmiVal, 50, [
+                {l:18.5,t:"Underweight",c:"#F59E0B"}, {l:22.9,t:"Normal",c:"#34C759"}, {l:27.4,t:"Overweight",c:"#FBBF24"},
+                {l:34.9,t:"Obese I",c:"#F97316"}, {l:39.9,t:"Obese II",c:"#EF4444"}, {l:50,t:"Obese III",c:"#991B1B"}
             ], risk);
-            
-            vHTML += getBar("Visceral Fat", parseFloat(document.getElementById('vfat').value)||0, 20, [{limit:9,c:"#34C759",l:"Ok"},{limit:14,c:"#F97316",l:"High"},{limit:20,c:"#EF4444",l:"V.High"}], "Level");
-            
+            vHTML += getDetailedBar("Muscle Percentage", parseFloat(document.getElementById('muscle').value)||0, 60, [{l:28,t:"Low",c:"#EF4444"},{l:33,t:"Normal",c:"#34C759"},{l:60,t:"High",c:"#34C759"}], "Level");
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // 4. Recommendations (Section H)
+            // 4. Section H: Recommendations
             let isMafld = document.getElementById('risk_mafld').checked;
-            let isDm = document.getElementById('risk_t2dm').checked;
-            let isOsa = document.getElementById('risk_osa').checked;
+            let lossPct = isMafld ? 0.10 : 0.05; 
+            let maxLossPct = isMafld ? 0.40 : 0.15;
+            let goalText = isMafld ? "Fatty Liver Protocol (10-40% Loss)" : "Standard Obesity Management (5-15% Loss)";
             
-            let lossPct = 0.05; // Default 5%
-            let reason = "Standard Obesity Mgmt";
-            
-            if(isMafld) { lossPct = 0.10; reason = "Fatty Liver Protocol (10-40%)"; }
-            else if(isDm) { lossPct = 0.15; reason = "Diabetes Remission Protocol"; }
-            else if(isOsa) { lossPct = 0.10; reason = "Sleep Apnea Improvement"; }
-
-            let targetWt = (w * (1-lossPct)).toFixed(1);
-            let mHTML = `<table class="milestone-table"><tr><th>Goal</th><th>Target Weight</th><th>Duration</th></tr>
-                <tr><td>${lossPct*100}% Loss</td><td>${targetWt} kg</td><td>3-6 Months</td></tr>
-                <tr><td>Long Term</td><td>${(w*0.8).toFixed(1)} kg</td><td>1 Year</td></tr></table>`;
-            
-            let recHTML = `<ul><li><b>Primary Goal:</b> ${reason}</li><li>Calorie Deficit: 500-1000 kcal/day</li><li>Protein: 1.2-1.5g/kg body weight</li></ul>`;
-            
-            document.getElementById('sMilestones').innerHTML = mHTML;
-            document.getElementById('sRecs').innerHTML = recHTML;
+            let hHTML = `<div style="background:#FFF7ED; padding:15px; border-radius:12px; border-left:5px solid #F97316; margin-bottom:15px;"><h4>${goalText}</h4>
+            <table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr>
+            <tr><td>Initial Phase (${lossPct*100}%)</td><td>${(w*(1-lossPct)).toFixed(1)} kg</td><td>3 Months</td></tr>
+            <tr><td>Target Phase (${maxLossPct*100}%)</td><td>${(w*(1-maxLossPct)).toFixed(1)} kg</td><td>6 Months</td></tr></table></div>`;
+            document.getElementById('hContent').innerHTML = hHTML;
             
             recalcExercises();
         }
 
-        function getBar(label, val, max, segments, status) {
-            let pct = Math.min((val/max)*100, 100);
-            return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span>${val}</span></div><div class="bar-complex"><div class="bar-seg" style="width:100%; background:linear-gradient(90deg, #F59E0B 0%, #34C759 40%, #EF4444 100%);"></div><div class="bar-marker" style="left:${pct}%"></div></div><div class="bar-status-label">${status}</div></div>`;
+        function getDetailedBar(title, val, max, segs, status) {
+            let html = `<div class="visual-row"><div class="visual-header"><span>${title}</span><span>${val}</span></div><div class="bar-complex">`;
+            let prev = 0;
+            segs.forEach(s => {
+                let w = ((s.l - prev)/max)*100;
+                html += `<div class="bar-seg" style="width:${w}%; background:${s.c}; float:left;"></div>`;
+                prev = s.l;
+            });
+            let mp = Math.min((val/max)*100, 100);
+            html += `<div class="bar-marker" style="left:${mp}%"></div></div>`;
+            // Labels Row
+            html += `<div class="bar-numbers-row">`;
+            prev = 0;
+            segs.forEach(s => {
+                let pos = (s.l/max)*100;
+                html += `<div class="bar-number-item" style="left:${pos}%">${s.l}</div>`;
+                prev = s.l;
+            });
+            html += `</div><div class="bar-status-label" style="clear:both;">Risk: ${status}</div></div>`;
+            return html;
         }
 
-        // --- TABLE LOGIC ---
+        // --- TABLES ---
         function addFood() {
-            let sel = document.getElementById('foodType');
-            let vals = sel.value.split('|');
-            let name = sel.options[sel.selectedIndex].text.split('(')[0].trim();
-            let qty = parseFloat(document.getElementById('foodQty').value) || 1;
-            foodPlan.push({id: Date.now(), n:name, q:qty, c:Math.round(vals[0]*qty), p:Math.round(vals[1]*qty)});
+            let sel = document.getElementById('foodType'); let vals = sel.value.split('|');
+            let name = sel.options[sel.selectedIndex].text; let qty = parseFloat(document.getElementById('foodQty').value)||1;
+            foodPlan.push({n:name, q:qty, p:Math.round(vals[1]*qty)});
             renderFood();
         }
         function renderFood() {
             let h="", tp=0;
-            foodPlan.forEach((f,i) => {
-                tp+=f.p;
-                h += `<tr><td>${i+1}</td><td>${f.n}</td><td>x${f.q}</td><td>${f.p}g</td><td class="del-btn" onclick="removeFood(${i})">×</td></tr>`;
-            });
-            document.getElementById('foodTableBody').innerHTML = h;
-            document.getElementById('totalProtVal').innerText = tp + "g";
+            foodPlan.forEach((f,i) => { tp+=f.p; h+=`<tr><td>${i+1}</td><td>${f.n}</td><td>x${f.q}</td><td>${f.p}g</td><td class="del-btn" onclick="foodPlan.splice(${i},1);renderFood()">×</td></tr>`; });
+            document.getElementById('foodTableBody').innerHTML = h; document.getElementById('totalProtVal').innerText = tp+"g";
         }
-        function removeFood(i) { foodPlan.splice(i,1); renderFood(); }
 
         function addExercise() {
-            let sel = document.getElementById('exMove');
-            let name = sel.options[sel.selectedIndex].text;
+            let sel = document.getElementById('exMove'); let name = sel.options[sel.selectedIndex].text;
             let dur = parseFloat(document.getElementById('exDur').value);
             let k = Math.round(parseFloat(sel.value) * (parseFloat(document.getElementById('weight').value)||70) * (dur/60));
             plan.push({n:name, d:dur, k:k});
@@ -489,24 +417,10 @@
         }
         function renderEx() {
             let h="", tk=0;
-            plan.forEach((p,i) => {
-                tk+=p.k;
-                h += `<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="removeEx(${i})">×</td></tr>`;
-            });
-            document.getElementById('planBody').innerHTML = h;
-            document.getElementById('totalBurn').innerText = tk;
+            plan.forEach((p,i) => { tk+=p.k; h+=`<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderEx()">×</td></tr>`; });
+            document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
         }
-        function removeEx(i) { plan.splice(i,1); renderEx(); }
-        function recalcExercises() { renderEx(); } // Just re-render in case weight changed
-
-        function switchTab(t) {
-             document.getElementById('tab-arashift').classList.toggle('hidden', t !== 'arashift');
-             document.getElementById('tab-diabetes').classList.toggle('hidden', t !== 'diabetes');
-             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-             document.getElementById('btn-'+t).classList.add('active');
-        }
-        function saveKey() { document.getElementById('keyModal').classList.add('hidden'); }
-        function toggleDay(el) { el.classList.toggle('active'); }
+        function recalcExercises() { renderEx(); }
 
         window.onload = init;
     </script>
