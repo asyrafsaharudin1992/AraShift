@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v27.1 (Mifflin-St Jeor)</title>
+    <title>AraShift System v28.0 (Metabolic Precision)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -128,77 +128,47 @@
 
         #clinical-report { display: none; }
         
-        /* ---------------- PRINT CSS - WYSIWYG FIXED ---------------- */
+        /* ---------------- PRINT CSS - PERFECT LAYOUT ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
-            body { 
-                background: white; 
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact; 
-                padding: 0; 
-                width: 100%;
-                zoom: 90%; 
-            }
+            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 90%; }
             .container { max-width: 100% !important; margin: 0 !important; width: 100%; }
             
-            /* --- 1. LAYOUT STRUCTURE (Print Layout) --- */
+            /* GRID */
             .layout-grid {
                 display: grid !important;
-                grid-template-columns: 1fr 1.5fr; /* A(Small) | B(Wide) */
+                grid-template-columns: 1fr 1.5fr;
                 gap: 20px;
                 grid-template-areas:
-                    "areaA areaB"  /* Row 1: Profile | Bio */
-                    "areaC areaD"  /* Row 2: Diet | Risk */
-                    "areaE areaE"  /* Row 3: Full Width */
+                    "areaA areaB"
+                    "areaC areaD"
+                    "areaE areaE"
                     "areaF areaF"
                     "areaG areaG"
                     "areaH areaH"
                     "areaI areaI";
             }
             
-            /* --- 2. SECTION A (PROFILE) - VERTICAL LIST --- */
-            #card-profile .input-grid-profile {
-                display: flex !important;
-                flex-direction: column;
-                gap: 5px;
-            }
-            #card-profile .form-group {
-                display: flex;
-                justify-content: space-between;
-                border-bottom: 1px solid #eee;
-                margin-bottom: 5px;
-            }
-            #card-profile label { width: 50%; }
-            #card-profile input, #card-profile select { width: 50%; text-align: right; }
+            /* VERTICAL PROFILE */
+            #card-profile .input-grid-profile { display: flex !important; flex-direction: column; gap: 5px; }
+            #card-profile .form-group { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; margin-bottom: 5px; }
+            #card-profile label { width: 50%; } #card-profile input, #card-profile select { width: 50%; text-align: right; }
 
-            /* --- 3. HIDE UI JUNK --- */
+            /* CLEAN UP */
             .action-bar, .logout, .nav-tabs, .help-icon, .add-row, .food-calc-row, .del-btn, .version-tag, .day-pills-container { display: none !important; }
             
-            /* --- 4. BEAUTIFY TABLES --- */
+            /* TABLE STYLING */
             .plan-table { border: 1px solid #ccc; font-size: 10pt; }
             .plan-table th { background-color: #EFEFEF !important; color: #000 !important; border: 1px solid #ccc !important; }
             .plan-table td { border: 1px solid #ccc !important; }
             .plan-table tfoot td { background-color: #A9A9A9 !important; color: #fff !important; font-weight: bold; border: 1px solid #ccc !important; }
-            .plan-table th:last-child, .plan-table td:last-child { display: none !important; } /* Hide Delete */
-            
-            /* --- 5. CLEAN CONTAINERS & INPUTS --- */
-            .card, .planner-box, .protein-box {
-                box-shadow: none !important;
-                border: 1px solid #ccc !important;
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-            input, select, textarea { 
-                border: none !important; 
-                background: transparent !important; 
-                padding: 0 !important; 
-                color: #000 !important; 
-                font-weight: 700 !important; 
-                appearance: none; 
-                resize: none; 
-            }
-            select { background-image: none !important; } 
-            ::placeholder { color: transparent; }
+            .plan-table th:last-child, .plan-table td:last-child { display: none !important; } 
+
+            /* VISUALS */
+            .card, .planner-box, .protein-box { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; }
+            input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; appearance: none; resize: none; }
+            select { background-image: none !important; } ::placeholder { color: transparent; }
+            .planner-header div { display: none !important; } 
             
             .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
             .bar-marker { background: #000 !important; border: 2px solid #fff; }
@@ -208,14 +178,21 @@
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v27.1</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v28.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
             <div class="layout-grid">
+                
                 <div class="card" id="card-profile">
                     <h3>A. Patient Profile</h3>
-                    <div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div><div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div><div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div><div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div><div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div></div>
+                    <div class="input-grid-profile">
+                        <div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div>
+                        <div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div>
+                        <div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div>
+                        <div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div>
+                        <div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div>
+                    </div>
                 </div>
 
                 <div class="card" id="card-bio">
@@ -270,7 +247,7 @@
                                 <button class="btn btn-p" onclick="addFood()">Add</button>
                             </div>
                             <table class="plan-table">
-                                <thead><tr><th style="width:5%">No</th><th style="width:50%">Protein</th><th style="width:20%">Size x Qty</th><th style="width:25%">Protein (g)</th><th></th></tr></thead>
+                                <thead><tr><th style="width:5%">No</th><th style="width:50%">Protein</th><th style="width:20%">meal size x number of meal</th><th style="width:25%">Protein amount (gram)</th><th></th></tr></thead>
                                 <tbody id="foodTableBody"></tbody>
                                 <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalProtVal">0g</td><td></td></tr></tfoot>
                             </table>
@@ -319,12 +296,12 @@
         ];
 
         const moves = {
-            'gym': [ {name:"Weight Lifting: General", factor:3}, {name:"Weight Lifting: Vigorous", factor:6}, {name:"Aerobics: Water", factor:4}, {name:"Aerobics: Low Impact", factor:5}, {name:"Aerobics: High Impact", factor:7}, {name:"Aerobics: Step", factor:8.5}, {name:"Calisthenics: Moderate", factor:4.5}, {name:"Calisthenics: Vigorous", factor:8}, {name:"Circuit Training", factor:8}, {name:"Rowing: Moderate", factor:7}, {name:"Rowing: Vigorous", factor:8.5}, {name:"Elliptical Trainer", factor:5}, {name:"Ski Machine", factor:9.5}, {name:"Stair Step Machine", factor:6}, {name:"Cycling: Stationary (Mod)", factor:7}, {name:"Cycling: Stationary (Vig)", factor:10.5}, {name:"Stretching / Hatha Yoga", factor:2.5}, {name:"Pilates", factor:3} ],
-            'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball: Game", factor:8}, {name:"Basketball: Shooting", factor:4.5}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming: Leisure", factor:6}, {name:"Swimming: Laps", factor:10}, {name:"Golf: Carrying Clubs", factor:4.5}, {name:"Golf: Cart", factor:3.5}, {name:"Bowling", factor:3}, {name:"Volleyball", factor:3}, {name:"Martial Arts", factor:10}, {name:"Boxing: Sparring", factor:9}, {name:"Handball", factor:12}, {name:"Squash", factor:12}, {name:"Table Tennis", factor:7} ],
-            'outdoor': [ {name:"Walking: 3.5 mph (Brisk)", factor:3.8}, {name:"Walking: 4.0 mph (Very Brisk)", factor:5}, {name:"Walking: 4.5 mph", factor:6.3}, {name:"Running: 5 mph", factor:8}, {name:"Running: 6 mph", factor:10}, {name:"Running: 7.5 mph", factor:12.5}, {name:"Running: 10 mph", factor:16}, {name:"Cycling: <10 mph", factor:4}, {name:"Cycling: 12-14 mph", factor:8}, {name:"Hiking: Cross Country", factor:6}, {name:"Gardening: General", factor:4}, {name:"Mowing Lawn", factor:5.5}, {name:"Raking Lawn", factor:4}, {name:"Shoveling Snow", factor:6} ],
-            'home': [ {name:"Sleeping", factor:0.9}, {name:"Watching TV", factor:1}, {name:"Reading", factor:1.3}, {name:"Cooking", factor:2}, {name:"Child Care: Bathing/Feeding", factor:3.5}, {name:"Child Care: Playing", factor:4}, {name:"Food Shopping", factor:3.5}, {name:"Moving Furniture", factor:6}, {name:"Heavy Cleaning", factor:4.5}, {name:"Vacuuming", factor:3.5} ],
-            'repair': [ {name:"Auto Repair", factor:3}, {name:"Carpentry", factor:3.5}, {name:"Painting", factor:4.5}, {name:"Plumbing", factor:3}, {name:"Roofing", factor:6}, {name:"Laying Tile", factor:4} ],
-            'occupational': [ {name:"Desk Work", factor:1.5}, {name:"Standing Work", factor:2}, {name:"Heavy Lifting (Cons.)", factor:8}, {name:"Farming: Baling Hay", factor:8}, {name:"Firefighting", factor:12}, {name:"Forestry", factor:8}, {name:"Massage Therapist", factor:4}, {name:"Police Officer", factor:2.5}, {name:"Truck Driving", factor:2} ]
+            'gym': [ {name:"Weight Lifting: General", factor:3}, {name:"Weight Lifting: Vigorous", factor:6}, {name:"Aerobics: Water", factor:4}, {name:"Aerobics: Low Impact", factor:5}, {name:"Aerobics: High Impact", factor:7}, {name:"Aerobics: Step", factor:8.5}, {name:"Calisthenics: Moderate", factor:4.5}, {name:"Calisthenics: Vigorous", factor:8}, {name:"Circuit Training", factor:8}, {name:"Rowing: Moderate", factor:7}, {name:"Rowing: Vigorous", factor:8.5}, {name:"Elliptical Trainer", factor:5}, {name:"Ski Machine", factor:9.5}, {name:"Cycling: Stationary (Mod)", factor:7}, {name:"Cycling: Stationary (Vig)", factor:10.5} ],
+            'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball: Game", factor:8}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming: Leisure", factor:6}, {name:"Swimming: Laps", factor:10}, {name:"Golf: Walking", factor:4.5} ],
+            'outdoor': [ {name:"Walking: 3.5 mph (Brisk)", factor:3.8}, {name:"Walking: 4.0 mph (Very Brisk)", factor:5}, {name:"Running: 5 mph", factor:8}, {name:"Running: 6 mph", factor:10}, {name:"Cycling: <10 mph", factor:4}, {name:"Cycling: 12-14 mph", factor:8}, {name:"Gardening", factor:4} ],
+            'home': [ {name:"Cleaning", factor:3}, {name:"Cooking", factor:2}, {name:"Child Care", factor:3.5}, {name:"Moving Furniture", factor:6} ],
+            'repair': [ {name:"Auto Repair", factor:3}, {name:"Painting", factor:4.5}, {name:"Carpentry", factor:3.5} ],
+            'occupational': [ {name:"Desk Work", factor:1.5}, {name:"Standing Work", factor:2}, {name:"Heavy Lifting", factor:8}, {name:"Farming", factor:8} ]
         };
 
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
@@ -362,48 +339,45 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. Metabolic (Mifflin-St Jeor)
-            // Mifflin: (10*w) + (6.25*h) - (5*age) + s
-            // Men: s = +5, Women: s = -161
-            let s = (gender === 'male' ? 5 : -161);
-            let bmrMifflin = (10 * w) + (6.25 * h) - (5 * age) + s;
-            
-            // Determine "Effective BMR" for display
-            // If body fat% is known, Katch-McArdle is "truer" for metabolic age calculation
+            // 2. Metabolic (BodySpec Logic: Katch-McArdle or Mifflin)
             let bf = parseFloat(document.getElementById('fat').value) || 0;
-            let effectiveBMR = bmrMifflin; // Default to Mifflin
+            let bmr = 0;
+            // Mifflin-St Jeor (Base)
+            let bmrMifflin = (10 * w) + (6.25 * h) - (5 * age) + (gender === 'male' ? 5 : -161);
             
-            if (bf > 0) {
+            // If BF% exists, use Katch-McArdle for "True BMR"
+            if(bf > 0) {
                 let lbm = w * (1 - (bf/100));
-                effectiveBMR = 370 + (21.6 * lbm); // Katch-McArdle
+                bmr = 370 + (21.6 * lbm);
+            } else {
+                bmr = bmrMifflin;
             }
+            bmr = Math.round(bmr);
             
-            // Display BMR: Use the one we calculated (usually Mifflin unless specifically overridden)
-            // CPGs often use Mifflin.
-            let displayBMR = Math.round(bmrMifflin); 
-            document.getElementById('sBMR').innerText = displayBMR;
-
-            // Metabolic Age (Reverse Mifflin using Effective BMR)
-            // We ask: "For a person of this height/weight/gender, what AGE would result in this Effective BMR?"
-            // Formula: 5*Age = (10*w) + (6.25*h) + s - EffectiveBMR
-            let metAge = age; 
-            if (w > 0 && effectiveBMR > 0) {
-                 metAge = Math.round( ((10 * w) + (6.25 * h) + s - effectiveBMR) / 5 );
-                 if(metAge < 12) metAge = 12; // Cap low
-                 if(metAge > 90) metAge = 90; // Cap high
+            // Metabolic Age (Reverse Mifflin logic)
+            // "At what age would Mifflin predict this BMR for a standard person?"
+            // Mifflin: BMR = Constant - (5 * Age)
+            // 5 * Age = Constant - BMR
+            let constant = (10 * w) + (6.25 * h) + (gender === 'male' ? 5 : -161);
+            let metAge = age;
+            if(w > 0 && bmr > 0) {
+                 metAge = Math.round((constant - bmr) / 5);
+                 if(metAge < 12) metAge = 12; // Cap
+                 if(metAge > 90) metAge = 90; // Cap
             }
             document.getElementById('sMetAge').innerText = metAge;
 
-            let tdee = Math.round(displayBMR * act);
+            let tdee = Math.round(bmr * act);
             let intake = 0;
             ['bf','lu','dn'].forEach(m => { intake += calMap[document.getElementById(m+'Type').value][document.getElementById(m+'Size').value]; });
             intake += (parseFloat(document.getElementById('snackFreq').value)||0)*200 + (parseFloat(document.getElementById('drinkFreq').value)||0)*150;
             
             document.getElementById('sIntake').innerText = Math.round(intake);
+            document.getElementById('sBMR').innerText = bmr;
             document.getElementById('sTDEE').innerText = tdee;
             document.getElementById('sBal').innerText = (intake - tdee);
 
-            // 3. Analysis (CPG 2023)
+            // 3. Analysis
             let risk = "Unknown";
             if(bmiVal < 18.5) risk = "Low Risk";
             else if(bmiVal < 23.0) risk = "Acceptable";
@@ -432,7 +406,7 @@
 
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // 4. Recommendations (CPG 2023)
+            // 4. Recommendations
             let isMafld = document.getElementById('risk_mafld').checked;
             let hasComorbid = (document.getElementById('risk_t2dm').checked || document.getElementById('risk_htn').checked || document.getElementById('risk_dys').checked || document.getElementById('risk_osa').checked);
             
@@ -487,9 +461,8 @@
         function addExercise() {
             let sel = document.getElementById('exMove'); let name = sel.options[sel.selectedIndex].text;
             let dur = parseFloat(document.getElementById('exDur').value);
-            let f = parseFloat(sel.value);
-            let k = Math.round(f * (parseFloat(document.getElementById('weight').value)||70) * (dur/60));
-            plan.push({n:name, d:dur, f:f, k:k});
+            let k = Math.round(parseFloat(sel.value) * (parseFloat(document.getElementById('weight').value)||70) * (dur/60));
+            plan.push({n:name, d:dur, f:parseFloat(sel.value), k:k});
             renderEx();
         }
         function renderEx() {
@@ -498,9 +471,12 @@
             document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
         }
 
+        // Dynamic Recalc
         function recalcExercises(newWeight) {
             if(!newWeight) newWeight = parseFloat(document.getElementById('weight').value) || 70;
-            plan.forEach(p => { p.k = Math.round(p.f * newWeight * (p.d / 60)); });
+            plan.forEach(p => {
+                p.k = Math.round(p.f * newWeight * (p.d / 60));
+            });
             renderEx();
         }
 
