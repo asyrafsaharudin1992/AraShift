@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v23.0 (CPG 2023 Compliance)</title>
+    <title>AraShift System v25.0 (Harvard + Pro Print)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -12,15 +12,14 @@
             --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
-            /* CPG 2023 Colors */
-            --c-norm: #34C759; --c-over: #FBBF24; --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
+            --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
         .container { max-width: 1200px; margin: 0 auto; }
         .hidden { display: none !important; }
         
-        /* HEADER */
+        /* HEADER & TABS */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; } .brand span { color: var(--primary); }
         .logout { color: var(--primary); cursor: pointer; font-weight: 500; }
@@ -28,10 +27,10 @@
         .tab-btn { background: transparent; border: none; font-size: 16px; font-weight: 600; color: var(--text-sec); cursor: pointer; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
         .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* --- LAYOUT GRID A-I --- */
+        /* --- SCREEN LAYOUT (A-I) --- */
         .layout-grid {
             display: grid;
-            grid-template-columns: 1.8fr 1.2fr;
+            grid-template-columns: 2fr 1.2fr;
             gap: 20px;
             grid-template-areas:
                 "areaA areaB"
@@ -42,12 +41,13 @@
                 "areaH areaH"
                 "areaI areaI";
         }
+        
         @media (max-width: 768px) { .layout-grid { display: block; } .card { margin-bottom: 20px; } }
 
         .card { background: #fff; border-radius: 18px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); height: 100%; box-sizing: border-box; }
         .card h3 { font-size: 12px; text-transform: uppercase; color: var(--text-sec); margin: 0 0 15px 0; font-weight: 700; letter-spacing: 0.05em; border-bottom: 1px solid #eee; padding-bottom: 5px; }
 
-        /* Areas */
+        /* Area Assignments */
         #card-profile { grid-area: areaA; }
         #card-bio { grid-area: areaB; }
         #card-diet { grid-area: areaC; }
@@ -58,7 +58,7 @@
         #card-recs { grid-area: areaH; }
         #card-remarks { grid-area: areaI; }
 
-        /* INPUTS */
+        /* FORM STYLING */
         .input-grid-profile { display: grid; grid-template-columns: 0.5fr 2fr 0.5fr 1fr 1.5fr; gap: 10px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
@@ -66,10 +66,11 @@
         
         .form-group { margin-bottom: 0; width: 100%; }
         label { display: flex; align-items: center; font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 3px; white-space: nowrap; }
-        input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid #D1D1D6; border-radius: 8px; font-size: 13px; font-weight: 500; background: #fff; box-sizing: border-box; }
+        input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid #D1D1D6; border-radius: 8px; font-size: 13px; font-weight: 500; background: #fff; box-sizing: border-box; transition: 0.2s; }
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
-        .small-input input { width: 60px; text-align: center; }
-
+        input[readonly] { background-color: #F2F2F7; color: var(--primary); font-weight: 700; border-color: transparent; }
+        .small-input input { width: 60px; text-align: center; } 
+        
         /* TOGGLES */
         .ios-list { display: flex; flex-direction: column; }
         .ios-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #E5E5EA; }
@@ -86,6 +87,8 @@
         .meta-val { font-size: 28px; font-weight: 800; color: #1D1D1F; order: 1; line-height: 1.1; margin-bottom: 4px; }
         .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; order: 2; }
         .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; order: 3; margin-top: 2px; }
+        .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
+        .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
 
         /* SECTION F: VISUALS */
         .visual-row { margin-bottom: 25px; break-inside: avoid; }
@@ -127,40 +130,73 @@
 
         #clinical-report { display: none; }
         
-        /* ---------------- PRINT CSS ---------------- */
+        /* ---------------- CREATIVE PRINT CSS (THE "PRO" LAYOUT) ---------------- */
         @media print {
-            @page { margin: 15mm; }
-            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; }
-            .container { max-width: 100% !important; margin: 0 !important; }
+            @page { margin: 10mm 15mm; size: A4 portrait; }
+            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; font-size: 9pt; color: #333; }
             
-            /* Hide UI Elements */
-            .action-bar, .logout, .nav-tabs, .help-icon, .add-row, .food-calc-row, .del-btn, .version-tag, .day-pills-container { display: none !important; }
+            /* HIDE UI */
+            .action-bar, .logout, .nav-tabs, .help-icon, .add-row, .food-calc-row, .del-btn, .version-tag, .day-pills-container, #guideModal, #keyModal { display: none !important; }
             
-            /* Input Styling */
-            input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; appearance: none; resize: none; }
-            select { background-image: none !important; } ::placeholder { color: transparent; }
-            
-            /* Custom Table Design (Gray Header / Dark Footer) */
-            .plan-table { border: 1px solid #ccc; font-size: 10pt; }
-            .plan-table th { background-color: #EFEFEF !important; color: #000 !important; border: 1px solid #ccc !important; }
-            .plan-table td { border: 1px solid #ccc !important; }
-            .plan-table tfoot td { background-color: #A9A9A9 !important; color: #fff !important; font-weight: bold; border: 1px solid #ccc !important; }
-            
-            /* Unbreakable Blocks */
-            .card, .planner-box, .protein-box { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px !important; }
-            .layout-grid { display: block; }
-            
+            /* RESET CONTAINER */
+            .container { max-width: 100% !important; margin: 0 !important; width: 100%; }
+            .card, .planner-box, .protein-box { box-shadow: none !important; border: none !important; border-bottom: 1px solid #eee !important; margin-bottom: 15px !important; border-radius: 0 !important; padding: 10px 0 !important; }
+
+            /* BRANDING HEADER */
+            header { border-bottom: 3px solid var(--primary); padding-bottom: 10px; margin-bottom: 20px; }
+            .brand { font-size: 24pt; color: #000; } .brand span { color: var(--primary); }
+
+            /* TRANSFORM GRID FOR PRINT (Creative 2-Column Report) */
+            .layout-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Force 2 equal columns */
+                gap: 20px;
+                grid-template-areas:
+                    "areaA areaB" /* Profile | Bio */
+                    "areaC areaD" /* Diet | Risk */
+                    "areaE areaE" /* Metabolic (Full) */
+                    "areaF areaF" /* Analysis (Full) */
+                    "areaG areaG" /* Plan (Full) */
+                    "areaH areaH" /* Recs (Full) */
+                    "areaI areaI"; /* Notes (Full) */
+            }
+
+            /* INPUTS AS TEXT */
+            input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; font-size: 9pt !important; appearance: none; resize: none; width: auto !important; display: inline-block; }
+            select { background-image: none !important; padding-right: 0 !important; } 
+            ::placeholder { color: transparent; }
+            label { color: #888; font-size: 8pt; text-transform: uppercase; margin-bottom: 0; }
+            .form-group { margin-bottom: 5px; border-bottom: 1px dotted #ccc; display: flex; justify-content: space-between; align-items: baseline; }
+
+            /* TABLE PRO STYLING */
+            .plan-table { border: 1px solid #333; font-size: 9pt; width: 100%; margin-top: 5px; }
+            .plan-table th { background-color: #E0E0E0 !important; color: #000 !important; border: 1px solid #333 !important; font-weight: 800; padding: 6px; text-transform: uppercase; }
+            .plan-table td { border: 1px solid #333 !important; padding: 6px; color: #000; }
+            .plan-table tfoot td { background-color: #444 !important; color: #fff !important; font-weight: 800; border: 1px solid #333 !important; }
             /* Hide Delete Column */
             .plan-table th:last-child, .plan-table td:last-child { display: none !important; }
             
-            .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
+            /* VISUALS */
+            .bar-complex { border: 1px solid #000; height: 10px; }
+            .bar-marker { background: #000 !important; border: 1px solid #fff; height: 16px; top: -3px; }
+            
+            /* METABOLIC CARDS - HORIZONTAL STRIP */
+            .metabolic-screen-row { display: flex; justify-content: space-between; border: 1px solid #ccc; padding: 10px; border-radius: 8px; background: #fff !important; }
+            .meta-card { border: none !important; background: transparent !important; padding: 0; }
+            .meta-val { font-size: 16pt; color: #000; }
+
+            /* UNBREAKABLE BLOCKS */
+            .card, .planner-box, .protein-box, .rec-container { page-break-inside: avoid; }
+
+            /* Hide Screen Headers in Tables */
+            .planner-header div { display: none !important; }
         }
     </style>
 </head>
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v23.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v25.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -209,7 +245,7 @@
                 </div>
 
                 <div class="card" id="card-analysis">
-                    <h3>F. Clinical Analysis (CPG 2023)</h3>
+                    <h3>F. Clinical Analysis</h3>
                     <div id="sAnalysis"></div>
                 </div>
 
@@ -232,7 +268,7 @@
                         <div class="planner-box">
                             <div class="box-head">Exercise Planner</div>
                             <div class="add-row">
-                                <select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option><option value="outdoor">Outdoor</option><option value="home">Home</option><option value="repair">Repair</option><option value="occupational">Work</option></select>
+                                <select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option><option value="outdoor">Outdoor</option><option value="home">Home & Daily</option><option value="repair">Repair</option><option value="occupational">Occupational</option></select>
                                 <select id="exMove"></select>
                                 <input type="number" id="exDur" placeholder="Min" value="30">
                                 <button class="btn btn-p" onclick="addExercise()">+</button>
@@ -262,29 +298,23 @@
     <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button></div>
 
     <script>
-        // --- DATABASES ---
+        // --- HARVARD & PROTEIN DATA ---
         const proteinDB = [
-            {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, p:8}, {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, p:8},
-            {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, p:17}, {cat:"Dairy", name:"Cottage Cheese (1/2 cup)", cal:110, p:14},
-            {cat:"Dairy", name:"Cheddar Cheese (1oz)", cal:115, p:7}, {cat:"Dairy", name:"Egg Large (1)", cal:75, p:6},
-            {cat:"Meat", name:"Chicken Breast (3oz)", cal:140, p:26}, {cat:"Meat", name:"Chicken Thigh (3oz)", cal:170, p:22},
-            {cat:"Meat", name:"Beef Steak (3oz)", cal:155, p:23}, {cat:"Meat", name:"Ground Beef 90% (3oz)", cal:180, p:22},
-            {cat:"Meat", name:"Turkey Breast (3oz)", cal:125, p:26}, {cat:"Meat", name:"Pork Chop (3oz)", cal:180, p:24},
-            {cat:"Seafood", name:"Salmon (3oz)", cal:175, p:19}, {cat:"Seafood", name:"Tuna Canned (3oz)", cal:100, p:22},
-            {cat:"Seafood", name:"Shrimp (3oz)", cal:85, p:18}, {cat:"Seafood", name:"Tilapia (3oz)", cal:90, p:21},
-            {cat:"Plant", name:"Tofu (1/2 cup)", cal:95, p:10}, {cat:"Plant", name:"Edamame (1/2 cup)", cal:100, p:9},
-            {cat:"Plant", name:"Lentils (1/2 cup)", cal:115, p:9}, {cat:"Plant", name:"Black Beans (1/2 cup)", cal:110, p:7},
-            {cat:"Plant", name:"Peanut Butter (2tbsp)", cal:190, p:8}, {cat:"Plant", name:"Almonds (1oz)", cal:160, p:6},
+            {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, p:8}, {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, p:8}, {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, p:17}, {cat:"Dairy", name:"Cottage Cheese (1/2 cup)", cal:110, p:14}, {cat:"Dairy", name:"Cheddar Cheese (1oz)", cal:115, p:7}, {cat:"Dairy", name:"Egg Large (1)", cal:75, p:6},
+            {cat:"Meat", name:"Chicken Breast (3oz)", cal:140, p:26}, {cat:"Meat", name:"Chicken Thigh (3oz)", cal:170, p:22}, {cat:"Meat", name:"Beef Steak (3oz)", cal:155, p:23}, {cat:"Meat", name:"Ground Beef 90% (3oz)", cal:180, p:22}, {cat:"Meat", name:"Turkey Breast (3oz)", cal:125, p:26}, {cat:"Meat", name:"Pork Chop (3oz)", cal:180, p:24},
+            {cat:"Seafood", name:"Salmon (3oz)", cal:175, p:19}, {cat:"Seafood", name:"Tuna Canned (3oz)", cal:100, p:22}, {cat:"Seafood", name:"Shrimp (3oz)", cal:85, p:18}, {cat:"Seafood", name:"Tilapia (3oz)", cal:90, p:21},
+            {cat:"Plant", name:"Tofu (1/2 cup)", cal:95, p:10}, {cat:"Plant", name:"Edamame (1/2 cup)", cal:100, p:9}, {cat:"Plant", name:"Lentils (1/2 cup)", cal:115, p:9}, {cat:"Plant", name:"Black Beans (1/2 cup)", cal:110, p:7}, {cat:"Plant", name:"Peanut Butter (2tbsp)", cal:190, p:8}, {cat:"Plant", name:"Almonds (1oz)", cal:160, p:6},
             {cat:"Supp", name:"Whey Protein (1 scoop)", cal:120, p:24}, {cat:"Supp", name:"Casein Protein (1 scoop)", cal:120, p:24}
         ];
 
+        // Approx METs based on Harvard Health 30min data / 70kg person -> Factor is (Cal per 30m / 70) * 2 = Cal/kg/hr roughly
         const moves = {
-            'gym': [ {name:"Weight Lifting: general", factor:3}, {name:"Weight Lifting: vigorous", factor:6}, {name:"Aerobics: water", factor:4}, {name:"Aerobics: high impact", factor:7}, {name:"Rowing: moderate", factor:7}, {name:"Elliptical", factor:5}, {name:"Cycling: stationary", factor:7} ],
-            'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball", factor:6}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming", factor:6}, {name:"Golf", factor:4} ],
-            'outdoor': [ {name:"Walking (Brisk)", factor:3.5}, {name:"Running (6mph)", factor:10}, {name:"Cycling", factor:8}, {name:"Hiking", factor:6}, {name:"Gardening", factor:4} ],
-            'home': [ {name:"Cleaning", factor:3}, {name:"Cooking", factor:2}, {name:"Child Care", factor:3}, {name:"Moving Furniture", factor:6} ],
-            'repair': [ {name:"Car Repair", factor:3}, {name:"Painting", factor:4}, {name:"Carpentry", factor:3.5} ],
-            'occupational': [ {name:"Desk Work", factor:1.5}, {name:"Standing Work", factor:2.5}, {name:"Heavy Lifting", factor:8}, {name:"Farming", factor:8} ]
+            'gym': [ {name:"Weight Lifting: General", factor:3}, {name:"Weight Lifting: Vigorous", factor:6}, {name:"Aerobics: Water", factor:4}, {name:"Aerobics: Low Impact", factor:5}, {name:"Aerobics: High Impact", factor:7}, {name:"Aerobics: Step", factor:8.5}, {name:"Calisthenics: Moderate", factor:4.5}, {name:"Calisthenics: Vigorous", factor:8}, {name:"Circuit Training", factor:8}, {name:"Rowing: Moderate", factor:7}, {name:"Rowing: Vigorous", factor:8.5}, {name:"Elliptical Trainer", factor:5}, {name:"Ski Machine", factor:9.5}, {name:"Stair Step Machine", factor:6}, {name:"Cycling: Stationary (Mod)", factor:7}, {name:"Cycling: Stationary (Vig)", factor:10.5}, {name:"Stretching / Hatha Yoga", factor:2.5}, {name:"Pilates", factor:3} ],
+            'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball: Game", factor:8}, {name:"Basketball: Shooting", factor:4.5}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming: Leisure", factor:6}, {name:"Swimming: Laps", factor:10}, {name:"Golf: Carrying Clubs", factor:4.5}, {name:"Golf: Cart", factor:3.5}, {name:"Bowling", factor:3}, {name:"Volleyball", factor:3}, {name:"Martial Arts", factor:10}, {name:"Boxing: Sparring", factor:9}, {name:"Handball", factor:12}, {name:"Squash", factor:12}, {name:"Table Tennis", factor:7} ],
+            'outdoor': [ {name:"Walking: 3.5 mph (Brisk)", factor:3.8}, {name:"Walking: 4.0 mph (Very Brisk)", factor:5}, {name:"Walking: 4.5 mph", factor:6.3}, {name:"Running: 5 mph", factor:8}, {name:"Running: 6 mph", factor:10}, {name:"Running: 7.5 mph", factor:12.5}, {name:"Running: 10 mph", factor:16}, {name:"Cycling: <10 mph", factor:4}, {name:"Cycling: 12-14 mph", factor:8}, {name:"Hiking: Cross Country", factor:6}, {name:"Gardening: General", factor:4}, {name:"Mowing Lawn", factor:5.5}, {name:"Raking Lawn", factor:4}, {name:"Shoveling Snow", factor:6} ],
+            'home': [ {name:"Sleeping", factor:0.9}, {name:"Watching TV", factor:1}, {name:"Reading", factor:1.3}, {name:"Cooking", factor:2}, {name:"Child Care: Bathing/Feeding", factor:3.5}, {name:"Child Care: Playing", factor:4}, {name:"Food Shopping", factor:3.5}, {name:"Moving Furniture", factor:6}, {name:"Heavy Cleaning", factor:4.5}, {name:"Vacuuming", factor:3.5} ],
+            'repair': [ {name:"Auto Repair", factor:3}, {name:"Carpentry", factor:3.5}, {name:"Painting", factor:4.5}, {name:"Plumbing", factor:3}, {name:"Roofing", factor:6}, {name:"Laying Tile", factor:4} ],
+            'occupational': [ {name:"Desk Work", factor:1.5}, {name:"Standing Work", factor:2}, {name:"Heavy Lifting (Cons.)", factor:8}, {name:"Farming: Baling Hay", factor:8}, {name:"Firefighting", factor:12}, {name:"Forestry", factor:8}, {name:"Massage Therapist", factor:4}, {name:"Police Officer", factor:2.5}, {name:"Truck Driving", factor:2} ]
         };
 
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
@@ -341,7 +371,7 @@
             if(w > 0 && bmr > 0) {
                  if(gender === 'male') metAge = Math.round((88.362 + (13.397*w) + (4.799*h) - bmr) / 5.677);
                  else metAge = Math.round((447.593 + (9.247*w) + (3.098*h) - bmr) / 4.330);
-                 if(metAge < 0) metAge = 0; // Sanity
+                 if(metAge < 0) metAge = 0; 
             }
             document.getElementById('sMetAge').innerText = metAge;
 
@@ -368,7 +398,10 @@
                 {l:18.5,c:"#F59E0B"}, {l:22.9,c:"#34C759"}, {l:27.4,c:"#FBBF24"}, {l:32.4,c:"#F97316"}, {l:37.4,c:"#EF4444"}, {l:50,c:"#991B1B"}
             ], risk);
             
-            // Fat & Muscle (Gender Specific)
+            let vf = parseFloat(document.getElementById('vfat').value)||0;
+            let vfRisk = vf < 10 ? "Normal" : (vf < 15 ? "High" : "Very High");
+            vHTML += getBar("Visceral Fat", vf, 20, [{l:9,c:"#34C759"},{l:14,c:"#F97316"},{l:20,c:"#EF4444"}], vfRisk);
+            
             let fp = parseFloat(document.getElementById('fat').value)||0;
             let fpRisk = "Normal";
             if(gender==='male') { if(fp>25) fpRisk="Very High"; else if(fp>20) fpRisk="High"; } else { if(fp>35) fpRisk="Very High"; else if(fp>30) fpRisk="High"; }
@@ -390,10 +423,7 @@
 
             if(isMafld) { targetPct=0.10; maxPct=0.40; strategy="Fatty Liver Protocol (Intensive)"; }
             
-            // Pharmacotherapy? (BMI >30 or >27+Comorbid)
-            if(bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) addRecs += "<li><b>Pharmacotherapy:</b> Indicated as adjunct to lifestyle.</li>";
-            
-            // Surgery? (BMI >37.5 or >32.5+Comorbid)
+            if(bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) addRecs += "<li><b>Pharmacotherapy:</b> Indicated.</li>";
             if(bmiVal >= 37.5 || (bmiVal >= 32.5 && hasComorbid)) addRecs += "<li><b>Bariatric Surgery:</b> Consider referral.</li>";
 
             let hHTML = `<div class="rec-container"><h4>${strategy}</h4>
@@ -406,6 +436,8 @@
                 ${addRecs}
             </ul></div>`;
             document.getElementById('hContent').innerHTML = hHTML;
+            
+            recalcExercises();
         }
 
         function getBar(label, val, max, segs, status) {
@@ -446,7 +478,10 @@
             plan.forEach((p,i) => { tk+=p.k; h+=`<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderEx()">×</td></tr>`; });
             document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
         }
-        
+        function recalcExercises() { renderEx(); }
+        function saveKey() { document.getElementById('keyModal').classList.add('hidden'); }
+        function toggleDay(el) { el.classList.toggle('active'); }
+
         window.onload = init;
     </script>
 </body>
