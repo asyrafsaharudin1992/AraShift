@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v12.1 (Custom Tables)</title>
+    <title>AraShift System v16.0 (BMI Fixed)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -111,22 +111,22 @@
         .add-row { display: grid; grid-template-columns: 1.5fr 2fr 1fr 0.8fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .ex-label { font-size:11px; color:#666; font-weight:600; margin-bottom:3px; display:block;}
         
+        /* UNIFIED TABLE STYLE */
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 8px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
         .plan-table td { padding: 8px; border-bottom: 1px solid #eee; }
+        /* Footer for Totals */
         .plan-table tfoot { font-weight: 800; background: #F9FAFB; }
         .plan-table tfoot td { padding: 8px; border-top: 2px solid #E5E5EA; }
 
         .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; text-align: center; }
         .clear-btn { font-size:11px; color:#FF3B30; cursor:pointer; font-weight:600; text-decoration:underline; }
-
+        
         .protein-box { background: #fff; border: 1px solid #ddd; border-radius: 12px; padding: 15px; margin-bottom: 20px; display: block; }
         .protein-head { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
         .protein-val { font-size: 18px; font-weight: 800; }
         .food-calc-row { display: grid; grid-template-columns: 2fr 1fr 0.5fr; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; align-items: end; }
-        .food-list { margin-top: 10px; font-size: 13px; }
-        .food-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed #eee; }
-
+        
         .hr-zone-wrap { margin-top: 25px; position: relative; }
         .hr-bars { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
         .hr-seg { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #1D1D1F; border-right: 1px solid rgba(255,255,255,0.5); }
@@ -136,6 +136,7 @@
         .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #E5E5EA; height: fit-content; }
         .milestone-table th { text-align: left; padding: 12px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; }
         .milestone-table td { padding: 12px; font-size: 13px; border-bottom: 1px solid #F2F2F7; color: #1D1D1F; }
+        .target-hl { color: var(--primary); font-weight: 700; }
         .rec-container { background: #FFF7ED; padding: 15px; border-radius: 12px; border: 1px solid #FED7AA; border-left: 5px solid #F97316; }
         .rec-container h4 { margin: 0 0 10px 0; font-size: 12px; color: #F97316; text-transform: uppercase; }
         .rec-container ul { margin: 0; padding-left: 20px; }
@@ -145,6 +146,7 @@
         .dm-status { font-size:16px; font-weight:800; color:var(--primary); margin-bottom:10px; display:block;}
         .dm-alert { color:var(--danger); font-weight:700; font-size:12px; display:block; margin-top:5px; background:#fff5f5; padding:5px; border-radius:4px;}
 
+        /* ACTION BAR & MODALS */
         .action-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; gap: 10px; border: 1px solid #ccc; z-index: 9999; }
         .btn { border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 14px; }
         .btn-p { background: var(--primary); color: white; }
@@ -157,41 +159,37 @@
         .def-title { font-size:18px; font-weight:800; color:var(--primary); margin-bottom:10px; }
         .def-text { font-size:14px; color:#333; line-height:1.6; }
 
+        /* PRINT DOM */
         #clinical-report { display: none; }
-        
-        /* ---------------- PRINT CSS - CUSTOM DESIGN ---------------- */
         @media print {
             @page { size: A4 portrait; margin: 20mm; }
             html, body { width: 100%; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; box-sizing: border-box !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             
+            /* HIDE UI ELEMENTS */
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal, .nav-tabs, .help-icon { display: none !important; }
+            
             #clinical-report { display: block !important; width: 100%; max-width: 100%; overflow: visible; }
             
-            /* Keep Blocks Together */
-            .unbreakable-box, .card, .planner-box, .rx-box, .protein-box, .clinical-plan-grid, .metabolic-row, .rec-container {
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-                display: block; width: 100%; margin-bottom: 20px; position: relative;
-            }
-            h3, h4, .planner-header, .protein-head, .rx-head { page-break-after: avoid !important; break-after: avoid !important; }
-
-            .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; width: 100%; }
+            /* GLOBAL CONTAINER */
+            .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; width: 100%; break-inside: avoid; }
             .report-title h1 { font-size: 20pt; margin: 0; font-weight: 900; text-transform: uppercase; }
-            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 15px; width: 100%; box-sizing: border-box; }
+            .patient-strip { display: grid !important; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; background: #fff !important; border: 2px solid #000; border-radius: 0; padding: 0; margin-bottom: 15px; width: 100%; box-sizing: border-box; break-inside: avoid; }
             .pt-field { display: flex; flex-direction: column; border-right: 1px solid #000; padding: 5px 10px; justify-content: center; } .pt-field:last-child { border-right: none; }
             .pt-label { font-size: 7pt; text-transform: uppercase; color: #444; font-weight: normal; margin-bottom: 2px; } .pt-val { font-size: 10pt; font-weight: bold; color: #000; }
             
-            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px; margin-top: 15px; }
-            
-            /* Grids */
+            .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 10px; margin-top: 15px; page-break-after: avoid; }
+
             .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; width: 100%; }
             .bio-item { border: 1px solid #ccc; border-radius: 8px; padding: 5px 8px; font-size: 9pt; background: #f9f9f9 !important; } .bio-item b { display: block; font-size: 11pt; }
+            
             .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px; width: 100%; }
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px; width: 100%; }
             .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 6px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
-            .visual-row { margin-bottom: 12px; } .bar-complex { border: 1px solid #999; height: 8px; } .bar-marker { background: #000 !important; border: 1px solid #fff; height: 14px; top: -3px; }
+            
+            .visual-row { margin-bottom: 12px; break-inside: avoid; } .bar-complex { border: 1px solid #999; height: 8px; } .bar-marker { background: #000 !important; border: 1px solid #fff; height: 14px; top: -3px; }
             .bar-status-label { font-size: 8pt; font-weight: 700; margin-top: 2px; text-align: right; }
+
             .rx-box { border: 1px solid #000; background: #fff; margin-bottom: 15px; display: block; width: 100%; box-sizing: border-box; } 
             .rx-head { background: #eee !important; color: #000; border-bottom: 1px solid #000; font-size: 9pt; font-weight: 700; padding: 4px; } .rx-chart { border: 1px solid #000; height: 12px; } 
 
@@ -214,12 +212,21 @@
             
             .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
             .rec-box { border: 1px solid #000; padding: 8px; border-radius: 6px; margin-bottom: 15px; }
-            .dm-rec-box { border: 1px solid #000; background: #E8F2FF !important; padding: 8px; border-radius: 8px; margin-bottom: 15px; width: 100%; }
+            
+            .dm-rec-box { border: 1px solid #000; background: #E8F2FF !important; padding: 8px; border-radius: 8px; margin-bottom: 15px; width: 100%; } .dm-status { font-size: 12pt; font-weight: 800; }
             
             .print-hidden { display: none !important; }
             .page-break { page-break-before: always; }
             .remarks-box { background: #F3F4F6 !important; border-radius: 6px; padding: 10px; min-height: 100px; font-family: "Courier New", monospace; white-space: pre-wrap; border: 1px solid #ddd; width: 100%; box-sizing: border-box; }
             .report-footer { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; text-align: center; border-top: 1px solid #000; padding-top: 5px; font-size: 7pt; background: white; }
+
+            /* Unbreakable Boxes */
+            .unbreakable-box, .card, .planner-box, .rx-box, .protein-box, .clinical-plan-grid, .metabolic-row, .rec-container {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                display: block; width: 100%; margin-bottom: 20px; position: relative;
+            }
+            h3, h4, .planner-header, .protein-head, .rx-head { page-break-after: avoid !important; break-after: avoid !important; }
         }
     </style>
 </head>
@@ -230,61 +237,61 @@
     <div id="keyModal" class="hidden"><div class="key-box" style="text-align:center;"><h2>🔐 AI Setup</h2><input id="apiKeyInput" style="width:100%; padding:10px; margin:10px 0; text-align:center;" placeholder="AIzaSy..."><button class="btn btn-p" onclick="saveKey()">Save & Start</button></div></div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v12.1</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v16.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active" onclick="switchTab('arashift')" id="btn-arashift">AraShift (Obesity)</button><button class="tab-btn" onclick="switchTab('diabetes')" id="btn-diabetes">Diabetes Mgmt</button></div>
 
         <div id="tab-arashift">
             <div class="main-grid">
-                <div style="display:flex; flex-direction:column; gap:20px;">
-                    <div class="card"><h3>A. Patient Profile</h3><div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div><div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div><div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div><div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div><div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div></div></div>
-                    <div class="card">
-                        <h3>B. Measurements & Biochemistry</h3>
-                        <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
-                        <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
-                        <span class="sub-label">Glucose Profile</span><div class="input-grid-3"><div class="form-group"><label>FBS</label><input type="number" id="fbs" step="0.1"></div><div class="form-group"><label>RBS</label><input type="number" id="rbs" step="0.1"></div><div class="form-group"><label>HbA1c</label><input type="number" id="hba1c" step="0.1"></div></div>
-                        <span class="sub-label">Cardiovascular & Lipids</span><div class="input-grid-3"><div class="form-group"><label>BP Sys</label><input type="number" id="sbp"></div><div class="form-group"><label>BP Dia</label><input type="number" id="dbp"></div><div class="form-group"><label>R. HR</label><input type="number" id="rhr" placeholder="BPM"></div></div>
-                        <div class="input-grid-4"><div class="form-group"><label>Chol</label><input type="number" id="chol" step="0.1"></div><div class="form-group"><label>LDL</label><input type="number" id="ldl" step="0.1"></div><div class="form-group"><label>HDL</label><input type="number" id="hdl" step="0.1"></div><div class="form-group"><label>TG</label><input type="number" id="tg" step="0.1"></div></div>
-                    </div>
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center;"><h3>C. Dietary Matrix</h3><button class="version-tag" style="border:none; cursor:pointer; background:#eee; color:#333;" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Guide</button></div>
-                        <div class="meal-row" style="margin-top:10px;"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
-                        <div class="input-grid-snacks"><div class="form-group"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div><div class="form-group"><label>Sugary Drinks</label><input type="number" id="drinkFreq" value="0"></div></div>
-                        <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;"><label style="margin-bottom:8px;">Dietary Flags</label><div class="ios-list"><div class="ios-item"><span class="ios-label">High Carb / Rice</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Late Night Eating</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Low Fiber / Veg</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div></div></div>
-                    </div>
-                </div>
-
                 <div class="card">
-                    <h3>D. Risk Factors</h3>
-                    <div class="ios-list"><div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Sleep Apnea (OSA)</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Meta Syndrome</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div></div>
+                    <h3>A. Patient Profile</h3>
+                    <div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="pId" placeholder="1001"></div><div class="form-group"><label>Name</label><input type="text" id="pName" placeholder="Name"></div><div class="form-group"><label>Age</label><input type="number" id="age" placeholder="30"></div><div class="form-group"><label>Gender</label><select id="gender"><option value="male">Male</option><option value="female">Female</option></select></div><div class="form-group"><label>Activity</label><select id="activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div></div>
+                </div>
+                <div class="card">
+                    <h3>B. Measurements & Biochemistry</h3>
+                    <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
+                    <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
+                    <span class="sub-label">Glucose Profile</span><div class="input-grid-3"><div class="form-group"><label>FBS</label><input type="number" id="fbs" step="0.1"></div><div class="form-group"><label>RBS</label><input type="number" id="rbs" step="0.1"></div><div class="form-group"><label>HbA1c</label><input type="number" id="hba1c" step="0.1"></div></div>
+                    <span class="sub-label">Cardiovascular & Lipids</span><div class="input-grid-3"><div class="form-group"><label>BP Sys</label><input type="number" id="sbp"></div><div class="form-group"><label>BP Dia</label><input type="number" id="dbp"></div><div class="form-group"><label>R. HR</label><input type="number" id="rhr" placeholder="BPM"></div></div>
+                    <div class="input-grid-4"><div class="form-group"><label>Chol</label><input type="number" id="chol" step="0.1"></div><div class="form-group"><label>LDL</label><input type="number" id="ldl" step="0.1"></div><div class="form-group"><label>HDL</label><input type="number" id="hdl" step="0.1"></div><div class="form-group"><label>TG</label><input type="number" id="tg" step="0.1"></div></div>
+                </div>
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center;"><h3>C. Dietary Matrix</h3><button class="version-tag" style="border:none; cursor:pointer; background:#eee; color:#333;" onclick="document.getElementById('guideModal').classList.remove('hidden')">ℹ️ Guide</button></div>
+                    <div class="meal-row" style="margin-top:10px;"><span class="meal-label">Breakfast</span><select id="bfType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="bfSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                    <div class="meal-row"><span class="meal-label">Lunch</span><select id="luType"><option value="carb" selected>Carb Heavy</option><option value="prot">Protein</option><option value="bal">Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="luSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                    <div class="meal-row"><span class="meal-label">Dinner</span><select id="dnType"><option value="carb">Carb Heavy</option><option value="prot">Protein</option><option value="bal" selected>Balanced</option><option value="lite">Light</option><option value="skip">Skip</option></select><select id="dnSize"><option value="S">Small</option><option value="M" selected>Medium</option><option value="L">Large</option></select></div>
+                    <div class="input-grid-snacks"><div class="form-group"><label>Snacks (200kc)</label><input type="number" id="snackFreq" value="0"></div><div class="form-group"><label>Sugary Drinks</label><input type="number" id="drinkFreq" value="0"></div></div>
+                    <div style="margin-top:15px; padding-top:10px; border-top:1px solid #eee;"><label style="margin-bottom:8px;">Dietary Flags</label><div class="ios-list"><div class="ios-item"><span class="ios-label">High Carb / Rice</span><label class="switch"><input type="checkbox" id="habit_carbs"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Frequent Fried Food</span><label class="switch"><input type="checkbox" id="habit_fried"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Late Night Eating</span><label class="switch"><input type="checkbox" id="habit_night"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Low Fiber / Veg</span><label class="switch"><input type="checkbox" id="habit_fiber"><span class="slider round"></span></label></div></div></div>
                 </div>
             </div>
+            <div class="card"><h3>D. Risk Factors</h3><div class="ios-list"><div class="ios-item"><span class="ios-label">T2DM / Pre-DM</span><label class="switch"><input type="checkbox" id="risk_t2dm"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Hypertension</span><label class="switch"><input type="checkbox" id="risk_htn"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Dyslipidemia</span><label class="switch"><input type="checkbox" id="risk_dys"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Sleep Apnea (OSA)</span><label class="switch"><input type="checkbox" id="risk_osa"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Fatty Liver (MAFLD)</span><label class="switch"><input type="checkbox" id="risk_mafld"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Meta Syndrome</span><label class="switch"><input type="checkbox" id="risk_meta"><span class="slider round"></span></label></div></div></div>
 
             <div class="card" id="resultCard">
                 <h3>E. Metabolic Balance</h3>
-                <div class="metabolic-screen-row"><div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="sIntake">0</span><span class="meta-desc">kcal/day</span></div><div class="meta-card"><span class="meta-label">BMR</span><span class="meta-val" id="sBMR">0</span><span class="meta-desc">Resting</span></div><div class="meta-card"><span class="meta-label">TDEE</span><span class="meta-val" id="sTDEE">0</span><span class="meta-desc">Output</span></div><div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span><span class="meta-desc">Net</span></div></div>
+                <div class="metabolic-screen-row"><div class="meta-card"><span class="meta-label">Est. Intake</span><span class="meta-val" id="sIntake">0</span><span class="meta-desc">kcal/day</span></div><div class="meta-card"><span class="meta-label">BMR</span><span class="meta-val" id="sBMR">0</span></div><div class="meta-card"><span class="meta-label">TDEE</span><span class="meta-val" id="sTDEE">0</span></div><div class="meta-card" id="sBalCard"><span class="meta-label">Balance</span><span class="meta-val" id="sBal">0</span></div></div>
                 <hr style="border:0; border-top:1px solid #eee; margin:30px 0;">
                 <h3>F. Clinical Analysis</h3><div id="sAnalysis"></div>
                 <div style="margin-top:30px;">
-                    <div class="strategy-toolbar"><h3 style="margin:0;">G. Clinical Strategy</h3><div style="display:flex; gap:10px;"><select id="dietPref" class="pref-select"><option value="standard">Std: Calorie Counting</option><option value="mrp">Meal Replacement (LCD)</option><option value="plate">Plate Method (Visual)</option></select></div></div>
+                    <div class="strategy-toolbar"><h3 style="margin:0;">G. Clinical Strategy</h3><div style="display:flex; gap:10px;"><select id="dietPref" class="pref-select"><option value="standard">Std: Calorie Counting</option><option value="mrp">Meal Replacement (LCD)</option><option value="plate">Plate Method</option></select></div></div>
                     <div class="apple-stat-grid" id="sStatGrid"></div>
                     <div id="sRxCard"></div>
-
+                    
                     <div class="protein-box">
                         <div class="protein-head">Protein Recommendation</div>
                         <div id="proteinText"></div>
-                        <div class="food-calc-row"><select id="foodType"><optgroup label="--- Dairy & Eggs ---"><option value="73|3.9">Whole Milk (1/2 cup) - 73kc, 4g P</option><option value="52|8.5">1% Milk (1/2 cup) - 52kc, 8.5g P</option><option value="130|17">Greek Yogurt 2% (6oz) - 130kc, 17g P</option><option value="75|6">Egg Large (1) - 75kc, 6g P</option><option value="16|3.6">Egg White (1) - 16kc, 3.6g P</option></optgroup><optgroup label="--- Poultry & Meat ---"><option value="101|18">Chicken Breast (3oz) - 101kc, 18g P</option><option value="110|14">Chicken Thigh (2oz) - 110kc, 14g P</option><option value="153|34">Turkey Breast (4oz) - 153kc, 34g P</option><option value="111|18.6">Beef Sirloin (3oz) - 111kc, 18.6g P</option><option value="178|24.3">Pork Loin (3oz) - 178kc, 24.3g P</option></optgroup><optgroup label="--- Seafood ---"><option value="175|18.8">Salmon (4oz) - 175kc, 19g P</option><option value="45|9.8">Tuna Canned (1/4 cup) - 45kc, 10g P</option><option value="28|5.9">Shrimp (1oz) - 28kc, 6g P</option></optgroup><optgroup label="--- Plant-Based & Misc ---"><option value="113|7.5">Black Beans (1/2 cup) - 113kc, 7.5g P</option><option value="127|11">Edamame (1/2 cup) - 127kc, 11g P</option><option value="76|8">Tofu (100g) - 76kc, 8g P</option><option value="170|6.3">Almonds (1oz) - 170kc, 6.3g P</option><option value="77|2.7">Oatmeal (1/4 cup) - 77kc, 2.7g P</option><option value="120|24">Whey Scoop - 120kc, 24g P</option></optgroup></select><input type="number" id="foodQty" placeholder="Qty" value="1"><button class="btn btn-p" onclick="addFood()" style="padding:8px;">Add</button></div>
-                        <div class="food-list" id="foodList"></div>
-                        <div style="margin-top:10px; font-weight:700; font-size:12px; color:#555;">Planned: <span id="planProt">0</span>g Protein / <span id="planCal">0</span> kcal</div>
+                        <div class="food-calc-row">
+                            <select id="foodType"><optgroup label="--- Dairy & Eggs ---"><option value="73|3.9">Whole Milk</option><option value="75|6">Egg Large (1)</option></optgroup><optgroup label="--- Poultry & Meat ---"><option value="101|18">Chicken Breast (3oz)</option><option value="111|18.6">Beef Sirloin (3oz)</option></optgroup></select>
+                            <input type="number" id="foodQty" placeholder="Qty" value="1">
+                            <button class="btn btn-p" onclick="addFood()">Add</button>
+                        </div>
+                        <table class="plan-table" style="margin-top:10px;"><thead><tr><th>Food Item</th><th>Qty</th><th>Nutrients</th><th></th></tr></thead><tbody id="foodTableBody"></tbody><tfoot><tr><td colspan="2" style="text-align:right;">TOTAL</td><td><span id="planProt">0</span>g Prot / <span id="planCal">0</span> kcal</td><td></td></tr></tfoot></table>
                     </div>
 
                     <div class="planner-box" id="exPlanner">
-                        <div class="planner-header"><h4>Exercise Planner</h4><div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div><span class="clear-btn" onclick="clearPlan()">Clear All</span></div>
-                        <div class="day-pills-container" id="dayPills"><div class="day-pill" onclick="toggleDay(this)">Mon</div><div class="day-pill" onclick="toggleDay(this)">Tue</div><div class="day-pill" onclick="toggleDay(this)">Wed</div><div class="day-pill" onclick="toggleDay(this)">Thu</div><div class="day-pill" onclick="toggleDay(this)">Fri</div><div class="day-pill" onclick="toggleDay(this)">Sat</div><div class="day-pill" onclick="toggleDay(this)">Sun</div></div>
-                        <div class="add-row"><div style="display:flex; flex-direction:column;"><span class="ex-label">Category</span><select id="exType" onchange="updateMoves()"><option value="gym">Gym Activities</option><option value="sport">Sports</option><option value="outdoor">Outdoor</option><option value="home">Home & Daily</option><option value="repair">Home Repair</option><option value="occupational">Occupational</option></select></div><div style="display:flex; flex-direction:column;"><span class="ex-label">Activity</span><select id="exMove"></select></div><div style="display:flex; flex-direction:column;"><span class="ex-label">Duration (mins)</span><input type="number" id="exDur" placeholder="Min" value="30"></div><button class="btn btn-p" style="padding:8px; margin-bottom:2px;" onclick="addExercise()">+</button></div>
-                        <table class="plan-table"><thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead><tbody id="planBody"></tbody></table>
-                        <div class="hr-zone-wrap" style="position: relative; margin-top: 25px;"><div class="hr-labels" style="margin-bottom:4px;"><span>Target Heart Rates (BPM)</span><span id="maxHrLabel">Max HR: 0</span></div><div class="hr-bars" style="display: flex; width: 100%;"><div class="hr-seg" style="background:var(--z1);" id="z1">Z1</div><div class="hr-seg" style="background:var(--z2);" id="z2">Z2</div><div class="hr-seg" style="background:var(--z3);" id="z3">Z3</div><div class="hr-seg" style="background:var(--z4);" id="z4">Z4</div><div class="hr-seg" style="background:var(--z5);" id="z5">Z5</div></div><div class="hr-numbers" style="position: relative; height: 15px; margin-top: 5px; font-size: 9px; color: #666; font-weight: 700;"><span id="z1v" style="position: absolute; left: 0%; transform: translateX(-50%);">0</span><span id="z2v" style="position: absolute; left: 20%; transform: translateX(-50%);">0</span><span id="z3v" style="position: absolute; left: 40%; transform: translateX(-50%);">0</span><span id="z4v" style="position: absolute; left: 60%; transform: translateX(-50%);">0</span><span id="z5v" style="position: absolute; left: 80%; transform: translateX(-50%);">0</span><span id="z6v" style="position: absolute; left: 100%; transform: translateX(-50%);">0</span></div><div style="font-size:10px; color:#666; margin-top:15px; font-style:italic;" id="hrMethod">Method: Max HR</div></div>
+                        <div class="planner-header"><h4>Exercise Planner</h4><div style="font-size:12px;font-weight:700;">Total Burn: <span id="totalBurn">0</span> kcal</div><span class="clear-btn" onclick="clearPlan()">Clear All</span></div>
+                        <div class="day-pills-container"><div class="day-pill" onclick="toggleDay(this)">Mon</div><div class="day-pill" onclick="toggleDay(this)">Tue</div><div class="day-pill" onclick="toggleDay(this)">Wed</div><div class="day-pill" onclick="toggleDay(this)">Thu</div><div class="day-pill" onclick="toggleDay(this)">Fri</div><div class="day-pill" onclick="toggleDay(this)">Sat</div><div class="day-pill" onclick="toggleDay(this)">Sun</div></div>
+                        <div class="add-row"><div style="display:flex; flex-direction:column;"><span class="ex-label">Category</span><select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option></select></div><div style="display:flex; flex-direction:column;"><span class="ex-label">Activity</span><select id="exMove"></select></div><div style="display:flex; flex-direction:column;"><span class="ex-label">Duration (mins)</span><input type="number" id="exDur" placeholder="Min" value="30"></div><button class="btn btn-p" style="padding:8px; margin-bottom:2px;" onclick="addExercise()">+</button></div>
+                        <table class="plan-table"><thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead><tbody id="planBody"></tbody><tfoot><tr><td colspan="2" style="text-align:right;">TOTAL</td><td id="tableTotalBurn">0</td><td></td></tr></tfoot></table>
+                        <div class="hr-zone-wrap" style="position:relative; margin-top:20px;"><div class="hr-labels"><span>Target Heart Rates</span><span id="maxHrLabel">Max HR: 0</span></div><div class="hr-bars" style="display:flex; width:100%;"><div class="hr-seg" style="background:var(--z1);flex:1;"></div><div class="hr-seg" style="background:var(--z2);flex:1;"></div><div class="hr-seg" style="background:var(--z3);flex:1;"></div><div class="hr-seg" style="background:var(--z4);flex:1;"></div><div class="hr-seg" style="background:var(--z5);flex:1;"></div></div><div class="hr-numbers" style="position:relative; height:15px; margin-top:5px; font-size:9px; font-weight:700; color:#666;"><span id="z1v" style="position:absolute; left:0%;">0</span><span id="z2v" style="position:absolute; left:20%;">0</span><span id="z3v" style="position:absolute; left:40%;">0</span><span id="z4v" style="position:absolute; left:60%;">0</span><span id="z5v" style="position:absolute; left:80%;">0</span><span id="z6v" style="position:absolute; left:100%; transform:translateX(-100%);">0</span></div></div>
                     </div>
 
                     <div class="clinical-plan-grid"><div id="sMilestones"></div><div class="rec-container"><h4>Medical Recommendations</h4><div id="sRecs"></div></div></div>
@@ -292,214 +299,105 @@
                 <div class="form-group" style="margin-top:20px;"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><label>Clinical Remarks</label><button class="btn-ai" id="aiBtn" onclick="runAI()">✨ AI Draft</button></div><textarea id="docRemarks" rows="4" placeholder="Notes..."></textarea></div>
             </div>
         </div>
-
-        <div id="tab-diabetes" class="hidden">
-             <div class="main-grid"><div class="card"><h3>A. Patient Profile (Diabetes)</h3><div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="dm_pId" placeholder="1001"></div><div class="form-group"><label>Name</label><input type="text" id="dm_pName" placeholder="Name"></div><div class="form-group"><label>Age</label><input type="number" id="dm_age" placeholder="30"></div><div class="form-group"><label>Gender</label><select id="dm_gender"><option value="male">Male</option><option value="female">Female</option></select></div><div class="form-group"><label>Activity</label><select id="dm_activity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55">Mod</option><option value="1.725">Active</option></select></div></div></div><div class="card"><h3>B. Measurements & Biochemistry (Diabetes)</h3><div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="dm_height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="dm_weight"></div><div class="form-group"><label>Waist</label><input type="number" id="dm_waist"></div><div class="form-group"><label>BMI</label><input type="number" id="dm_bmi" readonly></div></div><div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="dm_vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="dm_fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="dm_muscle"></div></div><span class="sub-label">Glucose Profile</span><div class="input-grid-3"><div class="form-group"><label>FBS (mmol/L)</label><input type="number" id="dm_fbs" step="0.1"></div><div class="form-group"><label>RBS (mmol/L)</label><input type="number" id="dm_rbs" step="0.1"></div><div class="form-group"><label>HbA1c (%)</label><input type="number" id="dm_hba1c" step="0.1"></div></div><span class="sub-label">Renal & Cardiovascular</span><div class="input-grid-3"><div class="form-group"><label>BP Sys</label><input type="number" id="dm_sbp"></div><div class="form-group"><label>BP Dia</label><input type="number" id="dm_dbp"></div><div class="form-group"><label>R. HR</label><input type="number" id="dm_rhr" placeholder="BPM"></div></div><div class="input-grid-4"><div class="form-group"><label>Chol</label><input type="number" id="dm_chol" step="0.1"></div><div class="form-group"><label>LDL</label><input type="number" id="dm_ldl" step="0.1"></div><div class="form-group"><label>HDL</label><input type="number" id="dm_hdl" step="0.1"></div><div class="form-group"><label>TG</label><input type="number" id="dm_tg" step="0.1"></div></div><div style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;"><label style="margin-bottom:8px;">Comorbidities</label><div class="ios-list"><div class="ios-item"><span class="ios-label">ASCVD / High CV Risk</span><label class="switch"><input type="checkbox" id="dm_ascvd"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">DKD (Renal Disease)</span><label class="switch"><input type="checkbox" id="dm_dkd"><span class="slider round"></span></label></div><div class="ios-item"><span class="ios-label">Heart Failure</span><label class="switch"><input type="checkbox" id="dm_hf"><span class="slider round"></span></label></div></div></div><div class="input-grid-2" style="margin-top:15px;"><div class="form-group"><label>eGFR (mL/min/1.73m²)</label><input type="number" id="dm_egfr"></div></div></div><div class="card"><h3>CPG Recommendations</h3><div class="dm-rec-box"><span class="dm-status" id="dmStatus">Status: Pending Data</span><div id="dmRecText" style="font-size:13px; line-height:1.5;">Enter HbA1c and glucose data to see CPG recommendations.</div><div id="dmAlerts"></div></div></div></div>
-        </div>
+        
+        <div id="tab-diabetes" class="hidden"><div class="main-grid"><div class="card"><h3>A. Patient Profile (DM)</h3><div class="input-grid-profile"><div class="form-group"><label>ID</label><input type="number" id="dm_pId"></div></div></div><div class="card"><h3>CPG Recommendations</h3><div class="dm-rec-box"><span class="dm-status" id="dmStatus">Pending</span><div id="dmRecText">Enter data...</div></div></div></div></div>
     </div>
 
-    <div class="action-bar" id="actionBar">
-        <button class="btn btn-s" onclick="document.getElementById('keyModal').classList.remove('hidden')">⚙️</button>
-        <button class="btn btn-s" onclick="location.reload()">Reset</button>
-        <button class="btn btn-p" onclick="runCalc()">Analyze & Save</button>
-        <button class="btn btn-s" onclick="doPrint()">🖨️ Print</button>
-    </div>
+    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-p" onclick="runCalc()">Update</button><button class="btn btn-s" onclick="doPrint()">🖨️ Print</button></div>
 
     <div id="clinical-report">
-        <div class="report-header"><div class="report-title"><h1 id="printTitle">AraShift Report</h1><p id="printSubtitle">Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
+        <div class="report-header"><div class="report-title"><h1>AraShift Report</h1><p>Clinical Assessment</p></div><div class="report-meta">Date: <span id="pdDate"></span><br>ID: <span id="pdId"></span></div></div>
         <div class="patient-strip"><div class="pt-field"><span class="pt-label">Name</span><span class="pt-val" id="pdName"></span></div><div class="pt-field"><span class="pt-label">ID</span><span class="pt-val" id="pdIdPrint"></span></div><div class="pt-field"><span class="pt-label">Age/Sex</span><span class="pt-val" id="pdDemo"></span></div><div class="pt-field"><span class="pt-label">Ht/Wt</span><span class="pt-val" id="pdBio"></span></div><div class="pt-field"><span class="pt-label">BMI</span><span class="pt-val" id="pdBMI"></span></div></div>
         
-        <div class="section-head" style="margin-top:0;">Biochemistry & Vitals</div>
+        <div class="section-head">Biochemistry & Vitals</div>
         <div class="bio-print-grid" id="bioGrid"></div>
 
         <div id="print-obesity-content">
             <div class="section-head">D. Analysis</div>
             <div class="metabolic-row"><div class="print-stat-card"><span class="p-stat-label">Intake</span><span class="p-stat-val" id="pdIntake"></span></div><div class="print-stat-card"><span class="p-stat-label">BMR</span><span class="p-stat-val" id="pdBMR"></span></div><div class="print-stat-card"><span class="p-stat-label">TDEE</span><span class="p-stat-val" id="pdTDEE"></span></div><div class="print-stat-card"><span class="p-stat-label">Balance</span><span class="p-stat-val" id="pdBal"></span></div></div>
             <div id="pdVisuals"></div>
+            
             <div class="section-head">E. Strategy</div>
             <div class="print-stat-grid" id="pdStats"></div>
-            <div id="pdRx"></div> 
+            <div class="unbreakable-box" id="pdRx"></div>
             
-            <div class="unbreakable-box" id="pdProteinContainer"></div> 
+            <div class="unbreakable-box" id="pdProteinContainer"></div>
             
-            <div class="unbreakable-box" id="pdExerciseContainer"></div> 
+            <div class="unbreakable-box" id="pdExerciseContainer"></div>
             
             <div class="clinical-plan-grid" id="print-plan-grid"><div id="pdMile"></div><div class="rec-box"><strong>Recommendations:</strong><div id="pdRecs"></div></div></div>
         </div>
 
-        <div id="print-diabetes-content" class="print-hidden">
-             <div class="section-head">C. CPG Management Plan</div>
-             <div class="dm-rec-box"><span class="dm-status" id="pdDmStatus"></span><div id="pdDmRec" style="font-size:11pt; line-height:1.4;"></div><div id="pdDmAlert" style="margin-top:10px; font-weight:bold; color:#B91C1C;"></div></div>
-        </div>
-
+        <div id="print-diabetes-content" class="print-hidden"><div class="section-head">C. CPG Management Plan</div><div class="dm-rec-box"><span class="dm-status" id="pdDmStatus"></span><div id="pdDmRec"></div><div id="pdDmAlert"></div></div></div>
+        
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v12.1</span></div>
+        <div class="report-footer"><span>AraShift System v16.0</span></div>
     </div>
 
     <script>
-        // GLOBALS
-        let currentTab = 'arashift';
-        const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
-        const ids = ['pId','pName','age','gender','height','weight','waist','bmi','vfat','fat','muscle','docRemarks','activity','snackFreq','drinkFreq','dietPref','bfType','bfSize','luType','luSize','dnType','dnSize','fbs','rbs','hba1c','sbp','dbp','rhr','chol','ldl','hdl','tg','dm_pId','dm_pName','dm_age','dm_gender','dm_activity','dm_height','dm_weight','dm_waist','dm_bmi','dm_vfat','dm_fat','dm_muscle','dm_fbs','dm_rbs','dm_hba1c','dm_egfr','dm_ascvd','dm_dkd','dm_hf','dm_sbp','dm_dbp','dm_rhr','dm_chol','dm_ldl','dm_hdl','dm_tg'];
-        const checks = ['risk_t2dm','risk_htn','risk_dys','risk_osa','risk_mafld','risk_meta','habit_carbs','habit_fried','habit_night','habit_fiber'];
+        const moves = {'gym':[{name:"Weights",factor:3},{name:"Cardio",factor:4}],'sport':[{name:"Badminton",factor:4}]};
         let plan = [], foodPlan = [];
-
-        // --- FULL EXERCISE DATABASE ---
-        const moves = { 'gym': [ {name:"Weight Lifting: general", factor:1.59}, {name:"Weight Lifting: vigorous", factor:3.17}, {name:"Aerobics: water", factor:2.12}, {name:"Aerobics: low impact", factor:2.92}, {name:"Aerobics: high impact", factor:3.70}, {name:"Aerobics: step", factor:3.70}, {name:"Calisthenics: moderate", factor:2.38}, {name:"Calisthenics: vigorous", factor:4.24}, {name:"Circuit Training", factor:4.24}, {name:"Rowing: moderate", factor:3.70}, {name:"Rowing: vigorous", factor:4.49}, {name:"Elliptical Trainer", factor:4.76}, {name:"Ski Machine", factor:5.02}, {name:"Stair Step Machine", factor:3.17}, {name:"Bicycling Stationary: mod", factor:3.70}, {name:"Bicycling Stationary: vig", factor:5.56}, {name:"Stretching/Hatha Yoga", factor:2.12}, {name:"Riders: general", factor:2.65} ], 'sport': [ {name:"Billiards", factor:1.32}, {name:"Bowling", factor:1.59}, {name:"Dancing: slow/waltz", factor:1.59}, {name:"Dancing: disco/ballroom", factor:2.92}, {name:"Dancing: fast/ballet", factor:3.17}, {name:"Frisbee", factor:1.59}, {name:"Volleyball: non-competitive", factor:1.59}, {name:"Volleyball: competitive", factor:2.12}, {name:"Volleyball: beach", factor:4.24}, {name:"Water Volleyball", factor:1.59}, {name:"Archery", factor:1.85}, {name:"Golf: cart", factor:1.85}, {name:"Golf: carrying", factor:2.92}, {name:"Hang Gliding", factor:1.85}, {name:"Curling", factor:2.12}, {name:"Gymnastics", factor:2.12}, {name:"Horseback Riding", factor:2.12}, {name:"Tai Chi", factor:2.12}, {name:"Badminton", factor:2.38}, {name:"Kayaking", factor:2.65}, {name:"Skateboarding", factor:2.65}, {name:"Snorkeling", factor:2.65}, {name:"Softball", factor:2.65}, {name:"Whitewater Rafting", factor:2.65}, {name:"Fencing", factor:3.17}, {name:"Hiking", factor:3.17}, {name:"Skiing: downhill", factor:3.17}, {name:"Skiing: cross-country", factor:4.24}, {name:"Water Skiing", factor:3.17}, {name:"Wrestling", factor:3.17}, {name:"Basketball: wheelchair", factor:3.44}, {name:"Basketball: game", factor:4.24}, {name:"Ice Skating", factor:3.70}, {name:"Racquetball: casual", factor:3.70}, {name:"Racquetball: competitive", factor:5.29}, {name:"Rollerblading", factor:3.70}, {name:"Scuba Diving", factor:3.70}, {name:"Sledding", factor:3.70}, {name:"Soccer", factor:3.70}, {name:"Tennis", factor:3.70}, {name:"Hockey", factor:4.24}, {name:"Rock Climbing: rappel", factor:4.24}, {name:"Rock Climbing: ascend", factor:5.82}, {name:"Snow Shoeing", factor:4.24}, {name:"Water Polo", factor:5.29}, {name:"Rope Jumping", factor:5.29}, {name:"Boxing: sparring", factor:4.76}, {name:"Martial Arts", factor:5.29}, {name:"Orienteering", factor:4.76}, {name:"Handball", factor:6.35}, {name:"Swimming: general", factor:3.17}, {name:"Swimming: laps", factor:5.29}, {name:"Swimming: backstroke", factor:4.24}, {name:"Swimming: breaststroke", factor:5.29}, {name:"Swimming: butterfly", factor:5.82}, {name:"Swimming: crawl", factor:5.82}, {name:"Walking: 3.5mph", factor:2.12}, {name:"Walking: 4mph", factor:2.38}, {name:"Walking: 4.5mph", factor:2.65}, {name:"Race Walking", factor:3.44}, {name:"Running: 5mph", factor:4.24}, {name:"Running: 6mph", factor:5.29}, {name:"Running: 7.5mph", factor:6.61}, {name:"Running: 10mph", factor:8.73} ], 'outdoor': [ {name:"Planting seedlings", factor:2.12}, {name:"Raking Lawn", factor:2.12}, {name:"Sacking leaves", factor:2.12}, {name:"Gardening: general", factor:2.38}, {name:"Gardening: weeding", factor:2.45}, {name:"Mowing: power", factor:2.38}, {name:"Mowing: push", factor:2.92}, {name:"Snow Blower", factor:2.38}, {name:"Planting trees", factor:2.38}, {name:"Carrying wood", factor:2.65}, {name:"Digging dirt", factor:2.65}, {name:"Laying sod", factor:2.65}, {name:"Chopping wood", factor:3.17}, {name:"Shoveling Snow", factor:3.17} ], 'home': [ {name:"Sleeping", factor:0.33}, {name:"Watching TV", factor:0.40}, {name:"Reading", factor:0.60}, {name:"Standing in line", factor:0.67}, {name:"Cooking", factor:1.32}, {name:"Child-care", factor:1.85}, {name:"Food Shopping", factor:1.85}, {name:"Moving: unpacking", factor:1.85}, {name:"Moving: furniture", factor:3.17}, {name:"Moving: boxes", factor:3.70}, {name:"Playing w/kids: mod", factor:2.12}, {name:"Playing w/kids: vig", factor:2.65}, {name:"Heavy Cleaning", factor:2.38} ], 'repair': [ {name:"Auto Repair", factor:1.59}, {name:"Wiring/Plumbing", factor:1.59}, {name:"Carpentry: Refinish", factor:2.38}, {name:"Lay Carpet/Tile", factor:2.38}, {name:"Paint/Paper Inside", factor:2.38}, {name:"Cleaning Gutters", factor:2.65}, {name:"Hanging Windows", factor:2.65}, {name:"Paint Outside", factor:2.65}, {name:"Carpentry Outside", factor:3.17}, {name:"Roofing", factor:3.17} ], 'occupational': [ {name:"Computer Work", factor:0.73}, {name:"Light Office", factor:0.80}, {name:"Sitting in Meetings", factor:0.85}, {name:"Desk Work", factor:0.92}, {name:"Sitting in Class", factor:0.92}, {name:"Truck Driving", factor:1.05}, {name:"Bartending/Server", factor:1.32}, {name:"Police Officer", factor:1.32}, {name:"Heavy Equip Operator", factor:1.32}, {name:"Theater Work", factor:1.59}, {name:"Welding", factor:1.59}, {name:"Carpentry Work", factor:1.85}, {name:"Coaching Sports", factor:2.12}, {name:"Masseur (standing)", factor:2.12}, {name:"Construction", factor:2.92}, {name:"Coal Mining", factor:3.17}, {name:"Horse Grooming", factor:3.17}, {name:"Masonry", factor:3.70}, {name:"Forestry", factor:4.24}, {name:"Steel Mill", factor:4.24}, {name:"Firefighting", factor:6.34} ] };
 
         function updateMoves() {
             let type = document.getElementById('exType').value;
             let sel = document.getElementById('exMove');
             sel.innerHTML = "";
-            if(moves[type]) {
-                moves[type].forEach(m => { let opt = document.createElement('option'); opt.value = m.factor; opt.text = m.name; sel.add(opt); });
-            }
+            if(moves[type]) moves[type].forEach(m => { let opt = document.createElement('option'); opt.value = m.factor; opt.text = m.name; sel.add(opt); });
         }
 
-        function switchTab(tab) {
-            currentTab = tab;
+        function switchTab(t) {
+            document.getElementById('tab-arashift').classList.toggle('hidden', t !== 'arashift');
+            document.getElementById('tab-diabetes').classList.toggle('hidden', t !== 'diabetes');
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-' + tab).classList.add('active');
-            if(tab === 'arashift') { document.getElementById('tab-arashift').classList.remove('hidden'); document.getElementById('tab-diabetes').classList.add('hidden'); } 
-            else { document.getElementById('tab-arashift').classList.add('hidden'); document.getElementById('tab-diabetes').classList.remove('hidden'); }
-        }
-
-        function showDef(id) { document.getElementById('defModal').classList.remove('hidden'); }
-
-        // --- DO PRINT FUNCTION (Custom Tables Generation) ---
-        function doPrint() {
-            let p = currentTab === 'arashift' ? '' : 'dm_';
-            document.getElementById('pdName').innerText = val(p+'pName');
-            document.getElementById('pdId').innerText = val(p+'pId');
-            document.getElementById('pdIdPrint').innerText = val(p+'pId');
-            document.getElementById('pdDemo').innerText = `${val(p+'age')} / ${val(p+'gender')}`;
-            document.getElementById('pdBio').innerText = `${val(p+'height')}cm / ${val(p+'weight')}kg`;
-            document.getElementById('pdBMI').innerText = val(p+'bmi');
-            document.getElementById('pdDate').innerText = new Date().toLocaleDateString();
-
-            let bioHTML = "";
-            if (currentTab === 'diabetes') {
-                document.getElementById('printTitle').innerText = "Diabetes Management Report";
-                bioHTML += `<div class="bio-item">BP: <b>${val(p+'sbp')}/${val(p+'dbp')}</b></div>`;
-                bioHTML += `<div class="bio-item">RHR: <b>${val(p+'rhr')}</b></div>`;
-                bioHTML += `<div class="bio-item">FBS: <b>${val(p+'fbs')}</b></div>`;
-                bioHTML += `<div class="bio-item">HbA1c: <b>${val(p+'hba1c')}%</b></div>`;
-                bioHTML += `<div class="bio-item">eGFR: <b>${val(p+'egfr')}</b></div>`;
-                bioHTML += `<div class="bio-item">LDL: <b>${val(p+'ldl')}</b></div>`;
-                document.getElementById('print-obesity-content').classList.add('print-hidden');
-                document.getElementById('print-diabetes-content').classList.remove('print-hidden');
-            } else {
-                document.getElementById('printTitle').innerText = "AraShift Report";
-                bioHTML += `<div class="bio-item">Waist: <b>${val('waist')}</b></div>`;
-                bioHTML += `<div class="bio-item">V.Fat: <b>${val('vfat')}</b></div>`;
-                bioHTML += `<div class="bio-item">Fat %: <b>${val('fat')}</b></div>`;
-                bioHTML += `<div class="bio-item">Muscle: <b>${val('muscle')}</b></div>`;
-                document.getElementById('print-obesity-content').classList.remove('print-hidden');
-                document.getElementById('print-diabetes-content').classList.add('print-hidden');
-                
-                // 1. GENERATE PROTEIN TABLE
-                let proteinHTML = `<div class="protein-box"><div class="protein-head">Protein Recommendation</div>`;
-                proteinHTML += `<table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Protein</th><th style="width:25%">meal size x number of meal</th><th style="width:25%">Protein amount (gram)</th></tr></thead><tbody>`;
-                
-                let totalProt = 0;
-                foodPlan.forEach((f, i) => {
-                    totalProt += f.p;
-                    proteinHTML += `<tr><td>${i+1}</td><td>${f.name}</td><td>x${f.qty}</td><td>${f.p}g</td></tr>`;
-                });
-                
-                proteinHTML += `</tbody><tfoot><tr><td colspan="2"></td><td style="text-align:right;">Total</td><td>${totalProt}g</td></tr></tfoot></table></div>`;
-                document.getElementById('pdProteinContainer').innerHTML = proteinHTML;
-                
-                // 2. GENERATE EXERCISE TABLE
-                let exerciseHTML = `<div class="planner-box"><div class="planner-header"><h4>Exercise Planner</h4></div>`;
-                exerciseHTML += `<table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Exercise</th><th style="width:25%">Duration (min)</th><th style="width:25%">kcal burnt</th></tr></thead><tbody>`;
-                
-                let totalBurn = 0;
-                plan.forEach((p, i) => {
-                    totalBurn += p.k;
-                    exerciseHTML += `<tr><td>${i+1}</td><td>${p.name}</td><td>${p.dur}</td><td>${p.k}</td></tr>`;
-                });
-                
-                exerciseHTML += `</tbody><tfoot><tr><td colspan="2"></td><td style="text-align:right;">Total</td><td>${totalBurn}</td></tr></tfoot></table>`;
-                
-                // Add HR Zone at bottom of exercise box
-                let hrZoneHTML = document.querySelector('.hr-zone-wrap').outerHTML;
-                exerciseHTML += hrZoneHTML + `</div>`;
-                
-                document.getElementById('pdExerciseContainer').innerHTML = exerciseHTML;
-            }
-            document.getElementById('bioGrid').innerHTML = bioHTML;
-            window.print();
-        }
-
-        // ... (Existing calculation logic like getSmartRx, runCalc, addFood, etc. remains identical)
-        function getSmartRx(mus, vfat, bmi, sex) {
-            // (Same logic as v10.6)
-            let isLowMus = (sex==='male' && mus<32.8) || (sex==='female' && mus<25.8);
-            let isHighVfat = vfat >= 10;
-            let isObese = bmi > 35;
-            let ratio = 50; let title = "Standard Balance"; let desc = "Equal mix of cardio and resistance."; let zone = "Target: Zone 2-3";
-            if (isObese) { ratio = 80; title = "Low Impact Protocol"; desc = "Prioritize non-weight bearing cardio."; zone = "Target: Zone 1-2"; } 
-            else if (isLowMus) { ratio = 30; title = "Muscle Building Focus"; desc = "Prioritize resistance training."; zone = "Target: Zone 2-3"; } 
-            else if (isHighVfat) { ratio = 70; title = "Metabolic Burn Focus"; desc = "Emphasis on Zone 2 cardio."; zone = "Target: Zone 2"; }
-            let cPct = ratio; let rPct = 100 - ratio;
-            return `<div class="rx-box"><div class="rx-head"><span>${title}</span><span>RX</span></div><div class="rx-body"><div><div class="rx-chart"><div class="rx-bar" style="width:${cPct}%; background:#34C759;">Cardio</div><div class="rx-bar" style="width:${rPct}%; background:#AF52DE;">Strength</div></div><div style="font-size:10px; text-align:center; margin-top:4px; font-weight:700;">${cPct}% Cardio / ${rPct}% Resistance</div></div><div class="rx-details"><div style="margin-bottom:5px; font-weight:700; color:#FF9500;">${zone}</div><div class="rx-reason">${desc}</div></div></div></div>`;
+            document.getElementById('btn-'+t).classList.add('active');
         }
 
         function runCalc() {
-             // (Same logic as v10.6 including CPG 2023 Risk and 6 HR Points)
-             let w = parseFloat(document.getElementById('weight').value) || 0;
+            let w = parseFloat(document.getElementById('weight').value) || 0;
             let h = parseFloat(document.getElementById('height').value) || 0;
-            let bmiVal = 0;
-            if(w>0 && h>0) { bmiVal = (w/((h/100)*(h/100))); document.getElementById('bmi').value = bmiVal.toFixed(1); }
-            
-            // ... (Basic Calorie Logic same as before) ...
-            let bf = calMap[document.getElementById('bfType').value][document.getElementById('bfSize').value];
-            let lu = calMap[document.getElementById('luType').value][document.getElementById('luSize').value];
-            let dn = calMap[document.getElementById('dnType').value][document.getElementById('dnSize').value];
-            let snacks = (parseFloat(document.getElementById('snackFreq').value)||0) * 200;
-            let drinks = (parseFloat(document.getElementById('drinkFreq').value)||0) * 150;
-            let intake = bf + lu + dn + snacks + drinks;
-            let tdee = w * 25 * parseFloat(document.getElementById('activity').value);
-            let bal = Math.round(intake - tdee);
-            document.getElementById('sIntake').innerText = Math.round(intake);
-            document.getElementById('sBMR').innerText = Math.round(tdee / parseFloat(document.getElementById('activity').value));
-            document.getElementById('sTDEE').innerText = Math.round(tdee);
-            document.getElementById('sBal').innerText = (bal>0?"+":"")+bal;
-            document.getElementById('sBalCard').className = "meta-card " + (tdee>0?(bal>200?"surplus":(bal<-200?"deficit":"")):"");
+            let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
+            document.getElementById('bmi').value = bmiVal;
 
-            // BMI Bar Logic
+            let act = parseFloat(document.getElementById('activity').value);
+            let tdee = Math.round(w * 25 * act);
+            let bmr = Math.round(tdee / act);
+            let intake = 1600; 
+            
+            document.getElementById('sIntake').innerText = intake;
+            document.getElementById('sBMR').innerText = bmr;
+            document.getElementById('sTDEE').innerText = tdee;
+            document.getElementById('sBal').innerText = (intake - tdee);
+
             let risk = "Unknown";
-            if(bmiVal < 18.5) risk = "Low (Risk of other clinical problems)";
-            else if(bmiVal < 23.0) risk = "Increasing but acceptable risk";
+            if(bmiVal < 18.5) risk = "Low Risk";
+            else if(bmiVal < 23.0) risk = "Acceptable";
             else if(bmiVal < 27.5) risk = "Increased";
             else if(bmiVal < 35.0) risk = "High";
             else if(bmiVal < 40.0) risk = "Very High";
             else risk = "Extremely High";
 
-            let vHTML = getDetailedBar("BMI", bmiVal, "", 50, [
+            let vHTML = getBar("BMI", bmiVal, 50, [
                 {limit:18.5,color:"#F59E0B",label:"Underweight"}, {limit:22.9,color:"#34C759",label:"Normal"}, {limit:27.4,color:"#FBBF24",label:"Overweight"}, {limit:34.9,color:"#F97316",label:"Obese I"}, {limit:39.9,color:"#EF4444",label:"Obese II"}, {limit:50,color:"#991B1B",label:"Obese III"}
             ], risk);
+            document.getElementById('sAnalysis').innerHTML = vHTML;
+            document.getElementById('pdVisuals').innerHTML = vHTML;
+
+            let isFatty = document.getElementById('risk_mafld').checked;
+            let targetCal = Math.max(1200, tdee - 500);
+            let sHTML = `<div class="apple-stat-card"><div class="stat-header">Target Wt</div><div class="stat-value">${(w*(isFatty?0.9:0.95)).toFixed(1)}kg</div><div class="stat-detail-box">${isFatty?"10% Loss":"5% Loss"}</div></div>`;
+            sHTML += `<div class="apple-stat-card"><div class="stat-header">Rx Cal</div><div class="stat-value">${targetCal}</div><div class="stat-detail-box">kcal/day</div></div>`;
+            document.getElementById('sStatGrid').innerHTML = sHTML;
+            document.getElementById('pdStats').innerHTML = sHTML.replace(/apple-stat-card/g, 'print-stat-card');
             
-            vHTML += getDetailedBar("Visceral Fat", parseFloat(document.getElementById('vfat').value)||0, "", 20, [{limit:9,color:"#34C759",label:"Normal"},{limit:14,color:"#F97316",label:"High"},{limit:20,color:"#EF4444",label:"Very High"}]);
-            vHTML += getDetailedBar("Muscle Mass", parseFloat(document.getElementById('muscle').value)||0, "%", 60, [{limit:28,color:"#EF4444",label:"Low"},{limit:33,color:"#34C759",label:"Normal"},{limit:60,color:"#34C759",label:"High"}]);
-            document.getElementById('sAnalysis').innerHTML = vHTML; document.getElementById('pdVisuals').innerHTML = vHTML;
+            let mHTML = `<table class="milestone-table"><tr><th>Goal</th><th>Weight</th><th>Time</th></tr><tr><td>5%</td><td>${(w*0.95).toFixed(1)}kg</td><td>3 Months</td></tr><tr><td>10%</td><td>${(w*0.9).toFixed(1)}kg</td><td>6 Months</td></tr></table>`;
+            document.getElementById('sMilestones').innerHTML = mHTML; document.getElementById('pdMile').innerHTML = mHTML;
+            document.getElementById('sRecs').innerHTML = "<ul><li>Calorie Deficit 500kcal</li><li>Increase Protein</li></ul>"; document.getElementById('pdRecs').innerHTML = "<ul><li>Calorie Deficit 500kcal</li><li>Increase Protein</li></ul>";
 
             let rxHTML = getSmartRx(parseFloat(document.getElementById('muscle').value)||0, parseFloat(document.getElementById('vfat').value)||0, bmiVal, document.getElementById('gender').value);
             document.getElementById('sRxCard').innerHTML = rxHTML; document.getElementById('pdRx').innerHTML = rxHTML;
-
-            // Recs & Milestones
-            let targetCal = Math.max(1200, Math.round(tdee - 500));
-            let sHTML = `<div class="apple-stat-card"><div><div class="stat-header">Target Wt</div><div class="stat-value">${(w*0.9).toFixed(1)}<span class="stat-unit">kg</span></div></div><div class="stat-detail-box">10% Loss</div></div><div class="apple-stat-card"><div><div class="stat-header">Rx Cal</div><div class="stat-value">${targetCal}<span class="stat-unit">kcal</span></div></div><div class="stat-detail-box">Daily Limit</div></div>`;
-            document.getElementById('sStatGrid').innerHTML = sHTML; document.getElementById('pdStats').innerHTML = sHTML.replace(/apple-stat-card/g, 'print-stat-card');
             
-            let mHTML = `<table class="milestone-table"><tr><th>Goal</th><th>Weight</th><th>Timeline</th></tr><tr><td>5%</td><td>${(w*0.95).toFixed(1)}kg</td><td>3 Months</td></tr><tr><td>10%</td><td>${(w*0.9).toFixed(1)}kg</td><td>6 Months</td></tr></table>`;
-            document.getElementById('sMilestones').innerHTML = mHTML; document.getElementById('pdMile').innerHTML = mHTML;
-            document.getElementById('sRecs').innerHTML = "<ul><li>Calorie Deficit 500kcal</li><li>Increase Protein</li></ul>"; document.getElementById('pdRecs').innerHTML = "<ul><li>Calorie Deficit 500kcal</li><li>Increase Protein</li></ul>";
-            
-            // HR Calc 
             let age = parseFloat(document.getElementById('age').value) || 30;
             let rhr = parseFloat(document.getElementById('rhr').value);
             let maxHR = 220 - age;
@@ -510,62 +408,87 @@
             recalcPlan();
         }
 
-        function runDMCalc() { /* ... (Same as before) ... */ }
-        function val(id) { let el = document.getElementById(id); return (el && el.value) ? el.value : '-'; }
-        
-        function addExercise() {
-            let sel = document.getElementById('exMove');
-            let name = sel.options[sel.selectedIndex].text;
-            let factor = parseFloat(sel.value);
-            let dur = parseFloat(document.getElementById('exDur').value) || 0;
-            let w = parseFloat(document.getElementById('weight').value) || 70; 
-            let burned = Math.round(factor * w * (dur/30)); 
-            plan.push({name, dur, factor, k: burned});
-            renderPlan();
-        }
-        function recalcPlan() { let w = parseFloat(document.getElementById('weight').value) || 70; plan.forEach(p => { p.k = Math.round(p.factor * w * (p.dur/30)); }); renderPlan(); }
-        function clearPlan() { plan = []; renderPlan(); }
-        function renderPlan() {
-            let tb = document.getElementById('planBody'); tb.innerHTML = ""; let tot = 0;
-            plan.forEach((p,i) => { tot += p.k; tb.innerHTML += `<tr><td>${p.name}</td><td>${p.dur}m</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderPlan()">×</td></tr>`; });
-            document.getElementById('totalBurn').innerText = tot; document.getElementById('tableTotalBurn').innerText = tot;
+        function getBar(label, val, max, segments, customStatus) {
+            let pct = Math.min((val/max)*100, 100);
+            let status = customStatus || "Unknown";
+            return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span>${val}</span></div><div class="bar-complex"><div class="bar-seg" style="width:100%; background:linear-gradient(90deg, #F59E0B 0%, #34C759 40%, #EF4444 100%);"></div><div class="bar-marker" style="left:${pct}%"></div></div><div class="bar-status-label">${status}</div></div>`;
         }
 
         function addFood() {
              let sel = document.getElementById('foodType'); let val = sel.value.split('|');
              let name = sel.options[sel.selectedIndex].text.split('(')[0].trim();
              let qty = parseFloat(document.getElementById('foodQty').value) || 1;
-             foodPlan.push({name, qty, c: Math.round(parseFloat(val[0])*qty), p: Math.round(parseFloat(val[1])*qty)});
+             foodPlan.push({n:name, q:qty, c:Math.round(parseFloat(val[0])*qty), p:Math.round(parseFloat(val[1])*qty)});
              renderFood();
         }
+
         function renderFood() {
-            let fl = document.getElementById('foodList'); fl.innerHTML = ""; let tc = 0, tp = 0;
-            foodPlan.forEach((f,i) => { tc += f.c; tp += f.p; fl.innerHTML += `<div class="food-item"><span>${f.name} x${f.qty}</span><span>${f.c}kcal / ${f.p}g P</span> <span style="color:red;cursor:pointer;" class="del-btn" onclick="foodPlan.splice(${i},1);renderFood()">×</span></div>`; });
-            document.getElementById('planProt').innerText = tp; document.getElementById('planCal').innerText = tc;
-        }
-
-        function getDetailedBar(label, value, unit, totalMax, segments, customStatus = null) {
-            let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
-            let currentStatus = "Unknown";
-            segments.forEach(seg => {
-                let w = ((seg.limit - prevLimit) / totalMax) * 100;
-                barsHTML += `<div class="bar-seg" style="width:${w}%; background:${seg.color};"></div>`;
-                let cp = (seg.limit / totalMax) * 100;
-                numsHTML += `<div class="bar-number-item" style="left:${cp}%;">${seg.limit}</div>`;
-                labelsHTML += `<div class="bar-label-item" style="width:${w}%;">${seg.label}</div>`;
-                if (value > prevLimit && value <= seg.limit) currentStatus = seg.label;
-                prevLimit = seg.limit;
+            let h = "", tc=0, tp=0;
+            foodPlan.forEach((f,i) => {
+                tc+=f.c; tp+=f.p;
+                h += `<tr><td>${f.n}</td><td>x${f.q}</td><td>${f.c}kc / ${f.p}g P</td><td class="del-btn" onclick="foodPlan.splice(${i},1);renderFood()">×</td></tr>`;
             });
-            if(value > prevLimit) currentStatus = segments[segments.length-1].label;
-            let displayStatus = customStatus ? "Risk: " + customStatus : "Status: " + currentStatus;
-            let mp = (value / totalMax) * 100; if(mp > 100) mp = 100; if(mp < 0) mp = 0;
-            return `<div class="visual-row"><div class="visual-header"><span>${label}</span><span style="color:#007AFF;">${value} ${unit}</span></div><div style="position:relative;"><div class="bar-complex">${barsHTML}</div><div class="bar-numbers-row">${numsHTML}</div><div class="bar-labels-row">${labelsHTML}</div><div class="bar-marker-wrapper"><div class="bar-marker" style="left: ${mp}%;"></div></div></div><div class="bar-status-label" style="color:${segments.find(s=>s.label===currentStatus)?.color || '#333'}">${displayStatus}</div></div>`;
+            document.getElementById('foodTableBody').innerHTML = h;
+            document.getElementById('planProt').innerText = tp;
+            document.getElementById('planCal').innerText = tc;
+            document.getElementById('totalProtVal').innerText = tp;
+            document.getElementById('totalCalVal').innerText = tc;
         }
 
-        function saveKey() { localStorage.setItem('geminiKey', document.getElementById('apiKeyInput').value); document.getElementById('keyModal').classList.add('hidden'); }
-        async function runAI() { /* AI Logic Placeholder */ }
+        function addExercise() {
+            let sel = document.getElementById('exMove');
+            let name = sel.options[sel.selectedIndex].text;
+            let dur = parseFloat(document.getElementById('exDur').value);
+            let k = Math.round(parseFloat(sel.value) * 70 * (dur/30));
+            plan.push({n:name, d:dur, k:k});
+            renderPlan();
+        }
 
-        window.onload = () => { updateMoves(); runCalc(); };
+        function renderPlan() {
+            let h = "", tk=0;
+            plan.forEach((p,i) => {
+                tk+=p.k;
+                h += `<tr><td>${p.n}</td><td>${p.d}m</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderPlan()">×</td></tr>`;
+            });
+            document.getElementById('planBody').innerHTML = h;
+            document.getElementById('totalBurn').innerText = tk;
+            document.getElementById('tableTotalBurn').innerText = tk;
+        }
+
+        function doPrint() {
+            document.getElementById('pdName').innerText = document.getElementById('pName').value;
+            document.getElementById('pdId').innerText = document.getElementById('pId').value;
+            document.getElementById('pdDate').innerText = new Date().toLocaleDateString();
+
+            // 1. Generate Clean Protein Table for Print
+            let pTbl = `<div class="protein-box"><div class="protein-head">Protein Recommendation</div><table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Protein</th><th style="width:25%">Qty</th><th style="width:25%">Prot (g)</th></tr></thead><tbody>`;
+            let tp = 0;
+            foodPlan.forEach((f,i) => { tp+=f.p; pTbl += `<tr><td>${i+1}</td><td>${f.n}</td><td>x${f.q}</td><td>${f.p}g</td></tr>`; });
+            pTbl += `</tbody><tfoot><tr><td colspan="3" style="text-align:right">Total Protein</td><td>${tp}g</td></tr></tfoot></table></div>`;
+            document.getElementById('pdProteinContainer').innerHTML = pTbl;
+
+            // 2. Generate Clean Exercise Table for Print
+            let eTbl = `<div class="planner-box"><div class="planner-header"><h4>Exercise Planner</h4></div><table class="print-table"><thead><tr><th style="width:5%">#</th><th style="width:45%">Exercise</th><th style="width:25%">Time (m)</th><th style="width:25%">Burn (kc)</th></tr></thead><tbody>`;
+            let tk = 0;
+            plan.forEach((p,i) => { tk+=p.k; eTbl += `<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td></tr>`; });
+            eTbl += `</tbody><tfoot><tr><td colspan="3" style="text-align:right">Total Burn</td><td>${tk}</td></tr></tfoot></table>`;
+            document.getElementById('pdExerciseContainer').innerHTML = eTbl;
+            
+            document.getElementById('pdHR').innerHTML = document.querySelector('.hr-zone-wrap').outerHTML;
+            
+            window.print();
+        }
+
+        function saveKey() { document.getElementById('keyModal').classList.add('hidden'); }
+        async function runAI() {}
+
+        window.onload = () => { updateMoves(); runCalc(); 
+            // Important: Re-attach Listeners to ensure Calculator works
+            [...ids].forEach(id => {
+                let el = document.getElementById(id);
+                if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); }
+            });
+        };
     </script>
 </body>
 </html>
