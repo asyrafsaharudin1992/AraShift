@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v10.7 (Refined)</title>
+    <title>AraShift System v10.8 (Data Fixed)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -179,7 +179,17 @@
         #clinical-report { display: none; }
         @media print {
             @page { size: A4 portrait; margin: 10mm; }
-            html, body { width: 100%; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; box-sizing: border-box !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            html, body { 
+                width: 100%; 
+                margin: 0; 
+                padding: 0; 
+                background: white; 
+                color: black; 
+                font-size: 10pt; 
+                box-sizing: border-box !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
             
             /* HIDE UI ELEMENTS */
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal, .nav-tabs, .help-icon { display: none !important; }
@@ -206,7 +216,7 @@
                 page-break-after: avoid !important;
             }
 
-            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; width: 100%; }
+            .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; width: 100%; }
             .bio-item { border: 1px solid #ccc; border-radius: 8px; padding: 5px 8px; font-size: 9pt; background: #f9f9f9 !important; } .bio-item b { display: block; font-size: 11pt; }
             
             .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px; width: 100%; }
@@ -240,7 +250,7 @@
             .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 4px; } 
             .plan-table td { padding: 4px; border-bottom: 1px solid #ccc; }
             /* Hide Del Column */
-            .plan-table th:last-child, .plan-table td:last-child { display: none !important; width: 0; padding: 0; }
+            .plan-table th:nth-child(4), .plan-table td:nth-child(4) { display: none !important; }
 
             .hr-zone-wrap { margin-top: 15px; position: relative; } 
             .hr-bars { border: 1px solid #000; height: 18px; }
@@ -291,7 +301,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.7</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v10.8</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -670,7 +680,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v10.7</span></div>
+        <div class="report-footer"><span>AraShift System v10.8</span></div>
     </div>
 
     <script>
@@ -783,6 +793,7 @@
             }
         }
 
+        // TABS
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -903,7 +914,7 @@
                 {limit:34.9,color:"#F97316",label:"Obese I"},
                 {limit:39.9,color:"#EF4444",label:"Obese II"},
                 {limit:50,color:"#991B1B",label:"Obese III"}
-            ], risk); // Pass risk as custom status
+            ], risk); 
             
             vHTML += getDetailedBar("Visceral Fat", parseFloat(document.getElementById('vfat').value)||0, "", 20, [
                 {limit:9,color:"#34C759",label:"Normal"},
@@ -1052,20 +1063,20 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- CLEAN PRINT LOGIC (v10.6) ---
+                // --- CLEAN PRINT LOGIC (v10.8) ---
                 let clone = document.getElementById('exPlanner').cloneNode(true);
                 let toRemove = clone.querySelectorAll('.add-row, .day-pills-container, .clear-btn, .del-btn');
                 toRemove.forEach(el => el.remove());
-                let ths = clone.querySelectorAll('th');
-                if(ths.length > 0) ths[ths.length-1].remove(); 
-                let trs = clone.querySelectorAll('tbody tr');
-                trs.forEach(tr => {
-                    let tds = tr.querySelectorAll('td');
-                    if(tds.length > 0) tds[tds.length-1].remove();
-                });
-
+                
+                // Remove the "Delete" column via CSS nth-child in the head, no JS manipulation needed for columns here
+                
                 document.getElementById('pdRxContainer').innerHTML = clone.innerHTML;
-                document.getElementById('pdProtein').innerHTML = document.getElementById('proteinBox').innerHTML.replace(/<div class="food-calc-row">[\s\S]*?<\/div>/, "");
+                
+                // PROTEIN BOX CLONE
+                let pClone = document.getElementById('proteinBox').cloneNode(true);
+                // Hide input row via class, no need to strip HTML string
+                // The print CSS handles hiding .food-calc-row
+                document.getElementById('pdProtein').innerHTML = pClone.innerHTML;
             }
             document.getElementById('bioGrid').innerHTML = bioHTML;
             window.print();
@@ -1100,14 +1111,34 @@
                 tot += p.k; 
                 tb.innerHTML += `<tr><td>${p.name}</td><td>${p.dur}m</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderPlan()">×</td></tr>`; 
             });
-            document.getElementById('totalBurn').innerText = tot;
+            document.getElementById('totalBurn').innerText = tot + " kcal";
         }
 
         function addFood() {
-             let f=document.getElementById('foodList'); f.innerHTML += `<div class="food-item"><span>${document.getElementById('foodType').options[document.getElementById('foodType').selectedIndex].text}</span></div>`;
+             let f=document.getElementById('foodList'); 
+             let sel = document.getElementById('foodType');
+             let val = sel.value.split('|');
+             let cal = parseFloat(val[0]);
+             let prot = parseFloat(val[1]);
+             let name = sel.options[sel.selectedIndex].text.split('(')[0].trim();
+             let qty = parseFloat(document.getElementById('foodQty').value) || 1;
+             
+             foodPlan.push({name, qty, c: Math.round(cal*qty), p: Math.round(prot*qty)});
+             renderFood();
         }
         
-        // VISUAL BAR LOGIC UPDATED TO ACCEPT CUSTOM RISK
+        function renderFood() {
+            let fl = document.getElementById('foodList');
+            fl.innerHTML = "";
+            let tc = 0, tp = 0;
+            foodPlan.forEach((f,i) => {
+                tc += f.c; tp += f.p;
+                fl.innerHTML += `<div class="food-item"><span>${f.name} x${f.qty}</span><span>${f.c}kcal / ${f.p}g P</span> <span style="color:red;cursor:pointer;" onclick="foodPlan.splice(${i},1);renderFood()">×</span></div>`;
+            });
+            document.getElementById('planProt').innerText = tp;
+            document.getElementById('planCal').innerText = tc;
+        }
+        
         function getDetailedBar(label, value, unit, totalMax, segments, customStatus = null) {
             let barsHTML = "", numsHTML = "", labelsHTML = "", prevLimit = 0;
             let currentStatus = "Unknown";
