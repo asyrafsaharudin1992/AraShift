@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v11.0 (Summary Tables)</title>
+    <title>AraShift System v11.1 (Unbreakable Layout)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -184,13 +184,28 @@
         /* PRINT DOM */
         #clinical-report { display: none; }
         @media print {
-            @page { size: A4 portrait; margin: 15mm; }
-            html, body { width: 100%; margin: 0; padding: 0; background: white; color: black; font-size: 10pt; box-sizing: border-box !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            /* CLEAR BROWSER MARGINS/HEADERS */
+            @page { 
+                size: A4 portrait; 
+                margin: 0; 
+            }
+            
+            html, body { 
+                width: 100%; 
+                margin: 0; 
+                padding: 0; 
+                background: white; 
+                color: black; 
+                font-size: 10pt; 
+                box-sizing: border-box !important; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+            }
             
             /* HIDE UI ELEMENTS */
             .container, .action-bar, #login-screen, #keyModal, #guideModal, #defModal, .nav-tabs, .help-icon { display: none !important; }
             
-            #clinical-report { display: block !important; width: 100%; max-width: 210mm; padding: 10mm; margin: 0 auto; box-sizing: border-box; overflow: visible; }
+            #clinical-report { display: block !important; width: 100%; max-width: 210mm; padding: 15mm; margin: 0 auto; box-sizing: border-box; overflow: visible; }
             
             /* GLOBAL CONTAINER */
             .report-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; width: 100%; break-inside: avoid; }
@@ -201,15 +216,19 @@
             
             .section-head { font-size: 10pt; font-weight: 800; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 3px; margin-bottom: 8px; margin-top: 15px; page-break-after: avoid; break-after: avoid; }
             
-            /* PREVENT SPLITTING OF BOXES */
-            .card, .planner-box, .rx-box, .protein-box, .clinical-plan-grid, .metabolic-row, .rec-container {
-                break-inside: avoid !important;
+            /* PREVENT SPLITTING OF BOXES - THE "BRICK" STRATEGY */
+            .unbreakable-box, .card, .planner-box, .rx-box, .protein-box, .clinical-plan-grid, .metabolic-row, .rec-container {
                 page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                display: block; 
+                width: 100%;
+                margin-bottom: 15px;
             }
             
+            /* Ensure Headers stay with content */
             h3, h4, .planner-header, .protein-head, .rx-head {
-                break-after: avoid !important;
                 page-break-after: avoid !important;
+                break-after: avoid !important;
             }
 
             .bio-print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; width: 100%; }
@@ -217,7 +236,7 @@
             
             .metabolic-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; background: #F9FAFB !important; border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px; width: 100%; }
             .print-stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px; width: 100%; }
-            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 8px; text-align: center; background: #F9F9F9 !important; }
+            .print-stat-card { border: 1px solid #000; border-radius: 6px; padding: 6px; text-align: center; background: #F9F9F9 !important; }
             .p-stat-label { font-size: 7pt; text-transform: uppercase; color: #555; display: block; margin-bottom: 2px; } .p-stat-val { font-size: 12pt; font-weight: 900; display: block; } .p-stat-detail { font-size: 7pt; border-top: 1px solid #ddd; margin-top: 4px; padding-top: 2px; display: block; font-weight: 600; }
             
             .visual-row { margin-bottom: 12px; break-inside: avoid; } .bar-complex { border: 1px solid #999; height: 8px; } .bar-marker { background: #000 !important; border: 1px solid #fff; height: 14px; top: -3px; }
@@ -239,21 +258,22 @@
             } 
             .planner-header { font-size: 10pt; color: #000; }
             
-            /* REMOVE INPUTS & HEADER TOTAL FOR PRINT */
+            /* REMOVE INPUTS FOR PRINT */
             .add-row, .del-btn, .clear-btn, .day-pills-container { display: none !important; }
-            
-            /* HIDE "Total Burn" in header for print */
+            /* Hide Total in Header */
             .planner-header div { display: none !important; } 
-            /* SHOW Planner Header Title */
             .planner-header h4 { display: block !important; margin: 0; }
-
+            
             .plan-table { width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; margin-top: 8px; }
             .plan-table th { background: #eee !important; color: #000; border-bottom: 1px solid #000; padding: 4px; } 
             .plan-table td { padding: 4px; border-bottom: 1px solid #ccc; }
             /* Hide Del Column */
             .plan-table th:last-child, .plan-table td:last-child { display: none !important; width: 0; padding: 0; }
+            
+            /* Footer Total */
+            .plan-table tfoot { display: table-row-group !important; } 
 
-            .hr-zone-wrap { margin-top: 20px; position: relative; } 
+            .hr-zone-wrap { margin-top: 15px; position: relative; } 
             .hr-bars { border: 1px solid #000; height: 18px; }
             
             .clinical-plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
@@ -305,7 +325,7 @@
 
     <div class="container" id="app-ui">
         <header>
-            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v11.0</span></div>
+            <div class="brand">Ara<span>Shift</span> <span class="version-tag">v11.1</span></div>
             <div class="logout">Logout</div>
         </header>
 
@@ -430,118 +450,122 @@
 
                     <div id="sRxCard"></div>
 
-                    <div id="proteinBox" class="protein-box">
-                        <div class="protein-head">Protein Recommendation</div>
-                        <div id="proteinText"></div>
-                        <div class="food-calc-row">
-                            <select id="foodType">
-                                <optgroup label="--- Dairy & Eggs ---">
-                                    <option value="73|3.9">Whole Milk (1/2 cup) - 73kc, 4g P</option>
-                                    <option value="52|8.5">1% Milk (1/2 cup) - 52kc, 8.5g P</option>
-                                    <option value="130|17">Greek Yogurt 2% (6oz) - 130kc, 17g P</option>
-                                    <option value="75|6">Egg Large (1) - 75kc, 6g P</option>
-                                    <option value="16|3.6">Egg White (1) - 16kc, 3.6g P</option>
-                                </optgroup>
-                                <optgroup label="--- Poultry & Meat ---">
-                                    <option value="101|18">Chicken Breast (3oz) - 101kc, 18g P</option>
-                                    <option value="110|14">Chicken Thigh (2oz) - 110kc, 14g P</option>
-                                    <option value="153|34">Turkey Breast (4oz) - 153kc, 34g P</option>
-                                    <option value="111|18.6">Beef Sirloin (3oz) - 111kc, 18.6g P</option>
-                                    <option value="178|24.3">Pork Loin (3oz) - 178kc, 24.3g P</option>
-                                </optgroup>
-                                <optgroup label="--- Seafood ---">
-                                    <option value="175|18.8">Salmon (4oz) - 175kc, 19g P</option>
-                                    <option value="45|9.8">Tuna Canned (1/4 cup) - 45kc, 10g P</option>
-                                    <option value="28|5.9">Shrimp (1oz) - 28kc, 6g P</option>
-                                </optgroup>
-                                <optgroup label="--- Plant-Based & Misc ---">
-                                    <option value="113|7.5">Black Beans (1/2 cup) - 113kc, 7.5g P</option>
-                                    <option value="127|11">Edamame (1/2 cup) - 127kc, 11g P</option>
-                                    <option value="76|8">Tofu (100g) - 76kc, 8g P</option>
-                                    <option value="170|6.3">Almonds (1oz) - 170kc, 6.3g P</option>
-                                    <option value="77|2.7">Oatmeal (1/4 cup) - 77kc, 2.7g P</option>
-                                    <option value="120|24">Whey Scoop - 120kc, 24g P</option>
-                                </optgroup>
-                            </select>
-                            <input type="number" id="foodQty" placeholder="Qty" value="1">
-                            <button class="btn btn-p" onclick="addFood()" style="padding:8px;">Add</button>
+                    <div class="unbreakable-box">
+                        <div id="proteinBox" class="protein-box">
+                            <div class="protein-head">Protein Recommendation</div>
+                            <div id="proteinText"></div>
+                            <div class="food-calc-row">
+                                <select id="foodType">
+                                    <optgroup label="--- Dairy & Eggs ---">
+                                        <option value="73|3.9">Whole Milk (1/2 cup) - 73kc, 4g P</option>
+                                        <option value="52|8.5">1% Milk (1/2 cup) - 52kc, 8.5g P</option>
+                                        <option value="130|17">Greek Yogurt 2% (6oz) - 130kc, 17g P</option>
+                                        <option value="75|6">Egg Large (1) - 75kc, 6g P</option>
+                                        <option value="16|3.6">Egg White (1) - 16kc, 3.6g P</option>
+                                    </optgroup>
+                                    <optgroup label="--- Poultry & Meat ---">
+                                        <option value="101|18">Chicken Breast (3oz) - 101kc, 18g P</option>
+                                        <option value="110|14">Chicken Thigh (2oz) - 110kc, 14g P</option>
+                                        <option value="153|34">Turkey Breast (4oz) - 153kc, 34g P</option>
+                                        <option value="111|18.6">Beef Sirloin (3oz) - 111kc, 18.6g P</option>
+                                        <option value="178|24.3">Pork Loin (3oz) - 178kc, 24.3g P</option>
+                                    </optgroup>
+                                    <optgroup label="--- Seafood ---">
+                                        <option value="175|18.8">Salmon (4oz) - 175kc, 19g P</option>
+                                        <option value="45|9.8">Tuna Canned (1/4 cup) - 45kc, 10g P</option>
+                                        <option value="28|5.9">Shrimp (1oz) - 28kc, 6g P</option>
+                                    </optgroup>
+                                    <optgroup label="--- Plant-Based & Misc ---">
+                                        <option value="113|7.5">Black Beans (1/2 cup) - 113kc, 7.5g P</option>
+                                        <option value="127|11">Edamame (1/2 cup) - 127kc, 11g P</option>
+                                        <option value="76|8">Tofu (100g) - 76kc, 8g P</option>
+                                        <option value="170|6.3">Almonds (1oz) - 170kc, 6.3g P</option>
+                                        <option value="77|2.7">Oatmeal (1/4 cup) - 77kc, 2.7g P</option>
+                                        <option value="120|24">Whey Scoop - 120kc, 24g P</option>
+                                    </optgroup>
+                                </select>
+                                <input type="number" id="foodQty" placeholder="Qty" value="1">
+                                <button class="btn btn-p" onclick="addFood()" style="padding:8px;">Add</button>
+                            </div>
+                            <div class="food-list" id="foodList"></div>
+                            <div style="margin-top:10px; font-weight:700; font-size:12px; color:#555;">
+                                Planned: <span id="planProt">0</span>g Protein / <span id="planCal">0</span> kcal
+                            </div>
+                            <div id="proteinSummary"></div>
                         </div>
-                        <div class="food-list" id="foodList"></div>
-                        <div style="margin-top:10px; font-weight:700; font-size:12px; color:#555;">
-                            Planned: <span id="planProt">0</span>g Protein / <span id="planCal">0</span> kcal
-                        </div>
-                        <div id="proteinSummary"></div>
                     </div>
 
-                    <div class="planner-box" id="exPlanner">
-                        <div class="planner-header">
-                            <h4>Exercise Planner <span class="help-icon" onclick="showDef('met')">?</span></h4>
-                            <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
-                            <span class="clear-btn" onclick="clearPlan()">Clear All</span>
-                        </div>
+                    <div class="unbreakable-box">
+                        <div class="planner-box" id="exPlanner">
+                            <div class="planner-header">
+                                <h4>Exercise Planner <span class="help-icon" onclick="showDef('met')">?</span></h4>
+                                <div style="font-size:12px; font-weight:700; color:#333;">Total Burn: <span id="totalBurn" style="color:var(--primary);">0</span> kcal</div>
+                                <span class="clear-btn" onclick="clearPlan()">Clear All</span>
+                            </div>
 
-                        <div class="day-pills-container" id="dayPills">
-                            <div class="day-pill" onclick="toggleDay(this)">Mon</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Tue</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Wed</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Thu</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Fri</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Sat</div>
-                            <div class="day-pill" onclick="toggleDay(this)">Sun</div>
-                        </div>
+                            <div class="day-pills-container" id="dayPills">
+                                <div class="day-pill" onclick="toggleDay(this)">Mon</div>
+                                <div class="day-pill" onclick="toggleDay(this)">Tue</div>
+                                <div class="day-pill" onclick="toggleDay(this)">Wed</div>
+                                <div class="day-pill" onclick="toggleDay(this)">Thu</div>
+                                <div class="day-pill" onclick="toggleDay(this)">Fri</div>
+                                <div class="day-pill" onclick="toggleDay(this)">Sat</div>
+                                <div class="day-pill" onclick="toggleDay(this)">Sun</div>
+                            </div>
 
-                        <div class="add-row">
-                            <div style="display:flex; flex-direction:column;">
-                                <span class="ex-label">Category</span>
-                                <select id="exType" onchange="updateMoves()">
-                                    <option value="gym">Gym Activities</option>
-                                    <option value="sport">Sports</option>
-                                    <option value="outdoor">Outdoor</option>
-                                    <option value="home">Home & Daily</option>
-                                    <option value="repair">Home Repair</option>
-                                    <option value="occupational">Occupational</option>
-                                </select>
+                            <div class="add-row">
+                                <div style="display:flex; flex-direction:column;">
+                                    <span class="ex-label">Category</span>
+                                    <select id="exType" onchange="updateMoves()">
+                                        <option value="gym">Gym Activities</option>
+                                        <option value="sport">Sports</option>
+                                        <option value="outdoor">Outdoor</option>
+                                        <option value="home">Home & Daily</option>
+                                        <option value="repair">Home Repair</option>
+                                        <option value="occupational">Occupational</option>
+                                    </select>
+                                </div>
+                                <div style="display:flex; flex-direction:column;">
+                                    <span class="ex-label">Activity</span>
+                                    <select id="exMove"></select>
+                                </div>
+                                <div style="display:flex; flex-direction:column;">
+                                    <span class="ex-label">Duration (mins)</span>
+                                    <input type="number" id="exDur" placeholder="Min" value="30">
+                                </div>
+                                <button class="btn btn-p" style="padding:8px; margin-bottom:2px;" onclick="addExercise()">+</button>
                             </div>
-                            <div style="display:flex; flex-direction:column;">
-                                <span class="ex-label">Activity</span>
-                                <select id="exMove"></select>
+                            <table class="plan-table">
+                                <thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead>
+                                <tbody id="planBody"></tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" style="text-align:right; border-top:2px solid #E5E5EA;">TOTAL</td>
+                                        <td style="border-top:2px solid #E5E5EA;" id="tableTotalBurn">0</td>
+                                        <td style="border-top:2px solid #E5E5EA;"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            
+                            <div class="hr-zone-wrap" style="position: relative; margin-top: 25px;">
+                                <div class="hr-labels" style="margin-bottom:4px;"><span>Target Heart Rates (BPM)</span><span id="maxHrLabel">Max HR: 0</span></div>
+                                <div class="hr-bars" style="display: flex; width: 100%;">
+                                    <div class="hr-seg" style="background:var(--z1);" id="z1">Z1</div>
+                                    <div class="hr-seg" style="background:var(--z2);" id="z2">Z2</div>
+                                    <div class="hr-seg" style="background:var(--z3);" id="z3">Z3</div>
+                                    <div class="hr-seg" style="background:var(--z4);" id="z4">Z4</div>
+                                    <div class="hr-seg" style="background:var(--z5);" id="z5">Z5</div>
+                                </div>
+                                <div class="hr-numbers" style="position: relative; height: 15px; margin-top: 5px; font-size: 9px; color: #666; font-weight: 700;">
+                                    <span id="z1v" style="position: absolute; left: 0%; transform: translateX(-50%);">0</span>
+                                    <span id="z2v" style="position: absolute; left: 20%; transform: translateX(-50%);">0</span>
+                                    <span id="z3v" style="position: absolute; left: 40%; transform: translateX(-50%);">0</span>
+                                    <span id="z4v" style="position: absolute; left: 60%; transform: translateX(-50%);">0</span>
+                                    <span id="z5v" style="position: absolute; left: 80%; transform: translateX(-50%);">0</span>
+                                    <span id="z6v" style="position: absolute; left: 100%; transform: translateX(-50%);">0</span>
+                                </div>
+                                <div style="font-size:10px; color:#666; margin-top:15px; font-style:italic;" id="hrMethod">Method: Max HR</div>
                             </div>
-                            <div style="display:flex; flex-direction:column;">
-                                <span class="ex-label">Duration (mins)</span>
-                                <input type="number" id="exDur" placeholder="Min" value="30">
-                            </div>
-                            <button class="btn btn-p" style="padding:8px; margin-bottom:2px;" onclick="addExercise()">+</button>
-                        </div>
-                        <table class="plan-table">
-                            <thead><tr><th>Activity</th><th>Duration</th><th>Burn (Est)</th><th></th></tr></thead>
-                            <tbody id="planBody"></tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colspan="2" style="text-align:right; border-top:2px solid #E5E5EA;">TOTAL</td>
-                                    <td style="border-top:2px solid #E5E5EA;" id="tableTotalBurn">0</td>
-                                    <td style="border-top:2px solid #E5E5EA;"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        
-                        <div class="hr-zone-wrap" style="position: relative; margin-top: 25px;">
-                            <div class="hr-labels" style="margin-bottom:4px;"><span>Target Heart Rates (BPM)</span><span id="maxHrLabel">Max HR: 0</span></div>
-                            <div class="hr-bars" style="display: flex; width: 100%;">
-                                <div class="hr-seg" style="background:var(--z1);" id="z1">Z1</div>
-                                <div class="hr-seg" style="background:var(--z2);" id="z2">Z2</div>
-                                <div class="hr-seg" style="background:var(--z3);" id="z3">Z3</div>
-                                <div class="hr-seg" style="background:var(--z4);" id="z4">Z4</div>
-                                <div class="hr-seg" style="background:var(--z5);" id="z5">Z5</div>
-                            </div>
-                            <div class="hr-numbers" style="position: relative; height: 15px; margin-top: 5px; font-size: 9px; color: #666; font-weight: 700;">
-                                <span id="z1v" style="position: absolute; left: 0%; transform: translateX(-50%);">0</span>
-                                <span id="z2v" style="position: absolute; left: 20%; transform: translateX(-50%);">0</span>
-                                <span id="z3v" style="position: absolute; left: 40%; transform: translateX(-50%);">0</span>
-                                <span id="z4v" style="position: absolute; left: 60%; transform: translateX(-50%);">0</span>
-                                <span id="z5v" style="position: absolute; left: 80%; transform: translateX(-50%);">0</span>
-                                <span id="z6v" style="position: absolute; left: 100%; transform: translateX(-50%);">0</span>
-                            </div>
-                            <div style="font-size:10px; color:#666; margin-top:15px; font-style:italic;" id="hrMethod">Method: Max HR</div>
                         </div>
                     </div>
 
@@ -672,8 +696,11 @@
             <div class="section-head">E. Strategy</div>
             <div class="print-stat-grid" id="pdStats"></div>
             <div id="pdRx"></div> 
+            
             <div id="pdProtein"></div> 
+            
             <div id="pdRxContainer"></div> 
+            
             <div class="clinical-plan-grid" id="print-plan-grid">
                 <div id="pdMile"></div>
                 <div class="rec-box"><strong>Recommendations:</strong><div id="pdRecs"></div></div>
@@ -692,7 +719,7 @@
         <div class="page-break"></div>
         <div class="report-header"><div class="report-title"><p>Clinical Notes</p></div></div>
         <div class="remarks-box" id="pdNotes"></div>
-        <div class="report-footer"><span>AraShift System v11.0</span><span>Page 2 of 2</span></div>
+        <div class="report-footer"><span>AraShift System v11.1</span></div>
     </div>
 
     <script>
@@ -1004,7 +1031,7 @@
             document.getElementById('pdTDEE').innerText = Math.round(tdee) + " kcal";
             document.getElementById('pdBal').innerText = (bal>0?"+":"")+bal + " kcal";
             
-            // HR CALC
+            // HR CALC (v10.4 Fix)
             let age = parseFloat(document.getElementById('age').value) || 30;
             let rhr = parseFloat(document.getElementById('rhr').value);
             let maxHR = 220 - age;
@@ -1074,19 +1101,27 @@
                 document.getElementById('print-obesity-content').classList.remove('print-hidden');
                 document.getElementById('print-diabetes-content').classList.add('print-hidden');
                 
-                // --- CLEAN PRINT LOGIC (v10.8) ---
+                // --- CLEAN PRINT LOGIC (v10.6 DOM CLEANING) ---
                 let clone = document.getElementById('exPlanner').cloneNode(true);
+                
+                // 1. Remove Inputs, Pills, Buttons using remove()
                 let toRemove = clone.querySelectorAll('.add-row, .day-pills-container, .clear-btn, .del-btn');
                 toRemove.forEach(el => el.remove());
                 
-                // Remove the "Delete" column via CSS nth-child in the head, no JS manipulation needed for columns here
-                
+                // 2. Clean Table Columns (remove delete button column)
+                let ths = clone.querySelectorAll('th');
+                if(ths.length > 0) ths[ths.length-1].remove(); 
+                let trs = clone.querySelectorAll('tbody tr');
+                trs.forEach(tr => {
+                    let tds = tr.querySelectorAll('td');
+                    if(tds.length > 0) tds[tds.length-1].remove();
+                });
+
                 document.getElementById('pdRxContainer').innerHTML = clone.innerHTML;
                 
-                // PROTEIN BOX CLONE
+                // --- PROTEIN BOX CLONE (Now wraps in .unbreakable-box) ---
                 let pClone = document.getElementById('proteinBox').cloneNode(true);
-                // Hide input row via class, no need to strip HTML string
-                // The print CSS handles hiding .food-calc-row
+                // Hide input via class (CSS handles .food-calc-row: none)
                 document.getElementById('pdProtein').innerHTML = pClone.innerHTML;
             }
             document.getElementById('bioGrid').innerHTML = bioHTML;
@@ -1146,7 +1181,7 @@
             let tc = 0, tp = 0;
             foodPlan.forEach((f,i) => {
                 tc += f.c; tp += f.p;
-                fl.innerHTML += `<div class="food-item"><span>${f.name} x${f.qty}</span><span>${f.c}kcal / ${f.p}g P</span> <span style="color:red;cursor:pointer;" onclick="foodPlan.splice(${i},1);renderFood()">×</span></div>`;
+                fl.innerHTML += `<div class="food-item"><span>${f.name} x${f.qty}</span><span>${f.c}kcal / ${f.p}g P</span> <span style="color:red;cursor:pointer;" class="del-btn" onclick="foodPlan.splice(${i},1);renderFood()">×</span></div>`;
             });
             document.getElementById('planProt').innerText = tp;
             document.getElementById('planCal').innerText = tc;
