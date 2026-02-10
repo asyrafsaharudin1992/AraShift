@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v32.0 (Clinical Calorie Update)</title>
+    <title>AraShift System v34.0 (Omron Body Age)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -129,7 +129,7 @@
 
         #clinical-report { display: none; }
         
-        /* ---------------- PRINT CSS - PERFECT LAYOUT (v27.0) ---------------- */
+        /* ---------------- PRINT CSS ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 90%; }
@@ -179,7 +179,7 @@
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v32.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v34.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -224,7 +224,7 @@
                         <div class="meta-card"><div class="meta-val" id="sBMR">0</div><div class="meta-label">BMR</div><div class="meta-desc">kcal</div></div>
                         <div class="meta-card"><div class="meta-val" id="sTDEE">0</div><div class="meta-label">TDEE</div><div class="meta-desc">kcal</div></div>
                         <div class="meta-card" id="sBalCard"><div class="meta-val" id="sBal">0</div><div class="meta-label">Balance</div><div class="meta-desc">Net</div></div>
-                        <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Metabolic Age</div><div class="meta-desc">Years</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Body Age</div><div class="meta-desc">Years</div></div>
                     </div>
                 </div>
 
@@ -243,7 +243,7 @@
                                 <button class="btn btn-p" onclick="addFood()">Add</button>
                             </div>
                             <table class="plan-table">
-                                <thead><tr><th style="width:5%">No</th><th style="width:50%">Protein</th><th style="width:20%">meal size x number of meal</th><th style="width:25%">Protein amount (gram)</th><th></th></tr></thead>
+                                <thead><tr><th style="width:5%">No</th><th style="width:50%">Protein</th><th style="width:20%">Size x Qty</th><th style="width:25%">Protein (g)</th><th></th></tr></thead>
                                 <tbody id="foodTableBody"></tbody>
                                 <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalProtVal">0g</td><td></td></tr></tfoot>
                             </table>
@@ -303,6 +303,26 @@
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let plan = [], foodPlan = [];
 
+        // OMRON BODY AGE REFERENCE DATA
+        const omronRef = {
+            ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75],
+            maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 21.5],
+            femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 20.7]
+        };
+
+        function interpolate(x, xArr, yArr) {
+            if (x >= xArr[0]) return yArr[0]; 
+            if (x <= xArr[xArr.length - 1]) return yArr[yArr.length - 1];
+            for (let i = 0; i < xArr.length - 1; i++) {
+                if (x <= xArr[i] && x >= xArr[i + 1]) {
+                    const x0 = xArr[i], x1 = xArr[i + 1];
+                    const y0 = yArr[i], y1 = yArr[i + 1];
+                    return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+                }
+            }
+            return yArr[yArr.length - 1];
+        }
+
         function init() {
             let pSel = document.getElementById('foodType'); pSel.innerHTML = "";
             let cats = [...new Set(proteinDB.map(i=>i.cat))];
@@ -339,26 +359,31 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. Metabolic (Mifflin/Katch)
+            // 2. Metabolic (BMR Calculation: Harris-Benedict / Katch)
+            // Use Harris-Benedict (Original) for the base unless lean/muscular logic
             let bf = parseFloat(document.getElementById('fat').value) || 0;
             let bmr = 0;
-            // Mifflin-St Jeor
-            let bmrMifflin = (10 * w) + (6.25 * h) - (5 * age) + (gender === 'male' ? 5 : -161);
+            if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
+            else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
             
-            if(bf > 0) {
+            // Refine BMR using Katch-McArdle if Body Fat is known (Better accuracy for age calc)
+            if (bf > 0) {
                 let lbm = w * (1 - (bf/100));
-                bmr = 370 + (21.6 * lbm); 
-            } else {
-                bmr = bmrMifflin;
+                bmr = 370 + (21.6 * lbm);
             }
             bmr = Math.round(bmr);
             
-            // Metabolic Age (Reverse Mifflin)
-            let s_const = (gender === 'male' ? 5 : -161);
+            // --- OMRON BODY AGE LOGIC ---
+            // Calculate Base Metabolism (kcal/kg)
             let metAge = age; 
-            if(w > 0 && bmr > 0) {
-                 metAge = Math.round( ((10 * w) + (6.25 * h) + s_const - bmr) / 5 );
-                 if(metAge < 12) metAge = 12; if(metAge > 90) metAge = 90;
+            if (w > 0 && bmr > 0) {
+                let userBaseValue = bmr / w;
+                let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
+                let calculatedAge = interpolate(userBaseValue, refBase, omronRef.ageMidpoints);
+                metAge = Math.round(calculatedAge);
+                // Clamp
+                if (metAge < 18) metAge = 18;
+                if (metAge > 80) metAge = 80;
             }
             document.getElementById('sMetAge').innerText = metAge;
 
