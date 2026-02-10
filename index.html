@@ -373,19 +373,30 @@
             }
             bmr = Math.round(bmr);
             
-            // --- OMRON BODY AGE LOGIC ---
-            // Calculate Base Metabolism (kcal/kg)
-            let metAge = age; 
-            if (w > 0 && bmr > 0) {
-                let userBaseValue = bmr / w;
-                let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
-                let calculatedAge = interpolate(userBaseValue, refBase, omronRef.ageMidpoints);
-                metAge = Math.round(calculatedAge);
-                // Clamp
-                if (metAge < 18) metAge = 18;
-                if (metAge > 80) metAge = 80;
-            }
-            document.getElementById('sMetAge').innerText = metAge;
+          // --- OMRON BODY AGE LOGIC (LBM-based) ---
+let metAge = age;
+
+if (w > 0 && bmr > 0) {
+    let bfPct = parseFloat(document.getElementById('fat').value) || 0;
+
+    // Lean Body Mass (kg)
+    let lbm = bfPct > 0 ? (w * (1 - bfPct / 100)) : w * 0.75; 
+    // fallback ~75% LBM if fat% missing (Omron-like behaviour)
+
+    // Base Metabolism per kg LBM
+    let userBaseValue = bmr / lbm;
+
+    let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
+    let calculatedAge = interpolate(userBaseValue, refBase, omronRef.ageMidpoints);
+
+    metAge = Math.round(calculatedAge);
+
+    // Clamp to Omron display limits
+    if (metAge < 18) metAge = 18;
+    if (metAge > 80) metAge = 80;
+}
+
+document.getElementById('sMetAge').innerText = metAge;
 
             let tdee = Math.round(bmr * act);
             let intake = 0;
@@ -530,3 +541,4 @@
     </script>
 </body>
 </html>
+
