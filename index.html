@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v40.0 (Harvard + Omron)</title>
+    <title>AraShift System v42.0 (Restored Master)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -13,7 +13,6 @@
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
             --c-norm: #34C759; --c-over: #FBBF24; --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
-            --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
@@ -58,7 +57,7 @@
         #card-recs { grid-area: areaH; }
         #card-remarks { grid-area: areaI; }
 
-        /* INPUTS */
+        /* INPUTS & INFO ICONS */
         .input-grid-profile { display: grid; grid-template-columns: 0.5fr 2fr 0.5fr 1fr 1.5fr; gap: 10px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
@@ -69,6 +68,16 @@
         input, select, textarea { width: 100%; padding: 8px 10px; border: 1px solid #D1D1D6; border-radius: 8px; font-size: 13px; font-weight: 500; background: #fff; box-sizing: border-box; }
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
         .small-input input { width: 60px; text-align: center; }
+
+        /* INFO ICON STYLING */
+        .info-icon {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 14px; height: 14px; border-radius: 50%;
+            background-color: #E5E5EA; color: var(--primary);
+            font-size: 10px; font-weight: bold; font-style: normal;
+            margin-left: 5px; cursor: pointer; transition: 0.2s;
+        }
+        .info-icon:hover { background-color: var(--primary); color: white; }
 
         /* TOGGLES */
         .ios-list { display: flex; flex-direction: column; }
@@ -84,7 +93,7 @@
         .metabolic-screen-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
         .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 12px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .meta-val { font-size: 28px; font-weight: 800; color: #1D1D1F; order: 1; line-height: 1.1; margin-bottom: 4px; }
-        .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; order: 2; }
+        .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; order: 2; display: flex; align-items: center; justify-content: center; }
         .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; order: 3; margin-top: 2px; }
         .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
         .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
@@ -104,11 +113,9 @@
         .protein-box, .planner-box { background: #F2F8FF; border: 1px solid #D6E4FF; border-radius: 12px; padding: 15px; margin-bottom: 20px; }
         .protein-box { background: #fff; border: 1px solid #ddd; }
         .box-head { font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px; }
-        
         .add-row, .food-calc-row { display: grid; gap: 10px; align-items: end; margin-bottom: 10px; }
         .add-row { grid-template-columns: 1.5fr 2fr 1fr 0.8fr; }
         .food-calc-row { grid-template-columns: 2fr 1fr 0.8fr; }
-
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
         .plan-table td { padding: 10px; border-bottom: 1px solid #eee; }
@@ -121,15 +128,23 @@
         .milestone-table td { padding: 10px; font-size: 13px; border-bottom: 1px solid #eee; }
         .rec-container { background: #FFF7ED; padding: 15px; border-radius: 12px; border: 1px solid #FED7AA; border-left: 5px solid #F97316; }
 
+        /* INFO MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .modal-header h3 { margin: 0; color: var(--primary); }
+        .close-btn { font-size: 24px; cursor: pointer; color: #999; }
+        .modal-body p { font-size: 14px; line-height: 1.5; color: #444; margin-bottom: 10px; }
+        .modal-body strong { color: #222; }
+
         /* ACTION BAR */
         .action-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; gap: 10px; border: 1px solid #ccc; z-index: 9999; }
         .btn { border: none; padding: 10px 20px; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 14px; }
         .btn-p { background: var(--primary); color: white; }
         .btn-s { background: transparent; border: 1px solid var(--border); }
 
-        #clinical-report { display: none; }
-        
-        /* ---------------- PRINT CSS ---------------- */
+        /* ---------------- PRINT CSS - PERFECT LAYOUT (v27.0) ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 90%; }
@@ -155,8 +170,8 @@
             #card-profile .form-group { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; margin-bottom: 5px; }
             #card-profile label { width: 50%; } #card-profile input, #card-profile select { width: 50%; text-align: right; }
 
-            /* CLEAN UP */
-            .action-bar, .logout, .nav-tabs, .help-icon, .add-row, .food-calc-row, .del-btn, .version-tag, .day-pills-container { display: none !important; }
+            /* CLEAN UP (Hide Info Icons!) */
+            .action-bar, .logout, .nav-tabs, .help-icon, .add-row, .food-calc-row, .del-btn, .version-tag, .day-pills-container, .info-icon, .modal-overlay { display: none !important; }
             
             /* TABLE STYLING */
             .plan-table { border: 1px solid #ccc; font-size: 10pt; }
@@ -178,8 +193,18 @@
 </head>
 <body>
 
+    <div id="infoModal" class="modal-overlay" onclick="closeInfo()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="infoTitle">Info</h3>
+                <span class="close-btn" onclick="closeInfo()">&times;</span>
+            </div>
+            <div class="modal-body" id="infoBody"></div>
+        </div>
+    </div>
+
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v40.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v42.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -191,8 +216,17 @@
 
                 <div class="card" id="card-bio">
                     <h3>B. Biochemistry</h3>
-                    <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
-                    <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
+                    <div class="input-grid-4">
+                        <div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div>
+                        <div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div>
+                        <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist"></div>
+                        <div class="form-group"><label>BMI <i class="info-icon" onclick="showInfo('bmi')">i</i></label><input type="number" id="bmi" readonly></div>
+                    </div>
+                    <div class="input-grid-3">
+                        <div class="form-group"><label>V.Fat <i class="info-icon" onclick="showInfo('vfat')">i</i></label><input type="number" id="vfat"></div>
+                        <div class="form-group"><label>Fat % <i class="info-icon" onclick="showInfo('fat')">i</i></label><input type="number" id="fat"></div>
+                        <div class="form-group"><label>Muscle % <i class="info-icon" onclick="showInfo('muscle')">i</i></label><input type="number" id="muscle"></div>
+                    </div>
                 </div>
 
                 <div class="card" id="card-diet">
@@ -221,10 +255,10 @@
                     <h3>E. Metabolic Balance</h3>
                     <div class="metabolic-screen-row">
                         <div class="meta-card"><div class="meta-val" id="sIntake">0</div><div class="meta-label">Est. Intake</div><div class="meta-desc">kcal/day</div></div>
-                        <div class="meta-card"><div class="meta-val" id="sBMR">0</div><div class="meta-label">BMR</div><div class="meta-desc">kcal</div></div>
-                        <div class="meta-card"><div class="meta-val" id="sTDEE">0</div><div class="meta-label">TDEE</div><div class="meta-desc">kcal</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sBMR">0</div><div class="meta-label">BMR <i class="info-icon" onclick="showInfo('bmr')">i</i></div><div class="meta-desc">kcal</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sTDEE">0</div><div class="meta-label">TDEE <i class="info-icon" onclick="showInfo('tdee')">i</i></div><div class="meta-desc">kcal</div></div>
                         <div class="meta-card" id="sBalCard"><div class="meta-val" id="sBal">0</div><div class="meta-label">Balance</div><div class="meta-desc">Net</div></div>
-                        <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Body Age</div><div class="meta-desc">Years</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Body Age <i class="info-icon" onclick="showInfo('age')">i</i></div><div class="meta-desc">Years</div></div>
                     </div>
                 </div>
 
@@ -282,6 +316,73 @@
     <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button></div>
 
     <script>
+        // --- INFO DATA (DEFINITIONS) ---
+        const infoData = {
+            'bmi': {
+                title: "Body Mass Index (BMI)",
+                content: `<p><strong>Definition:</strong> A screening tool used to identify weight categories that may lead to health problems.</p>
+                          <p><strong>Formula:</strong> Weight (kg) / Height (m)²</p>
+                          <p><strong>Classification (CPG 2023):</strong><br>
+                          • Normal: 18.5 - 22.9<br>
+                          • Overweight: 23.0 - 27.4<br>
+                          • Obese: ≥ 27.5</p>`
+            },
+            'vfat': {
+                title: "Visceral Fat Level",
+                content: `<p><strong>Definition:</strong> Fat located deep in the abdominal area, surrounding organs like the liver and pancreas.</p>
+                          <p><strong>Risks:</strong> High levels correlate with T2DM, Hypertension, and MAFLD.</p>
+                          <p><strong>Target Range:</strong><br>
+                          • Normal: 1 - 9<br>
+                          • High: 10 - 14<br>
+                          • Very High: ≥ 15</p>`
+            },
+            'fat': {
+                title: "Body Fat Percentage",
+                content: `<p><strong>Definition:</strong> The total mass of fat divided by total body mass.</p>
+                          <p><strong>Measurement:</strong> Bioelectrical Impedance (Standard).</p>
+                          <p><strong>Classification (Obesity):</strong><br>
+                          • Male: > 25%<br>
+                          • Female: > 35%</p>`
+            },
+            'muscle': {
+                title: "Skeletal Muscle Percentage",
+                content: `<p><strong>Definition:</strong> The muscle mass attached to bones that allows movement. Key for metabolism.</p>
+                          <p><strong>Significance:</strong> Higher muscle mass increases BMR and reduces metabolic age.</p>
+                          <p><strong>Normal Range (Approx):</strong><br>
+                          • Male: 33 - 39%<br>
+                          • Female: 24 - 30%</p>`
+            },
+            'bmr': {
+                title: "Basal Metabolic Rate (BMR)",
+                content: `<p><strong>Definition:</strong> The minimum energy (calories) required to keep your body functioning at rest.</p>
+                          <p><strong>Method:</strong> Harris-Benedict (Original) Equation.</p>
+                          <p><strong>Note:</strong> Used as the baseline for calculating Body Age and Calorie Needs.</p>`
+            },
+            'tdee': {
+                title: "Total Daily Energy Expenditure",
+                content: `<p><strong>Definition:</strong> The total calories you burn in a day, including activity.</p>
+                          <p><strong>Formula:</strong> BMR × Activity Factor.</p>
+                          <p><strong>Use:</strong> To lose weight, you must eat less than this number (Calorie Deficit).</p>`
+            },
+            'age': {
+                title: "Body Age (Metabolic Age)",
+                content: `<p><strong>Definition:</strong> An indicator of your body's functional age based on your metabolic rate and body composition.</p>
+                          <p><strong>Method:</strong> Omron Algorithm (BMR/Weight Ratio + Extrapolation).</p>
+                          <p><strong>Goal:</strong> Aim for a Body Age lower than your actual age by increasing muscle and reducing fat.</p>`
+            }
+        };
+
+        function showInfo(key) {
+            if(infoData[key]) {
+                document.getElementById('infoTitle').innerText = infoData[key].title;
+                document.getElementById('infoBody').innerHTML = infoData[key].content;
+                document.getElementById('infoModal').style.display = 'flex';
+            }
+        }
+        function closeInfo() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
         // --- DATABASES ---
         const proteinDB = [
             {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, p:8}, {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, p:8}, {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, p:17}, {cat:"Dairy", name:"Cottage Cheese (1/2 cup)", cal:110, p:14}, {cat:"Dairy", name:"Cheddar Cheese (1oz)", cal:115, p:7}, {cat:"Dairy", name:"Egg Large (1)", cal:75, p:6},
@@ -292,7 +393,7 @@
         ];
 
         // HARVARD HEALTH DATABASE (Converted to ~kcal/kg/hr factor)
-        [cite_start]// Derived from 155lb (70.5kg) 30-min values in PDF [cite: 122, 125, 126, 127, 128, 129, 130, 131, 132, 133]
+        // Derived from 155lb (70.5kg) 30-min values in PDF
         const moves = {
             'gym': [ 
                 {name:"Weight Lifting: General", factor:3.17}, {name:"Weight Lifting: Vigorous", factor:6.32},
@@ -387,7 +488,7 @@
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let plan = [], foodPlan = [];
 
-        // OMRON REFERENCE DATA
+        // OMRON REFERENCE DATA (CALIBRATED V39)
         const omronRef = {
             ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75],
             // EXTENDED THE TAIL TO 19.925 / 20.88 TO ALLOW AGES >60
@@ -396,7 +497,9 @@
         };
 
         function interpolate(x, xArr, yArr) {
+            // Extrapolation enabled (removed lower clamp)
             if (x >= xArr[0]) return yArr[0]; 
+            
             for (let i = 0; i < xArr.length - 1; i++) {
                 if (x <= xArr[i] && x >= xArr[i + 1]) {
                     const x0 = xArr[i], x1 = xArr[i + 1];
@@ -404,6 +507,7 @@
                     return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
                 }
             }
+            // Extrapolate past end
             const last = xArr.length - 1;
             const x0 = xArr[last-1], x1 = xArr[last];
             const y0 = yArr[last-1], y1 = yArr[last];
@@ -442,11 +546,11 @@
             let gender = document.getElementById('gender').value;
             let act = parseFloat(document.getElementById('activity').value);
             
-            // 1. BMI Calculation
+            // 1. BMI Calculation (Standard: kg/m^2)
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. Metabolic (Strictly Harris-Benedict Original for Omron Compat)
+            // 2. Metabolic (Strict Harris-Benedict Original for Omron Compat)
             let bmr = 0;
             if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
             else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
