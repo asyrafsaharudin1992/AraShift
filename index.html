@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v39.0 (Omron HBF-702T Calibrated)</title>
+    <title>AraShift System v40.0 (Harvard + Omron)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -129,7 +129,7 @@
 
         #clinical-report { display: none; }
         
-        /* ---------------- PRINT CSS - PERFECT LAYOUT (v27.0) ---------------- */
+        /* ---------------- PRINT CSS ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 90%; }
@@ -179,7 +179,7 @@
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v39.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v40.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -252,7 +252,7 @@
                         <div class="planner-box">
                             <div class="box-head">Exercise Planner</div>
                             <div class="add-row">
-                                <select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option><option value="outdoor">Outdoor</option><option value="home">Home</option><option value="repair">Repair</option><option value="occupational">Work</option></select>
+                                <select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option><option value="outdoor">Outdoor</option><option value="home">Home & Daily</option><option value="repair">Home Repair</option><option value="occupational">Work/Job</option></select>
                                 <select id="exMove"></select>
                                 <input type="number" id="exDur" placeholder="Min" value="30">
                                 <button class="btn btn-p" onclick="addExercise()">+</button>
@@ -291,32 +291,112 @@
             {cat:"Supp", name:"Whey Protein (1 scoop)", cal:120, p:24}, {cat:"Supp", name:"Casein Protein (1 scoop)", cal:120, p:24}
         ];
 
+        // HARVARD HEALTH DATABASE (Converted to ~kcal/kg/hr factor)
+        [cite_start]// Derived from 155lb (70.5kg) 30-min values in PDF [cite: 122, 125, 126, 127, 128, 129, 130, 131, 132, 133]
         const moves = {
-            'gym': [ {name:"Weight Lifting: General", factor:3}, {name:"Weight Lifting: Vigorous", factor:6}, {name:"Aerobics: Water", factor:4}, {name:"Aerobics: Low Impact", factor:5}, {name:"Aerobics: High Impact", factor:7}, {name:"Aerobics: Step", factor:8.5}, {name:"Calisthenics: Moderate", factor:4.5}, {name:"Calisthenics: Vigorous", factor:8}, {name:"Circuit Training", factor:8}, {name:"Rowing: Moderate", factor:7}, {name:"Rowing: Vigorous", factor:8.5}, {name:"Elliptical Trainer", factor:5}, {name:"Ski Machine", factor:9.5}, {name:"Cycling: Stationary (Mod)", factor:7}, {name:"Cycling: Stationary (Vig)", factor:10.5} ],
-            'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball: Game", factor:8}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming: Leisure", factor:6}, {name:"Swimming: Laps", factor:10}, {name:"Golf: Walking", factor:4.5} ],
-            'outdoor': [ {name:"Walking: 3.5 mph (Brisk)", factor:3.8}, {name:"Walking: 4.0 mph (Very Brisk)", factor:5}, {name:"Running: 5 mph", factor:8}, {name:"Running: 6 mph", factor:10}, {name:"Cycling: <10 mph", factor:4}, {name:"Cycling: 12-14 mph", factor:8}, {name:"Gardening", factor:4} ],
-            'home': [ {name:"Cleaning", factor:3}, {name:"Cooking", factor:2}, {name:"Child Care", factor:3.5}, {name:"Moving Furniture", factor:6} ],
-            'repair': [ {name:"Auto Repair", factor:3}, {name:"Painting", factor:4.5}, {name:"Carpentry", factor:3.5} ],
-            'occupational': [ {name:"Desk Work", factor:1.5}, {name:"Standing Work", factor:2}, {name:"Heavy Lifting", factor:8}, {name:"Farming", factor:8} ]
+            'gym': [ 
+                {name:"Weight Lifting: General", factor:3.17}, {name:"Weight Lifting: Vigorous", factor:6.32},
+                {name:"Aerobics: Water", factor:4.22}, {name:"Aerobics: Low Impact", factor:5.81},
+                {name:"Aerobics: High Impact", factor:7.37}, {name:"Aerobics: Step (Low)", factor:7.37},
+                {name:"Aerobics: Step (High)", factor:10.55}, {name:"Calisthenics: Moderate", factor:4.73},
+                {name:"Calisthenics: Vigorous", factor:8.45}, {name:"Circuit Training", factor:8.45},
+                {name:"Rowing Station: Moderate", factor:7.37}, {name:"Rowing Station: Vigorous", factor:8.96},
+                {name:"Elliptical Trainer", factor:9.50}, {name:"Ski Machine", factor:10.0},
+                {name:"Bicycling Station: Moderate", factor:7.37}, {name:"Bicycling Station: Vigorous", factor:11.09},
+                {name:"Stretching / Hatha Yoga", factor:4.22}, {name:"Riders: General", factor:5.27},
+                {name:"Stair Step Machine", factor:6.32}, {name:"Teaching Aerobics", factor:6.32}
+            ],
+            'sport': [
+                {name:"Billiards", factor:2.63}, {name:"Bowling", factor:3.17},
+                {name:"Curling", factor:4.22}, {name:"Gymnastics", factor:4.22},
+                {name:"Volleyball: Non-Competitive", factor:3.17}, {name:"Volleyball: Competitive/Gym", factor:4.22},
+                {name:"Volleyball: Beach", factor:8.45}, {name:"Badminton", factor:4.73},
+                {name:"Tai Chi", factor:4.22}, {name:"Horseback Riding", factor:4.22},
+                {name:"Archery", factor:3.68}, {name:"Golf: Cart", factor:3.68},
+                {name:"Golf: Carrying Clubs", factor:5.81}, {name:"Basketball: Game", factor:8.45},
+                {name:"Basketball: Wheelchair", factor:6.86}, {name:"Soccer", factor:7.37},
+                {name:"Tennis", factor:7.37}, {name:"Football: Competitive", factor:9.50},
+                {name:"Football: Touch/Flag", factor:8.45}, {name:"Hockey (Field/Ice)", factor:8.45},
+                {name:"Rugby/Wrestling", factor:6.32}, {name:"Martial Arts (Judo/Karate)", factor:10.55},
+                {name:"Boxing: Sparring", factor:9.50}, {name:"Handball", factor:12.65},
+                {name:"Racquetball: Competitive", factor:10.55}, {name:"Racquetball: Casual", factor:7.37},
+                {name:"Squash", factor:12.65}, {name:"Swimming: General", factor:6.32},
+                {name:"Swimming: Laps/Vigorous", factor:10.55}, {name:"Swimming: Backstroke", factor:8.45},
+                {name:"Swimming: Breaststroke", factor:10.55}, {name:"Swimming: Butterfly/Crawl", factor:11.6},
+                {name:"Water Polo", factor:10.55}, {name:"Water Volleyball", factor:3.17},
+                {name:"Scuba Diving", factor:7.37}, {name:"Snorkeling", factor:5.27},
+                {name:"Whitewater Rafting/Kayaking", factor:5.27}, {name:"Kayaking", factor:5.27},
+                {name:"Skateboarding", factor:5.27}, {name:"Rollerblading", factor:7.37},
+                {name:"Ice Skating", factor:7.37}, {name:"Sledding/Toboggan", factor:7.37},
+                {name:"Sky Diving/Hang Gliding", factor:3.68}, {name:"Fencing", factor:6.32},
+                {name:"Rope Jumping", factor:10.55}
+            ],
+            'outdoor': [
+                {name:"Walking: 3.5 mph", factor:4.22}, {name:"Walking: 4.0 mph", factor:4.73},
+                {name:"Walking: 4.5 mph", factor:5.27}, {name:"Race Walking", factor:6.86},
+                {name:"Running: 5 mph (12 min/mi)", factor:8.45}, {name:"Running: 5.2 mph (11.5 min/mi)", factor:9.50},
+                {name:"Running: 6 mph (10 min/mi)", factor:10.55}, {name:"Running: 6.7 mph (9 min/mi)", factor:11.60},
+                {name:"Running: 7.5 mph (8 min/mi)", factor:13.19}, {name:"Running: 8.6 mph (7 min/mi)", factor:15.29},
+                {name:"Running: 10 mph (6 min/mi)", factor:17.41}, {name:"Running: Cross Country", factor:9.50},
+                {name:"Bicycling: 12-13.9 mph", factor:8.45}, {name:"Bicycling: 14-15.9 mph", factor:10.55},
+                {name:"Bicycling: 16-19 mph", factor:12.65}, {name:"Bicycling: >20 mph", factor:17.41},
+                {name:"Bicycling: BMX/Mountain", factor:8.96}, {name:"Hiking: Cross Country", factor:6.32},
+                {name:"Rock Climbing: Ascending", factor:11.60}, {name:"Rock Climbing: Rappelling", factor:8.45},
+                {name:"Skiing: Downhill", factor:6.32}, {name:"Skiing: Cross Country", factor:8.45},
+                {name:"Snow Shoeing", factor:8.45}, {name:"Gardening: General", factor:4.73},
+                {name:"Gardening: Weeding", factor:4.87}, {name:"Planting Trees", factor:4.73},
+                {name:"Raking Lawn", factor:4.22}, {name:"Sacking Leaves", factor:4.22},
+                {name:"Mowing Lawn: Push Power", factor:4.73}, {name:"Mowing Lawn: Push Hand", factor:5.81},
+                {name:"Chopping Wood", factor:6.32}, {name:"Shoveling Snow", factor:6.32},
+                {name:"Carrying/Stacking Wood", factor:5.27}, {name:"Digging Dirt", factor:5.27},
+                {name:"Laying Sod", factor:5.27}
+            ],
+            'home': [
+                {name:"Sleeping", factor:0.65}, {name:"Watching TV", factor:0.79},
+                {name:"Reading: Sitting", factor:1.19}, {name:"Standing in Line", factor:1.33},
+                {name:"Cooking", factor:2.63}, {name:"Food Shopping (Cart)", factor:3.68},
+                {name:"Child Care: Bathing/Feeding", factor:3.68}, {name:"Playing w/ Kids: Moderate", factor:4.22},
+                {name:"Playing w/ Kids: Vigorous", factor:5.27}, {name:"Child Games (Hopscotch)", factor:5.27},
+                {name:"Heavy Cleaning (Car/Windows)", factor:4.73}, {name:"Moving: Unpacking", factor:3.68},
+                {name:"Moving: Furniture", factor:6.32}, {name:"Moving: Carrying Boxes", factor:7.37},
+                {name:"Dancing: Slow/Waltz", factor:3.17}, {name:"Dancing: Disco/Ballroom", factor:5.81},
+                {name:"Dancing: Fast/Twist", factor:6.32}
+            ],
+            'repair': [
+                {name:"Auto Repair", factor:3.17}, {name:"Wiring/Plumbing", factor:3.17},
+                {name:"Carpentry: Refinish Furniture", factor:4.73}, {name:"Carpentry: General", factor:3.68},
+                {name:"Carpentry: Outside", factor:6.32}, {name:"Lay/Remove Carpet/Tile", factor:4.73},
+                {name:"Paint/Paper: Inside", factor:4.73}, {name:"Paint House: Outside", factor:5.27},
+                {name:"Cleaning Rain Gutters", factor:5.27}, {name:"Hanging Storm Windows", factor:5.27},
+                {name:"Roofing", factor:6.32}, {name:"Masonry", factor:7.37}
+            ],
+            'occupational': [
+                {name:"Computer Work", factor:1.44}, {name:"Light Office Work", factor:1.58},
+                {name:"Sitting in Meetings/Class", factor:1.70}, {name:"Desk Work", factor:1.84},
+                {name:"Truck Driving", factor:2.09}, {name:"Bartending/Server", factor:2.63},
+                {name:"Police Officer", factor:2.63}, {name:"Heavy Equip Operator", factor:2.63},
+                {name:"Theater Work", factor:3.17}, {name:"Welding", factor:3.17},
+                {name:"Carpentry Work", factor:3.68}, {name:"Coaching Sports", factor:4.22},
+                {name:"Masseur (Standing)", factor:4.22}, {name:"Construction: General", factor:5.81},
+                {name:"Coal Mining", factor:6.32}, {name:"Horse Grooming", factor:6.32},
+                {name:"Forestry: General", factor:8.45}, {name:"Steel Mill: General", factor:8.45},
+                {name:"Firefighting", factor:12.65}
+            ]
         };
 
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let plan = [], foodPlan = [];
 
-        // OMRON REFERENCE DATA (CALIBRATED)
-        // Adjusted tail end to be steeper to match Ratio 20.5 -> Age 60
+        // OMRON REFERENCE DATA
         const omronRef = {
             ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75],
-            // Standard male base
-            maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.0],
-            // Calibrated female base: 59.5y = 20.7, 75y = 18.0 (Steeper drop)
-            femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 18.0]
+            // EXTENDED THE TAIL TO 19.925 / 20.88 TO ALLOW AGES >60
+            maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88],
+            femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 19.925]
         };
 
         function interpolate(x, xArr, yArr) {
-            // Extrapolation enabled (removed lower clamp)
             if (x >= xArr[0]) return yArr[0]; 
-            
             for (let i = 0; i < xArr.length - 1; i++) {
                 if (x <= xArr[i] && x >= xArr[i + 1]) {
                     const x0 = xArr[i], x1 = xArr[i + 1];
@@ -324,7 +404,6 @@
                     return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
                 }
             }
-            // Extrapolate past end
             const last = xArr.length - 1;
             const x0 = xArr[last-1], x1 = xArr[last];
             const y0 = yArr[last-1], y1 = yArr[last];
@@ -363,18 +442,17 @@
             let gender = document.getElementById('gender').value;
             let act = parseFloat(document.getElementById('activity').value);
             
-            // 1. BMI
+            // 1. BMI Calculation
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. Metabolic (Strict Harris-Benedict Original)
+            // 2. Metabolic (Strictly Harris-Benedict Original for Omron Compat)
             let bmr = 0;
             if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
             else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
             bmr = Math.round(bmr);
             
             // 3. Omron Body Age (Pure Ratio Interpolation + Extrapolation)
-            // No manual Fat/Muscle adjustments, relying on BMR/Wt ratio alone
             let metAge = age;
             if (w > 0 && bmr > 0) {
                 let userBaseValue = bmr / w;
