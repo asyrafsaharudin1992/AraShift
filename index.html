@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v30.0 (Metabolic Fixed)</title>
+    <title>AraShift System v31.0 (Logic + Print)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -12,7 +12,6 @@
             --primary: #007AFF; --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
-            --c-norm: #34C759; --c-over: #FBBF24; --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
             --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
@@ -132,7 +131,14 @@
         /* ---------------- PRINT CSS - WYSIWYG FIXED ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
-            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 90%; }
+            body { 
+                background: white; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                padding: 0; 
+                width: 100%;
+                zoom: 90%; 
+            }
             .container { max-width: 100% !important; margin: 0 !important; width: 100%; }
             
             /* UI Hiding */
@@ -168,7 +174,7 @@
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v30.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v31.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -213,6 +219,7 @@
                         <div class="meta-card" id="sBalCard"><div class="meta-val" id="sBal">0</div><div class="meta-label">Balance</div><div class="meta-desc">Net</div></div>
                         <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Metabolic Age</div><div class="meta-desc">Years</div></div>
                     </div>
+                    <div style="text-align:center; font-size:10px; color:#999; margin-top:5px;" id="bmrDebug">Method: Standard</div>
                 </div>
 
                 <div class="card" id="card-analysis">
@@ -266,7 +273,7 @@
         </div>
     </div>
 
-    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button></div>
+    <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Screen</button></div>
 
     <script>
         // --- DATABASES ---
@@ -299,6 +306,7 @@
                 pSel.appendChild(grp);
             });
             updateMoves();
+            
             const inputs = ['pId','pName','age','gender','height','weight','waist','vfat','fat','muscle','activity','snackFreq','drinkFreq','bfType','bfSize','luType','luSize','dnType','dnSize','risk_mafld','risk_t2dm','risk_htn','risk_dys','risk_osa','risk_meta'];
             inputs.forEach(id => { let el = document.getElementById(id); if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); } });
             runCalc();
@@ -322,50 +330,47 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. Metabolic (BMR Formula: Katch-McArdle or Mifflin)
-            // Smart Estimation if BF% missing
-            let inputBF = parseFloat(document.getElementById('fat').value);
-            let calcBF = inputBF;
-            
-            // If user did NOT enter Fat%, estimate it (Deurenberg)
-            if (!calcBF || calcBF <= 0) {
-                let sexF = (gender === 'male' ? 1 : 0);
-                // Deurenberg: (1.2 * BMI) + (0.23 * Age) - (10.8 * sex) - 5.4
-                if(bmiVal > 0) calcBF = (1.2 * bmiVal) + (0.23 * age) - (10.8 * sexF) - 5.4;
-                else calcBF = 0;
-            }
-            
-            // Calculate LBM based on the BF (either manual or estimated)
-            let lbm = 0;
-            if(w > 0 && calcBF > 0) {
-                lbm = w * (1 - (calcBF / 100));
-            }
-
-            // Calculate True BMR (Katch-McArdle) if LBM exists
+            // 2. METABOLIC LOGIC (The Specific Request)
+            let bf = parseFloat(document.getElementById('fat').value) || 0;
             let bmr = 0;
-            if (lbm > 0) {
+            let method = "Standard (Mifflin-St Jeor)";
+            
+            // Criteria for "Very Lean/Muscular" switch
+            // Male < 15% Fat OR Female < 25% Fat
+            let isLean = (gender === 'male' && bf > 0 && bf < 15) || (gender === 'female' && bf > 0 && bf < 25);
+
+            if (isLean) {
+                // Use Katch-McArdle
+                let lbm = w * (1 - (bf/100));
                 bmr = 370 + (21.6 * lbm);
+                method = "Athletic (Katch-McArdle)";
             } else {
-                // Fallback to Mifflin if really no data
+                // Use Mifflin-St Jeor (Default)
+                // Men: 10W + 6.25H - 5A + 5
+                // Women: 10W + 6.25H - 5A - 161
                 let s = (gender === 'male' ? 5 : -161);
                 bmr = (10 * w) + (6.25 * h) - (5 * age) + s;
             }
             bmr = Math.round(bmr);
             document.getElementById('sBMR').innerText = bmr;
-            
-            // Metabolic Age (Reverse Mifflin)
-            // "At what age would a standard person (Mifflin) have this Katch-McArdle BMR?"
+            document.getElementById('bmrDebug').innerText = "Method: " + method;
+
+            // Metabolic Age (Reverse Engineer based on selected BMR)
+            // We find Age X where Mifflin(X) = CalculatedBMR
+            // Mifflin: BMR = (10W + 6.25H + S) - 5*Age
+            // 5*Age = (10W + 6.25H + S) - BMR
+            // Age = ((10W + 6.25H + S) - BMR) / 5
             let metAge = age;
             if (w > 0 && bmr > 0) {
-                 let s_const = (gender === 'male' ? 5 : -161);
-                 // Mifflin: BMR = 10W + 6.25H - 5A + S
-                 // 5A = 10W + 6.25H + S - BMR
-                 // A = (10W + 6.25H + S - BMR) / 5
-                 metAge = Math.round( ((10 * w) + (6.25 * h) + s_const - bmr) / 5 );
+                 let s_val = (gender === 'male' ? 5 : -161);
+                 let constant = (10 * w) + (6.25 * h) + s_val;
+                 metAge = Math.round((constant - bmr) / 5);
                  
-                 // Clamp reasonable limits
-                 if(metAge < 12) metAge = 12;
-                 if(metAge > 90) metAge = 90;
+                 // Logic Check: If you are athletic (Katch BMR > Mifflin BMR), (Constant - HighBMR) becomes smaller -> Age drops. Correct.
+                 // If you are obese (High Fat), we stick to Mifflin, so MetAge = Age (unless BMR is suppressed, which this simple model doesn't account for, but Katch would show lower BMR -> Higher age).
+                 
+                 if(metAge < 12) metAge = 12; // Biological floor
+                 if(metAge > 90) metAge = 90; // Biological ceiling
             }
             document.getElementById('sMetAge').innerText = metAge;
 
