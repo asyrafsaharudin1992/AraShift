@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v38.0 (Omron Logic)</title>
+    <title>AraShift System v38.0 (Omron Calibrated)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -303,6 +303,33 @@
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let plan = [], foodPlan = [];
 
+        // OMRON REFERENCE DATA
+        const omronRef = {
+            ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75],
+            // EXTENDED THE TAIL TO 19.925 / 20.88 TO ALLOW AGES >60
+            maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88],
+            femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 19.925]
+        };
+
+        function interpolate(x, xArr, yArr) {
+            // REMOVED LOWER BOUND CLAMP FOR EXTRAPOLATION
+            if (x >= xArr[0]) return yArr[0]; 
+            // if (x <= xArr[xArr.length - 1]) return yArr[yArr.length - 1]; // DISABLED CLAMP
+            
+            for (let i = 0; i < xArr.length - 1; i++) {
+                if (x <= xArr[i] && x >= xArr[i + 1]) {
+                    const x0 = xArr[i], x1 = xArr[i + 1];
+                    const y0 = yArr[i], y1 = yArr[i + 1];
+                    return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+                }
+            }
+            // EXTRAPOLATION FALLBACK
+            const last = xArr.length - 1;
+            const x0 = xArr[last-1], x1 = xArr[last];
+            const y0 = yArr[last-1], y1 = yArr[last];
+            return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+        }
+
         function init() {
             let pSel = document.getElementById('foodType'); pSel.innerHTML = "";
             let cats = [...new Set(proteinDB.map(i=>i.cat))];
@@ -339,39 +366,30 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. METABOLIC AGE LOGIC (OMRON REVERSE)
-            // Step A: "True BMR" via Katch-McArdle (if Fat% exists)
-            let bf = parseFloat(document.getElementById('fat').value) || 0;
+            // 2. Metabolic (Strictly Harris-Benedict Original for Omron Compat)
             let bmr = 0;
-            if(bf > 0) {
-                let lbm = w * (1 - (bf/100));
-                bmr = 370 + (21.6 * lbm);
-            } else {
-                // Fallback if no fat data (Harris-Benedict)
-                if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
-                else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
-            }
+            if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
+            else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
             bmr = Math.round(bmr);
-            document.getElementById('sBMR').innerText = bmr;
-
-            // Step B: Reverse Mifflin-St Jeor to find Age for that BMR
-            // Formula: 5*Age = (10*w) + (6.25*h) + s - BMR
-            let s_const = (gender === 'male' ? 5 : -161);
-            let metAge = age; 
-            if(w > 0 && bmr > 0) {
-                 metAge = Math.round( ((10 * w) + (6.25 * h) + s_const - bmr) / 5 );
-                 if(metAge < 12) metAge = 12; 
-                 if(metAge > 90) metAge = 90;
+            
+            // 3. Omron Body Age (Pure Ratio Interpolation + Extrapolation enabled)
+            let metAge = age;
+            if (w > 0 && bmr > 0) {
+                let userBaseValue = bmr / w;
+                let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
+                let calculatedAge = interpolate(userBaseValue, refBase, omronRef.ageMidpoints);
+                metAge = Math.round(calculatedAge);
+                if (metAge < 18) metAge = 18; if (metAge > 99) metAge = 99; // Cap at 99
             }
             document.getElementById('sMetAge').innerText = metAge;
 
-            // Rest of Logic
             let tdee = Math.round(bmr * act);
             let intake = 0;
             ['bf','lu','dn'].forEach(m => { intake += calMap[document.getElementById(m+'Type').value][document.getElementById(m+'Size').value]; });
             intake += (parseFloat(document.getElementById('snackFreq').value)||0)*200 + (parseFloat(document.getElementById('drinkFreq').value)||0)*150;
             
             document.getElementById('sIntake').innerText = Math.round(intake);
+            document.getElementById('sBMR').innerText = bmr;
             document.getElementById('sTDEE').innerText = tdee;
             document.getElementById('sBal').innerText = (intake - tdee);
 
