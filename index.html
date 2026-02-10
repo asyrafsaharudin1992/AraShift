@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v34.0 (Omron Body Age)</title>
+    <title>AraShift System v35.0 (Omron Calibrated)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -129,7 +129,7 @@
 
         #clinical-report { display: none; }
         
-        /* ---------------- PRINT CSS ---------------- */
+        /* ---------------- PRINT CSS - PERFECT LAYOUT (v27.0) ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 90%; }
@@ -179,7 +179,7 @@
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v34.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v35.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -303,7 +303,7 @@
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let plan = [], foodPlan = [];
 
-        // OMRON BODY AGE REFERENCE DATA
+        // OMRON BODY AGE DATA
         const omronRef = {
             ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75],
             maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 21.5],
@@ -355,48 +355,26 @@
             let gender = document.getElementById('gender').value;
             let act = parseFloat(document.getElementById('activity').value);
             
-            // 1. BMI Calculation
+            // 1. BMI
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // 2. Metabolic (BMR Calculation: Harris-Benedict / Katch)
-            // Use Harris-Benedict (Original) for the base unless lean/muscular logic
-            let bf = parseFloat(document.getElementById('fat').value) || 0;
+            // 2. BMR (Harris-Benedict for Omron Compat)
             let bmr = 0;
             if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
             else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
-            
-            // Refine BMR using Katch-McArdle if Body Fat is known (Better accuracy for age calc)
-            if (bf > 0) {
-                let lbm = w * (1 - (bf/100));
-                bmr = 370 + (21.6 * lbm);
-            }
             bmr = Math.round(bmr);
             
-          // --- OMRON BODY AGE LOGIC (LBM-based) ---
-let metAge = age;
-
-if (w > 0 && bmr > 0) {
-    let bfPct = parseFloat(document.getElementById('fat').value) || 0;
-
-    // Lean Body Mass (kg)
-    let lbm = bfPct > 0 ? (w * (1 - bfPct / 100)) : w * 0.75; 
-    // fallback ~75% LBM if fat% missing (Omron-like behaviour)
-
-    // Base Metabolism per kg LBM
-    let userBaseValue = bmr / lbm;
-
-    let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
-    let calculatedAge = interpolate(userBaseValue, refBase, omronRef.ageMidpoints);
-
-    metAge = Math.round(calculatedAge);
-
-    // Clamp to Omron display limits
-    if (metAge < 18) metAge = 18;
-    if (metAge > 80) metAge = 80;
-}
-
-document.getElementById('sMetAge').innerText = metAge;
+            // Body Age (Omron Logic)
+            let metAge = age;
+            if (w > 0 && bmr > 0) {
+                let userBaseValue = bmr / w;
+                let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
+                let calculatedAge = interpolate(userBaseValue, refBase, omronRef.ageMidpoints);
+                metAge = Math.round(calculatedAge);
+                if (metAge < 18) metAge = 18; if (metAge > 80) metAge = 80;
+            }
+            document.getElementById('sMetAge').innerText = metAge;
 
             let tdee = Math.round(bmr * act);
             let intake = 0;
@@ -437,7 +415,7 @@ document.getElementById('sMetAge').innerText = metAge;
 
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // 4. Recommendations (CPG 2023 - Weight Targets + Calorie Strategy)
+            // 4. Recommendations (CPG 2023 - Weight Targets + V32 Calorie Strategy)
             let isMafld = document.getElementById('risk_mafld').checked;
             let isT2dm = document.getElementById('risk_t2dm').checked;
             let isHtn = document.getElementById('risk_htn').checked;
@@ -455,7 +433,7 @@ document.getElementById('sMetAge').innerText = metAge;
             else if (isOsa) { targetPct = 0.07; maxPct = 0.11; reason = "Sleep Apnea Management"; }
             else if (isAsthma) { targetPct = 0.07; maxPct = 0.08; reason = "Asthma Symptom Control"; }
 
-            // Calorie Strategy (Specific Request v32)
+            // Calorie Strategy
             let calStrat = "";
             let defMin = Math.max(1000, tdee - 750);
             let defMax = Math.max(1200, tdee - 500);
@@ -467,6 +445,13 @@ document.getElementById('sMetAge').innerText = metAge;
             }
             calStrat += `<li><b>Option B:</b> Reduce daily energy by 500-750 kcal (${defMin}-${defMax} kcal/day)</li>`;
 
+            // Pharmacotherapy Logic
+            let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
+            let drugRec = "";
+            if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) {
+                drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct to lifestyle.</li>";
+            }
+
             let hHTML = `<div class="rec-container"><h4>${reason}</h4>
             <table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr>
             <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${(w*(1-targetPct)).toFixed(1)} kg</td><td>3 Months</td></tr>
@@ -476,6 +461,7 @@ document.getElementById('sMetAge').innerText = metAge;
                 <ul style="padding-left:20px; margin-top:5px;">
                     ${calStrat}
                     <li>Physical Activity: >150 min/week moderate intensity</li>
+                    ${drugRec}
                 </ul>
             </div></div>`;
             document.getElementById('hContent').innerHTML = hHTML;
@@ -541,4 +527,3 @@ document.getElementById('sMetAge').innerText = metAge;
     </script>
 </body>
 </html>
-
