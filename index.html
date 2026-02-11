@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v45.0 (USDA Data)</title>
+    <title>AraShift System v46.0 (Full PDF Data)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -212,7 +212,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v45.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v46.0</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -350,148 +350,133 @@
         function showInfo(key) { if(infoData[key]) { document.getElementById('infoTitle').innerText = infoData[key].title; document.getElementById('infoBody').innerHTML = infoData[key].content; document.getElementById('infoModal').style.display = 'flex'; } }
         function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
 
-        // --- USDA CALIBRATED PROTEIN DATABASE (v45) ---
-    const proteinDatabase = [
-  [cite_start]// --- Milk/Creamers --- [cite: 3]
-  { category: "Milk/Creamers", name: "Milk, Whole", portion: "1/2 cup", calories: 73, protein: 3.9, carbs: 6.4 },
-  { category: "Milk/Creamers", name: "Milk, 1%", portion: "1/2 cup", calories: 52, protein: 8.5, carbs: 6 },
-  { category: "Milk/Creamers", name: "Milk, 2%", portion: "1/2 cup", calories: 60, protein: 4, carbs: 4 },
-  { category: "Milk/Creamers", name: "Milk, Skim", portion: "1/2 cup", calories: 45, protein: 4, carbs: 4 },
-  { category: "Milk/Creamers", name: "Half and Half", portion: "1 tablespoon", calories: 19, protein: 0.4, carbs: 0.6 },
-  { category: "Milk/Creamers", name: "Half and Half, fat free", portion: "1 tablespoon", calories: 9, protein: 0.4, carbs: 1.3 },
-  { category: "Milk/Creamers", name: "Heavy Whipping Cream", portion: "1 tablespoon", calories: 52, protein: 0.3, carbs: 0.4 },
-  { category: "Milk/Creamers", name: "Coffee Creamer, Powder", portion: "1 tablespoon", calories: 10, protein: 0, carbs: 1 },
-  { category: "Milk/Creamers", name: "Coffee Creamer, liquid", portion: "1 tablespoon", calories: 20, protein: 0, carbs: 2 },
-  { category: "Milk/Creamers", name: "Soymilk, light", portion: "1/2 cup", calories: 30, protein: 3, carbs: 2.5 },
-  { category: "Milk/Creamers", name: "Almond milk", portion: "1/2 cup", calories: 30, protein: 0.5, carbs: 4 },
-
-  [cite_start]// --- Yogurt/Sour Cream --- [cite: 3]
-  { category: "Yogurt/Sour Cream", name: "Greek, 2% low-fat plain", portion: "6 oz", calories: 130, protein: 17, carbs: 7 },
-  { category: "Yogurt/Sour Cream", name: "Greek, nonfat/fat-free", portion: "6 oz", calories: 120, protein: 15, carbs: 13 },
-  { category: "Yogurt/Sour Cream", name: "Yogurt, Plain, low-fat", portion: "1/2 cup", calories: 77, protein: 6.5, carbs: 8.5 },
-  { category: "Yogurt/Sour Cream", name: "Yogurt, Plain, non-fat", portion: "1/2 cup", calories: 68.5, protein: 7, carbs: 9 },
-  { category: "Yogurt/Sour Cream", name: "Yogurt, Plain, whole-fat", portion: "1/2 cup", calories: 75, protein: 4.25, carbs: 5.5 },
-  { category: "Yogurt/Sour Cream", name: "Sour Cream, cultured", portion: "1 tablespoon", calories: 26, protein: 0.4, carbs: 0.5 },
-  { category: "Yogurt/Sour Cream", name: "Sour Cream, fat free", portion: "1 tablespoon", calories: 9, protein: 0.4, carbs: 1.9 },
-  { category: "Yogurt/Sour Cream", name: "Sour Cream, light", portion: "1 tablespoon", calories: 16, protein: 0.4, carbs: 0.9 },
-  { category: "Yogurt/Sour Cream", name: "Yogurt w/fruit, fat free", portion: "1/2 cup", calories: 107.5, protein: 5, carbs: 24 },
-  { category: "Yogurt/Sour Cream", name: "Yogurt w/fruit, low fat", portion: "1/2 cup", calories: 112.5, protein: 5, carbs: 24 },
-  { category: "Yogurt/Sour Cream", name: "Yogurt w/fruit, whole fat", portion: "1/2 cup", calories: 120, protein: 6, carbs: 8 },
-
-  [cite_start]// --- Egg/Egg Substitute --- [cite: 3]
-  { category: "Egg/Egg Substitute", name: "Egg, large", portion: "1 large", calories: 75, protein: 6, carbs: 0.4 },
-  { category: "Egg/Egg Substitute", name: "Egg white", portion: "1 large", calories: 16, protein: 3.6, carbs: 0.2 },
-  { category: "Egg/Egg Substitute", name: "Egg substitute", portion: "1/4 cup", calories: 30, protein: 6, carbs: 1 },
-  { category: "Egg/Egg Substitute", name: "Egg substitute white", portion: "1/4 cup", calories: 25, protein: 5, carbs: 1 },
-
-  [cite_start]// --- Cheese/Butter --- [cite: 3]
-  { category: "Cheese/Butter", name: "American Pasteurized", portion: "1 slice (0.7 oz)", calories: 79, protein: 4.7, carbs: 0.3 },
-  { category: "Cheese/Butter", name: "Blue Cheese, crumbled", portion: "1/4 cup", calories: 119, protein: 7, carbs: 0.8 },
-  { category: "Cheese/Butter", name: "Butter, regular, salted", portion: "1 pat", calories: 36, protein: 0, carbs: 0 },
-  { category: "Cheese/Butter", name: "Butter, regular, unsalted", portion: "1 pat", calories: 36, protein: 0, carbs: 0 },
-  { category: "Cheese/Butter", name: "Cheddar or Colby, low fat", portion: "1 slice (1 oz)", calories: 48, protein: 6.8, carbs: 0.5 },
-  { category: "Cheese/Butter", name: "Cottage Cheese, 2% fat", portion: "1 oz", calories: 26, protein: 4, carbs: 1 },
-  { category: "Cheese/Butter", name: "Cottage Cheese, low fat", portion: "1 oz", calories: 20, protein: 3.5, carbs: 0.8 },
-  { category: "Cheese/Butter", name: "Cream Cheese", portion: "1 tablespoon", calories: 51, protein: 1.1, carbs: 0.4 },
-  { category: "Cheese/Butter", name: "Cream Cheese, fat free", portion: "1 tablespoon", calories: 17, protein: 2.6, carbs: 1 },
-  { category: "Cheese/Butter", name: "Cream Cheese, low fat", portion: "1 tablespoon", calories: 23, protein: 1.1, carbs: 0.7 },
-  { category: "Cheese/Butter", name: "Feta, crumbled", portion: "1/4 cup", calories: 99, protein: 5, carbs: 1.5 },
-  { category: "Cheese/Butter", name: "Cheese, Firm/Hard, fat-free", portion: "1 oz (1 slice)", calories: 31, protein: 4.7, carbs: 2.8 },
-  { category: "Cheese/Butter", name: "Cheese, Firm/Hard, low fat", portion: "1 oz (1 slice)", calories: 48, protein: 6.8, carbs: 0.5 },
-  { category: "Cheese/Butter", name: "Cheese, Firm/Hard, regular", portion: "1 oz (1 slice)", calories: 113, protein: 7, carbs: 0.4 },
-  { category: "Cheese/Butter", name: "Margarine 80% fat, salted", portion: "1 tablespoon", calories: 101, protein: 0, carbs: 0.1 },
-  { category: "Cheese/Butter", name: "Margarine, light soft spread", portion: "1 tablespoon", calories: 40, protein: 0, carbs: 0 },
-  { category: "Cheese/Butter", name: "Parmesan Cheese, grated", portion: "1 tablespoon", calories: 22, protein: 1.9, carbs: 0.2 },
-
-  [cite_start]// --- Nuts/Seeds --- [cite: 3]
-  { category: "Nuts/Seeds", name: "Almonds, dry roasted", portion: "1 oz (24 med)", calories: 170, protein: 6.3, carbs: 5.5 },
-  { category: "Nuts/Seeds", name: "Cashews, dry roasted", portion: "1 oz (18 med)", calories: 163, protein: 4.3, carbs: 9.3 },
-  { category: "Nuts/Seeds", name: "Peanuts, roasted", portion: "1 oz (40 small)", calories: 166, protein: 6.7, carbs: 6.1 },
-  { category: "Nuts/Seeds", name: "Pumpkin seeds, dry roasted", portion: "1 oz", calories: 126, protein: 12, carbs: 15.2 },
-  { category: "Nuts/Seeds", name: "Soy nuts, dry roasted", portion: "1 oz", calories: 112, protein: 9, carbs: 6.7 },
-  { category: "Nuts/Seeds", name: "Sunflower seeds, dry roasted", portion: "1 oz", calories: 165, protein: 5.5, carbs: 6.8 },
-
-  [cite_start]// --- Beans/Legumes --- [cite: 4]
-  { category: "Beans/Legumes", name: "Black beans, boiled", portion: "1/2 cup", calories: 113, protein: 7.5, carbs: 20 },
-  { category: "Beans/Legumes", name: "Chickpeas/Garbanzo, canned", portion: "1/2 cup", calories: 105, protein: 6, carbs: 16 },
-  { category: "Beans/Legumes", name: "Edamame, boiled", portion: "1/2 cup", calories: 127, protein: 11, carbs: 9 },
-  { category: "Beans/Legumes", name: "Lentils, boiled", portion: "1/2 cup", calories: 115, protein: 9, carbs: 20 },
-  { category: "Beans/Legumes", name: "Pinto beans, boiled", portion: "1/2 cup", calories: 122, protein: 7.5, carbs: 22 },
-
-  [cite_start]// --- Meat/Poultry/Seafood --- [cite: 4]
-  { category: "Meat/Poultry/Seafood", name: "Atlantic Salmon, baked", portion: "4 oz", calories: 175, protein: 18.8, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Beef 80% lean ground, broiled", portion: "3 oz", calories: 230, protein: 21.9, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Beef Lean (round), cooked", portion: "3 oz", calories: 138, protein: 24.9, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Beef Lean (sirloin), cooked", portion: "3 oz", calories: 111, protein: 18.6, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Catfish, baked", portion: "3 oz", calories: 89, protein: 15.7, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Chicken Breast, skinless, cooked", portion: "3 oz", calories: 101, protein: 18, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Chicken Deli", portion: "1 oz (1 slice)", calories: 20, protein: 5, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Chicken Drumstick, skinless", portion: "1 leg (1.7 oz)", calories: 75, protein: 12, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Chicken Thigh, skinless, cooked", portion: "1 thigh (2 oz)", calories: 110, protein: 14, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Chicken Wing, w/skin, cooked", portion: "1 wing (1.3 oz)", calories: 80, protein: 10, carbs: 1 },
-  { category: "Meat/Poultry/Seafood", name: "Cod, baked/broiled", portion: "3 oz", calories: 89, protein: 19.4, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Deli Roast beef", portion: "1 oz (1 slice)", calories: 29, protein: 4.9, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Ham, extra lean, cooked", portion: "3 oz", calories: 123, protein: 18, carbs: 1.3 },
-  { category: "Meat/Poultry/Seafood", name: "Pork loin, cooked", portion: "3 oz", calories: 178, protein: 24.3, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Pork loin, roast, cooked", portion: "3 oz", calories: 180, protein: 24, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Pork tenderloin, cooked", portion: "3 oz", calories: 139, protein: 24, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Shrimp, boiled", portion: "1 oz (5 large)", calories: 28, protein: 5.9, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Swai, baked", portion: "3 oz", calories: 89, protein: 11.3, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Tuna, canned in water", portion: "1/4 cup", calories: 45, protein: 9.8, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Turkey Breast, skinless, cooked", portion: "4 oz", calories: 153, protein: 34, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Turkey Deli", portion: "1 slice (3.5\" sq)", calories: 22, protein: 3.6, carbs: 0.9 },
-  { category: "Meat/Poultry/Seafood", name: "Turkey Ground 85% lean", portion: "3 oz", calories: 153, protein: 14.4, carbs: 0 },
-  { category: "Meat/Poultry/Seafood", name: "Turkey Wing, with skin, roasted", portion: "1 wing (5.2 oz)", calories: 186, protein: 24.9, carbs: 0 },
-
-  [cite_start]// --- Vegetables --- [cite: 4]
-  { category: "Vegetables", name: "Brussels Sprouts, boiled", portion: "1/4 cup", calories: 14, protein: 1, carbs: 2.8 },
-  { category: "Vegetables", name: "Broccoli", portion: "1/4 cup", calories: 7, protein: 0.6, carbs: 1.5 },
-  { category: "Vegetables", name: "Cauliflower", portion: "1/4 cup", calories: 7, protein: 0.5, carbs: 1.4 },
-  { category: "Vegetables", name: "Carrots, raw", portion: "1/4 cup", calories: 13, protein: 0.3, carbs: 2.9 },
-  { category: "Vegetables", name: "Celery", portion: "1 strip (4\" long)", calories: 1, protein: 0, carbs: 0.1 },
-  { category: "Vegetables", name: "Corn, canned, drained", portion: "1/4 cup", calories: 33, protein: 1.1, carbs: 7.6 },
-  { category: "Vegetables", name: "Corn, cob", portion: "1 ear (2.2 oz)", calories: 59, protein: 2, carbs: 14.1 },
-  { category: "Vegetables", name: "Cucumber, with peel, raw", portion: "1/4 cup sliced", calories: 4, protein: 0.2, carbs: 0.6 },
-  { category: "Vegetables", name: "Cucumber, without peel, raw", portion: "1/4 cup sliced", calories: 4, protein: 0.2, carbs: 0.9 },
-  { category: "Vegetables", name: "Garlic, raw", portion: "1 teaspoon", calories: 4, protein: 0.2, carbs: 0.9 },
-  { category: "Vegetables", name: "Lettuce, red", portion: "1/4 cup", calories: 1, protein: 0, carbs: 0.2 },
-  { category: "Vegetables", name: "Lettuce, romaine", portion: "1/4 cup", calories: 2, protein: 0.1, carbs: 0 },
-  { category: "Vegetables", name: "Onion, green or red", portion: "1 tablespoon", calories: 2, protein: 0.1, carbs: 0.4 },
-  { category: "Vegetables", name: "Onion, white", portion: "1 tablespoon", calories: 4, protein: 0, carbs: 1 },
-  { category: "Vegetables", name: "Pepper, yellow", portion: "1 tablespoon", calories: 2, protein: 0, carbs: 0.5 },
-  { category: "Vegetables", name: "Pepper, green", portion: "1 tablespoon", calories: 2, protein: 0, carbs: 0.4 },
-  { category: "Vegetables", name: "Pepper, red", portion: "1 tablespoon", calories: 2, protein: 0, carbs: 0.6 },
-  { category: "Vegetables", name: "Potatoes, no skin, boiled", portion: "1/4 cup", calories: 34, protein: 0.7, carbs: 7.8 },
-  { category: "Vegetables", name: "Spinach, raw", portion: "1/4 cup", calories: 2, protein: 0.2, carbs: 0.3 },
-  { category: "Vegetables", name: "Squash, summer, yellow, cooked", portion: "1/4 cup", calories: 9, protein: 0.4, carbs: 1.9 },
-  { category: "Vegetables", name: "Squash, winter, butternut, cooked", portion: "1/4 cup", calories: 21, protein: 0.5, carbs: 5.4 },
-  { category: "Vegetables", name: "Squash, winter, spaghetti, cooked", portion: "1/4 cup", calories: 10, protein: 0.3, carbs: 2.5 },
-  { category: "Vegetables", name: "Sweet Potato, no skin, boiled", portion: "1/4 cup", calories: 62, protein: 1.1, carbs: 14.5 },
-  { category: "Vegetables", name: "Tomato", portion: "1/4 cup (6.3 oz)", calories: 8, protein: 0.4, carbs: 1.8 },
-  { category: "Vegetables", name: "Zucchini, raw, with skin", portion: "1/4 cup", calories: 5, protein: 0.3, carbs: 1 },
-
-  [cite_start]// --- Fruits --- [cite: 5, 6, 7, 8]
-  { category: "Fruits", name: "Apple, raw, w/skin", portion: "1/4 cup sliced", calories: 14, protein: 0, carbs: 3.8 },
-  { category: "Fruits", name: "Banana", portion: "1/4 cup sliced", calories: 33, protein: 0.4, carbs: 8.6 },
-  { category: "Fruits", name: "Oranges", portion: "1/4 cup sections", calories: 21, protein: 0.4, carbs: 5.3 },
-  { category: "Fruits", name: "Pears", portion: "1/4 cup sliced", calories: 20, protein: 0.1, carbs: 5.4 },
-  { category: "Fruits", name: "Grapes, All varieties", portion: "1/4 cup sliced", calories: 26, protein: 0.3, carbs: 6.8 },
-  { category: "Fruits", name: "Watermelon", portion: "1/4 cup diced", calories: 11, protein: 0.2, carbs: 2.9 },
-  { category: "Fruits", name: "Cantaloupe", portion: "1/4 cup cubed", calories: 13, protein: 0.3, carbs: 3.4 },
-  { category: "Fruits", name: "Peaches", portion: "1/4 cup sliced", calories: 15, protein: 0.4, carbs: 3.8 },
-  { category: "Fruits", name: "Nectarines", portion: "1/4 cup sliced", calories: 16, protein: 0.4, carbs: 3.8 },
-  { category: "Fruits", name: "Strawberries", portion: "1/4 cup sliced", calories: 13, protein: 0.3, carbs: 3.2 },
-  { category: "Fruits", name: "Blueberries", portion: "1/4 cup", calories: 21, protein: 0.3, carbs: 5.4 },
-  { category: "Fruits", name: "Avocados", portion: "1/4 cup sliced", calories: 48, protein: 0.7, carbs: 3.1 },
-
-  [cite_start]// --- Misc --- [cite: 8]
-  { category: "Misc", name: "Cream of Wheat, instant", portion: "1 packet", calories: 100, protein: 3, carbs: 20 },
-  { category: "Misc", name: "Oatmeal, instant", portion: "1/4 cup", calories: 77, protein: 2.7, carbs: 13.7 },
-  { category: "Misc", name: "Quinoa, cooked", portion: "1/4 cup", calories: 56, protein: 2, carbs: 9.9 },
-  { category: "Misc", name: "Ranch", portion: "1 tablespoon", calories: 73, protein: 0.2, carbs: 1 },
-  { category: "Misc", name: "Ranch, Fat Free", portion: "1 tablespoon", calories: 17, protein: 0, carbs: 3.7 },
-  { category: "Misc", name: "Ranch, Reduced Fat", portion: "1 tablespoon", calories: 29, protein: 0.2, carbs: 3.2 }
-];
+        // --- FULL PDF PROTEIN DATABASE (MANUALLY EXTRACTED) ---
+        const proteinDB = [
+            // Milk/Creamers
+            {cat:"Milk/Creamers", name:"Milk, Whole (1/2 cup)", cal:73, p:3.9},
+            {cat:"Milk/Creamers", name:"Milk, 1% (1/2 cup)", cal:52, p:8.5},
+            {cat:"Milk/Creamers", name:"Milk, 2% (1/2 cup)", cal:60, p:4},
+            {cat:"Milk/Creamers", name:"Milk, Skim (1/2 cup)", cal:45, p:4},
+            {cat:"Milk/Creamers", name:"Half and Half (1 tbsp)", cal:19, p:0.4},
+            {cat:"Milk/Creamers", name:"Half and Half, fat free (1 tbsp)", cal:9, p:0.4},
+            {cat:"Milk/Creamers", name:"Heavy Whipping Cream (1 tbsp)", cal:52, p:0.3},
+            {cat:"Milk/Creamers", name:"Coffee Creamer, Powder (1 tbsp)", cal:10, p:0},
+            {cat:"Milk/Creamers", name:"Coffee Creamer, liquid (1 tbsp)", cal:20, p:0},
+            {cat:"Milk/Creamers", name:"Soymilk, light (1/2 cup)", cal:30, p:3},
+            {cat:"Milk/Creamers", name:"Almond milk (1/2 cup)", cal:30, p:0.5},
+            // Yogurt/Sour Cream
+            {cat:"Yogurt/Sour Cream", name:"Greek, 2% low-fat plain (6 oz)", cal:130, p:17},
+            {cat:"Yogurt/Sour Cream", name:"Greek, nonfat (6 oz)", cal:120, p:15},
+            {cat:"Yogurt/Sour Cream", name:"Yogurt, Plain, low-fat (1/2 cup)", cal:77, p:6.5},
+            {cat:"Yogurt/Sour Cream", name:"Yogurt, Plain, non-fat (1/2 cup)", cal:68.5, p:7},
+            {cat:"Yogurt/Sour Cream", name:"Yogurt, Plain, whole-fat (1/2 cup)", cal:75, p:4.25},
+            {cat:"Yogurt/Sour Cream", name:"Sour Cream, cultured (1 tbsp)", cal:26, p:0.4},
+            {cat:"Yogurt/Sour Cream", name:"Sour Cream, fat free (1 tbsp)", cal:9, p:0.4},
+            {cat:"Yogurt/Sour Cream", name:"Sour Cream, light (1 tbsp)", cal:16, p:0.4},
+            {cat:"Yogurt/Sour Cream", name:"Yogurt w/fruit, fat free (1/2 cup)", cal:107.5, p:5},
+            {cat:"Yogurt/Sour Cream", name:"Yogurt w/fruit, low fat (1/2 cup)", cal:112.5, p:5},
+            {cat:"Yogurt/Sour Cream", name:"Yogurt w/fruit, whole fat (1/2 cup)", cal:120, p:6},
+            // Egg
+            {cat:"Egg/Egg Substitute", name:"Egg, large (1)", cal:75, p:6},
+            {cat:"Egg/Egg Substitute", name:"Egg white (1)", cal:16, p:3.6},
+            {cat:"Egg/Egg Substitute", name:"Egg substitute (1/4 cup)", cal:30, p:6},
+            {cat:"Egg/Egg Substitute", name:"Egg substitute white (1/4 cup)", cal:25, p:5},
+            // Cheese/Butter
+            {cat:"Cheese/Butter", name:"American Pasteurized (1 slice)", cal:79, p:4.7},
+            {cat:"Cheese/Butter", name:"Blue Cheese, crumbled (1/4 cup)", cal:119, p:7},
+            {cat:"Cheese/Butter", name:"Butter, salted/unsalted (1 pat)", cal:36, p:0},
+            {cat:"Cheese/Butter", name:"Cheddar or Colby, low fat (1 oz)", cal:48, p:6.8},
+            {cat:"Cheese/Butter", name:"Cottage Cheese, 2% fat (1 oz)", cal:26, p:4},
+            {cat:"Cheese/Butter", name:"Cottage Cheese, low fat (1 oz)", cal:20, p:3.5},
+            {cat:"Cheese/Butter", name:"Cream Cheese (1 tbsp)", cal:51, p:1.1},
+            {cat:"Cheese/Butter", name:"Cream Cheese, fat free (1 tbsp)", cal:17, p:2.6},
+            {cat:"Cheese/Butter", name:"Cream Cheese, low fat (1 tbsp)", cal:23, p:1.1},
+            {cat:"Cheese/Butter", name:"Feta, crumbled (1/4 cup)", cal:99, p:5},
+            {cat:"Cheese/Butter", name:"Firm/Hard, fat-free (1 oz)", cal:31, p:4.7},
+            {cat:"Cheese/Butter", name:"Firm/Hard, low fat (1 oz)", cal:48, p:6.8},
+            {cat:"Cheese/Butter", name:"Firm/Hard, regular (1 oz)", cal:113, p:7},
+            {cat:"Cheese/Butter", name:"Margarine 80% (1 tbsp)", cal:101, p:0},
+            {cat:"Cheese/Butter", name:"Margarine, light (1 tbsp)", cal:40, p:0},
+            {cat:"Cheese/Butter", name:"Parmesan, grated (1 tbsp)", cal:22, p:1.9},
+            // Nuts/Seeds
+            {cat:"Nuts/Seeds", name:"Almonds, dry roasted (1 oz)", cal:170, p:6.3},
+            {cat:"Nuts/Seeds", name:"Cashews, dry roasted (1 oz)", cal:163, p:4.3},
+            {cat:"Nuts/Seeds", name:"Peanuts, roasted (1 oz)", cal:166, p:6.7},
+            {cat:"Nuts/Seeds", name:"Pumpkin seeds, roasted (1 oz)", cal:126, p:12},
+            {cat:"Nuts/Seeds", name:"Soy nuts, roasted (1 oz)", cal:112, p:9},
+            {cat:"Nuts/Seeds", name:"Sunflower seeds, roasted (1 oz)", cal:165, p:5.5},
+            // Beans
+            {cat:"Beans/Legumes", name:"Black beans, boiled (1/2 cup)", cal:113, p:7.5},
+            {cat:"Beans/Legumes", name:"Chickpeas, canned (1/2 cup)", cal:105, p:6},
+            {cat:"Beans/Legumes", name:"Edamame, boiled (1/2 cup)", cal:127, p:11},
+            {cat:"Beans/Legumes", name:"Lentils, boiled (1/2 cup)", cal:115, p:9},
+            {cat:"Beans/Legumes", name:"Pinto beans, boiled (1/2 cup)", cal:122, p:7.5},
+            // Meat/Poultry/Seafood
+            {cat:"Meat/Poultry/Seafood", name:"Atlantic Salmon, baked (4 oz)", cal:175, p:18.8},
+            {cat:"Meat/Poultry/Seafood", name:"Beef 80% lean, broiled (3 oz)", cal:230, p:21.9},
+            {cat:"Meat/Poultry/Seafood", name:"Beef Lean round (3 oz)", cal:138, p:24.9},
+            {cat:"Meat/Poultry/Seafood", name:"Beef Lean sirloin (3 oz)", cal:111, p:18.6},
+            {cat:"Meat/Poultry/Seafood", name:"Catfish, baked (3 oz)", cal:89, p:15.7},
+            {cat:"Meat/Poultry/Seafood", name:"Chicken Breast, skinless (3 oz)", cal:101, p:18},
+            {cat:"Meat/Poultry/Seafood", name:"Chicken Deli (1 oz)", cal:20, p:5},
+            {cat:"Meat/Poultry/Seafood", name:"Chicken Drumstick (1 leg)", cal:75, p:12},
+            {cat:"Meat/Poultry/Seafood", name:"Chicken Thigh (2 oz)", cal:110, p:14},
+            {cat:"Meat/Poultry/Seafood", name:"Chicken Wing (1 wing)", cal:80, p:10},
+            {cat:"Meat/Poultry/Seafood", name:"Cod, baked (3 oz)", cal:89, p:19.4},
+            {cat:"Meat/Poultry/Seafood", name:"Deli Roast beef (1 oz)", cal:29, p:4.9},
+            {cat:"Meat/Poultry/Seafood", name:"Ham, extra lean (3 oz)", cal:123, p:18},
+            {cat:"Meat/Poultry/Seafood", name:"Pork loin (3 oz)", cal:178, p:24.3},
+            {cat:"Meat/Poultry/Seafood", name:"Pork loin roast (3 oz)", cal:180, p:24},
+            {cat:"Meat/Poultry/Seafood", name:"Pork tenderloin (3 oz)", cal:139, p:24},
+            {cat:"Meat/Poultry/Seafood", name:"Shrimp, boiled (1 oz)", cal:28, p:5.9},
+            {cat:"Meat/Poultry/Seafood", name:"Swai, baked (3 oz)", cal:89, p:11.3},
+            {cat:"Meat/Poultry/Seafood", name:"Tuna, canned water (1/4 cup)", cal:45, p:9.8},
+            {cat:"Meat/Poultry/Seafood", name:"Turkey Breast, skinless (4 oz)", cal:153, p:34},
+            {cat:"Meat/Poultry/Seafood", name:"Turkey Deli (1 slice)", cal:22, p:3.6},
+            {cat:"Meat/Poultry/Seafood", name:"Turkey Ground 85% (3 oz)", cal:153, p:14.4},
+            {cat:"Meat/Poultry/Seafood", name:"Turkey Wing (1 wing)", cal:186, p:24.9},
+            // Vegetables
+            {cat:"Vegetables", name:"Brussels Sprouts (1/4 cup)", cal:14, p:1},
+            {cat:"Vegetables", name:"Broccoli (1/4 cup)", cal:7, p:0.6},
+            {cat:"Vegetables", name:"Cauliflower (1/4 cup)", cal:7, p:0.5},
+            {cat:"Vegetables", name:"Carrots, raw (1/4 cup)", cal:13, p:0.3},
+            {cat:"Vegetables", name:"Celery (1 strip)", cal:1, p:0},
+            {cat:"Vegetables", name:"Corn, canned (1/4 cup)", cal:33, p:1.1},
+            {cat:"Vegetables", name:"Corn, cob (1 ear)", cal:59, p:2},
+            {cat:"Vegetables", name:"Cucumber, sliced (1/4 cup)", cal:4, p:0.2},
+            {cat:"Vegetables", name:"Garlic (1 tsp)", cal:4, p:0.2},
+            {cat:"Vegetables", name:"Lettuce (1/4 cup)", cal:2, p:0.1},
+            {cat:"Vegetables", name:"Onion (1 tbsp)", cal:4, p:0},
+            {cat:"Vegetables", name:"Pepper (1 tbsp)", cal:2, p:0},
+            {cat:"Vegetables", name:"Potato, boiled (1/4 cup)", cal:34, p:0.7},
+            {cat:"Vegetables", name:"Spinach, raw (1/4 cup)", cal:2, p:0.2},
+            {cat:"Vegetables", name:"Squash, yellow (1/4 cup)", cal:9, p:0.4},
+            {cat:"Vegetables", name:"Squash, butternut (1/4 cup)", cal:21, p:0.5},
+            {cat:"Vegetables", name:"Squash, spaghetti (1/4 cup)", cal:10, p:0.3},
+            {cat:"Vegetables", name:"Sweet Potato, boiled (1/4 cup)", cal:62, p:1.1},
+            {cat:"Vegetables", name:"Tomato (1/4 cup)", cal:8, p:0.4},
+            {cat:"Vegetables", name:"Zucchini (1/4 cup)", cal:5, p:0.3},
+            // Fruits
+            {cat:"Fruits", name:"Apple, sliced (1/4 cup)", cal:14, p:0},
+            {cat:"Fruits", name:"Banana, sliced (1/4 cup)", cal:33, p:0.4},
+            {cat:"Fruits", name:"Oranges (1/4 cup)", cal:21, p:0.4},
+            {cat:"Fruits", name:"Pears (1/4 cup)", cal:20, p:0.1},
+            {cat:"Fruits", name:"Grapes (1/4 cup)", cal:26, p:0.3},
+            {cat:"Fruits", name:"Watermelon (1/4 cup)", cal:11, p:0.2},
+            {cat:"Fruits", name:"Cantaloupe (1/4 cup)", cal:13, p:0.3},
+            {cat:"Fruits", name:"Peaches (1/4 cup)", cal:15, p:0.4},
+            {cat:"Fruits", name:"Nectarines (1/4 cup)", cal:16, p:0.4},
+            {cat:"Fruits", name:"Strawberries (1/4 cup)", cal:13, p:0.3},
+            {cat:"Fruits", name:"Blueberries (1/4 cup)", cal:21, p:0.3},
+            {cat:"Fruits", name:"Avocado (1/4 cup)", cal:48, p:0.7},
+            // Misc
+            {cat:"Misc", name:"Cream of Wheat (1 pkt)", cal:100, p:3},
+            {cat:"Misc", name:"Oatmeal (1/4 cup)", cal:77, p:2.7},
+            {cat:"Misc", name:"Quinoa (1/4 cup)", cal:56, p:2},
+            {cat:"Misc", name:"Ranch (1 tbsp)", cal:73, p:0.2},
+            {cat:"Misc", name:"Ranch, Fat Free (1 tbsp)", cal:17, p:0},
+            {cat:"Misc", name:"Ranch, Reduced Fat (1 tbsp)", cal:29, p:0.2}
+        ];
 
         // FULL HARVARD LIST
         const moves = {
