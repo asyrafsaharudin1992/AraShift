@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v46.0 (Full PDF Data)</title>
+    <title>AraShift System v42.0 (Clinical Protocol Engine)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -13,13 +13,14 @@
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
             --c-norm: #34C759; --c-over: #FBBF24; --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
+            --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
         .container { max-width: 1200px; margin: 0 auto; }
         .hidden { display: none !important; }
         
-        /* HEADER & TABS */
+        /* HEADER */
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; } .brand span { color: var(--primary); }
         .logout { color: var(--primary); cursor: pointer; font-weight: 500; }
@@ -27,7 +28,7 @@
         .tab-btn { background: transparent; border: none; font-size: 16px; font-weight: 600; color: var(--text-sec); cursor: pointer; padding: 8px 16px; border-radius: 8px; transition: 0.2s; }
         .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* --- LAYOUT GRID A-K --- */
+        /* --- LAYOUT GRID --- */
         .layout-grid {
             display: grid;
             grid-template-columns: 1.8fr 1.2fr;
@@ -37,10 +38,10 @@
                 "areaC areaD"
                 "areaE areaE"
                 "areaF areaF"
-                "areaG areaH" /* G=Protein, H=Exercise */
-                "areaI areaI" /* I=Tracker */
-                "areaJ areaJ" /* J=Recs */
-                "areaK areaK";/* K=Remarks */
+                "areaG areaG"
+                "areaH areaH"
+                "areaI areaI"
+                "areaJ areaJ";
         }
         @media (max-width: 768px) { .layout-grid { display: block; } .card { margin-bottom: 20px; } }
 
@@ -54,13 +55,12 @@
         #card-risk { grid-area: areaD; }
         #card-meta { grid-area: areaE; }
         #card-analysis { grid-area: areaF; }
-        #card-protein { grid-area: areaG; }
+        #card-mnt { grid-area: areaG; }
         #card-exercise { grid-area: areaH; }
-        #card-tracker { grid-area: areaI; background: #F2F8FF; border: 1px solid #D6E4FF; }
-        #card-recs { grid-area: areaJ; }
-        #card-remarks { grid-area: areaK; }
+        #card-recs { grid-area: areaI; }
+        #card-remarks { grid-area: areaJ; }
 
-        /* INPUTS & INFO ICONS */
+        /* INPUTS */
         .input-grid-profile { display: grid; grid-template-columns: 0.5fr 2fr 0.5fr 1fr 1.5fr; gap: 10px; }
         .input-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
         .input-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
@@ -72,16 +72,6 @@
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,122,255,0.15); }
         .small-input input { width: 60px; text-align: center; }
 
-        /* INFO ICON */
-        .info-icon {
-            display: inline-flex; justify-content: center; align-items: center;
-            width: 14px; height: 14px; border-radius: 50%;
-            background-color: #E5E5EA; color: var(--primary);
-            font-size: 10px; font-weight: bold; font-style: normal;
-            margin-left: 5px; cursor: pointer; transition: 0.2s;
-        }
-        .info-icon:hover { background-color: var(--primary); color: white; }
-
         /* TOGGLES */
         .ios-list { display: flex; flex-direction: column; }
         .ios-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #E5E5EA; }
@@ -92,25 +82,14 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        /* SECTION E: METABOLIC */
+        /* METABOLIC */
         .metabolic-screen-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
         .meta-card { background: #F8F9FA; border: 1px solid #E5E5EB; border-radius: 12px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .meta-val { font-size: 28px; font-weight: 800; color: #1D1D1F; order: 1; line-height: 1.1; margin-bottom: 4px; }
-        .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; order: 2; display: flex; align-items: center; justify-content: center; }
+        .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; order: 2; }
         .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; order: 3; margin-top: 2px; }
 
-        /* SECTION I: TRACKER */
-        .tracker-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1.5fr; gap: 20px; align-items: center; }
-        .track-item { text-align: center; border-right: 1px solid #ddd; }
-        .track-item:last-child { border-right: none; }
-        .track-val { font-size: 24px; font-weight: 800; color: #333; }
-        .track-lbl { font-size: 11px; text-transform: uppercase; color: #666; font-weight: 700; }
-        .track-result { padding: 10px; border-radius: 10px; color: white; font-weight: 700; text-align: center; }
-        .res-loss { background: var(--success); }
-        .res-gain { background: var(--danger); }
-        .res-maint { background: var(--warning); }
-
-        /* SECTION F: VISUALS */
+        /* VISUALS */
         .visual-row { margin-bottom: 25px; }
         .visual-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
         .bar-complex { position: relative; height: 14px; border-radius: 4px; overflow: hidden; display: flex; width: 100%; background: #E5E5EA; }
@@ -120,34 +99,28 @@
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -5px; transition: left 0.3s ease; z-index: 10; }
         .bar-status-label { text-align: right; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
-        /* SECTION G/H: PLANNING */
-        .protein-box, .planner-box { background: #fff; border: 1px solid #E5E5EA; border-radius: 12px; padding: 15px; margin-bottom: 0; }
-        .planner-box { background: #F2F8FF; border: 1px solid #D6E4FF; } /* Blue tint for Exercise */
-        .box-head { font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        .rec-tag { font-size: 11px; background: #EEE; color: #333; padding: 2px 8px; border-radius: 10px; font-weight: 600; text-transform: none; }
-        .add-row, .food-calc-row { display: grid; gap: 10px; align-items: end; margin-bottom: 10px; }
-        .add-row { grid-template-columns: 1.5fr 2fr 1fr 0.8fr; }
-        .food-calc-row { grid-template-columns: 2fr 1fr 0.8fr; }
+        /* MNT PLANNER (Section G) */
+        .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; }
+        .mnt-stat-item { text-align: center; }
+        .mnt-stat-val { font-size: 14px; font-weight: 800; display: block; }
+        
+        .mnt-controls { display: grid; grid-template-columns: 1.5fr 2fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
-        .plan-table th { background: #E5E5EA; padding: 10px; text-align: left; font-size: 11px; font-weight: 700; color: #666; }
-        .plan-table td { padding: 10px; border-bottom: 1px solid #eee; }
+        .plan-table th { background: #E5E5EA; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: #666; border-bottom: 1px solid #ccc; }
+        .plan-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
+        .plan-table td:first-child { text-align: left; font-weight: 600; }
         .plan-table tfoot td { font-weight: 800; background: #F9FAFB; padding: 10px; border-top: 2px solid #E5E5EA; }
-        .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; text-align: center; }
+        .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; }
+        
+        .macro-viz { margin-top:15px; background:#F5F5F7; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; }
+        .macro-bar-container { width: 70%; height: 10px; background: #E5E5EA; border-radius: 5px; overflow: hidden; display: flex; }
+        .macro-seg { height: 100%; }
 
-        /* SECTION J: RECS */
-        .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #E5E5EA; margin-bottom: 15px; }
-        .milestone-table th { padding: 10px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; text-align: left; }
-        .milestone-table td { padding: 10px; font-size: 13px; border-bottom: 1px solid #eee; }
+        /* RECS */
         .rec-container { background: #FFF7ED; padding: 15px; border-radius: 12px; border: 1px solid #FED7AA; border-left: 5px solid #F97316; }
-
-        /* INFO MODAL */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
-        .modal-content { background: white; padding: 25px; border-radius: 16px; width: 90%; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: popIn 0.2s ease-out; }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .modal-header h3 { margin: 0; color: var(--primary); }
-        .close-btn { font-size: 24px; cursor: pointer; color: #999; }
-        .modal-body p { font-size: 14px; line-height: 1.5; color: #444; margin-bottom: 10px; }
+        .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #E5E5EA; margin-bottom: 10px; }
+        .milestone-table th { padding: 8px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; text-align: left; }
+        .milestone-table td { padding: 8px; font-size: 13px; border-bottom: 1px solid #eee; }
 
         /* ACTION BAR */
         .action-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; gap: 10px; border: 1px solid #ccc; z-index: 9999; }
@@ -155,13 +128,15 @@
         .btn-p { background: var(--primary); color: white; }
         .btn-s { background: transparent; border: 1px solid var(--border); }
 
+        #clinical-report { display: none; }
+        
         /* ---------------- PRINT CSS ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
-            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 90%; }
+            body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 85%; }
             .container { max-width: 100% !important; margin: 0 !important; width: 100%; }
             
-            /* GRID: A|B Top, C|D Middle, Rest Full */
+            /* GRID */
             .layout-grid {
                 display: grid !important;
                 grid-template-columns: 1fr 1.5fr;
@@ -171,48 +146,39 @@
                     "areaC areaD"
                     "areaE areaE"
                     "areaF areaF"
-                    "areaG areaH" /* G and H Side-by-side */
+                    "areaG areaG"
+                    "areaH areaH"
                     "areaI areaI"
-                    "areaJ areaJ"
-                    "areaK areaK";
+                    "areaJ areaJ";
             }
             
-            /* VERTICAL PROFILE (Section A) */
             #card-profile .input-grid-profile { display: flex !important; flex-direction: column; gap: 5px; }
             #card-profile .form-group { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; margin-bottom: 5px; }
             #card-profile label { width: 50%; } #card-profile input, #card-profile select { width: 50%; text-align: right; }
 
-            /* CLEAN UP */
-            .action-bar, .logout, .nav-tabs, .help-icon, .add-row, .food-calc-row, .del-btn, .version-tag, .day-pills-container, .info-icon, .modal-overlay { display: none !important; }
+            .action-bar, .logout, .nav-tabs, .help-icon, .mnt-controls, .del-btn, .version-tag { display: none !important; }
             
-            /* TABLE STYLING */
             .plan-table { border: 1px solid #ccc; font-size: 10pt; }
             .plan-table th { background-color: #EFEFEF !important; color: #000 !important; border: 1px solid #ccc !important; }
             .plan-table td { border: 1px solid #ccc !important; }
             .plan-table tfoot td { background-color: #A9A9A9 !important; color: #fff !important; font-weight: bold; border: 1px solid #ccc !important; }
             .plan-table th:last-child, .plan-table td:last-child { display: none !important; } 
 
-            /* VISUALS */
-            .card, .planner-box, .protein-box { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; }
+            .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; }
             input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; appearance: none; resize: none; }
             select { background-image: none !important; } ::placeholder { color: transparent; }
             
             .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
             .bar-marker { background: #000 !important; border: 2px solid #fff; }
+            
+            .mnt-header-summary { background: #eee !important; border: 1px solid #ccc !important; color: #000 !important; }
         }
     </style>
 </head>
 <body>
 
-    <div id="infoModal" class="modal-overlay" onclick="closeInfo()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><h3 id="infoTitle">Info</h3><span class="close-btn" onclick="closeInfo()">&times;</span></div>
-            <div class="modal-body" id="infoBody"></div>
-        </div>
-    </div>
-
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v46.0</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v42.0 (Clinical Protocol)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -224,17 +190,8 @@
 
                 <div class="card" id="card-bio">
                     <h3>B. Biochemistry</h3>
-                    <div class="input-grid-4">
-                        <div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div>
-                        <div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div>
-                        <div class="form-group"><label>Waist (cm)</label><input type="number" id="waist"></div>
-                        <div class="form-group"><label>BMI <i class="info-icon" onclick="showInfo('bmi')">i</i></label><input type="number" id="bmi" readonly></div>
-                    </div>
-                    <div class="input-grid-3">
-                        <div class="form-group"><label>V.Fat <i class="info-icon" onclick="showInfo('vfat')">i</i></label><input type="number" id="vfat"></div>
-                        <div class="form-group"><label>Fat % <i class="info-icon" onclick="showInfo('fat')">i</i></label><input type="number" id="fat"></div>
-                        <div class="form-group"><label>Muscle % <i class="info-icon" onclick="showInfo('muscle')">i</i></label><input type="number" id="muscle"></div>
-                    </div>
+                    <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
+                    <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
                 </div>
 
                 <div class="card" id="card-diet">
@@ -263,10 +220,10 @@
                     <h3>E. Metabolic Balance</h3>
                     <div class="metabolic-screen-row">
                         <div class="meta-card"><div class="meta-val" id="sIntake">0</div><div class="meta-label">Est. Intake</div><div class="meta-desc">kcal/day</div></div>
-                        <div class="meta-card"><div class="meta-val" id="sBMR">0</div><div class="meta-label">BMR <i class="info-icon" onclick="showInfo('bmr')">i</i></div><div class="meta-desc">kcal</div></div>
-                        <div class="meta-card"><div class="meta-val" id="sTDEE">0</div><div class="meta-label">TDEE <i class="info-icon" onclick="showInfo('tdee')">i</i></div><div class="meta-desc">kcal</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sBMR">0</div><div class="meta-label">BMR</div><div class="meta-desc">kcal</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sTDEE">0</div><div class="meta-label">TDEE</div><div class="meta-desc">kcal</div></div>
                         <div class="meta-card" id="sBalCard"><div class="meta-val" id="sBal">0</div><div class="meta-label">Balance</div><div class="meta-desc">Net</div></div>
-                        <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Body Age <i class="info-icon" onclick="showInfo('age')">i</i></div><div class="meta-desc">Years</div></div>
+                        <div class="meta-card"><div class="meta-val" id="sMetAge">-</div><div class="meta-label">Body Age</div><div class="meta-desc">Years</div></div>
                     </div>
                 </div>
 
@@ -275,59 +232,87 @@
                     <div id="sAnalysis"></div>
                 </div>
 
-                <div class="card" id="card-protein">
-                    <div class="protein-box">
-                        <div class="box-head">
-                            <span>G. Protein Planner</span>
-                            <span id="protRecTag" class="rec-tag">Target: 0g</span>
+                <div class="card" id="card-mnt">
+                    <h3>G. Medical Nutrition Therapy (MNT)</h3>
+                    
+                    <div class="mnt-header-summary">
+                        <div class="mnt-stat-item">Target Intake<span class="mnt-stat-val" id="targetCalVal">0 kcal</span></div>
+                        <div class="mnt-stat-item">Carb Goal<span class="mnt-stat-val" id="targetCarbVal">0g</span></div>
+                        <div class="mnt-stat-item">Prot Goal<span class="mnt-stat-val" id="targetProtVal">0g</span></div>
+                        <div class="mnt-stat-item">Fat Goal<span class="mnt-stat-val" id="targetFatVal">0g</span></div>
+                    </div>
+
+                    <div class="mnt-controls">
+                        <select id="mntProtocol" onchange="runCalc()">
+                            <option value="std" selected>Standard Balanced</option>
+                            <option value="lcd">Low Carb (LCD)</option>
+                            <option value="hp">High Protein</option>
+                            <option value="dash">DASH Diet</option>
+                            <option value="keto">Ketogenic</option>
+                        </select>
+                        <select id="mntFood"></select>
+                        <input type="number" id="mntQty" placeholder="Qty" value="1">
+                        <button class="btn btn-p" onclick="addMnt()">Add Food</button>
+                    </div>
+                    <table class="plan-table">
+                        <thead>
+                            <tr>
+                                <th style="width:30%">Food Item</th>
+                                <th style="width:10%">Qty</th>
+                                <th style="width:15%">Calories</th>
+                                <th style="width:10%">Carb (g)</th>
+                                <th style="width:10%">Prot (g)</th>
+                                <th style="width:10%">Fat (g)</th>
+                                <th style="width:5%"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="mntBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td>TOTAL</td>
+                                <td></td>
+                                <td id="tCal">0</td>
+                                <td id="tCarb">0</td>
+                                <td id="tProt">0</td>
+                                <td id="tFat">0</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div class="macro-viz">
+                        <div style="font-size:11px; font-weight:700;">MACRO SPLIT:</div>
+                        <div class="macro-bar-container">
+                            <div class="macro-seg" id="barCarb" style="background:#34C759; width:0%"></div>
+                            <div class="macro-seg" id="barProt" style="background:#007AFF; width:0%"></div>
+                            <div class="macro-seg" id="barFat" style="background:#FF9500; width:0%"></div>
                         </div>
-                        <div class="food-calc-row">
-                            <select id="foodType"></select>
-                            <input type="number" id="foodQty" placeholder="Qty" value="1">
-                            <button class="btn btn-p" onclick="addFood()">Add</button>
-                        </div>
-                        <table class="plan-table">
-                            <thead><tr><th style="width:5%">No</th><th style="width:50%">Protein Source</th><th style="width:20%">Size x Qty</th><th style="width:25%">Protein (g)</th><th></th></tr></thead>
-                            <tbody id="foodTableBody"></tbody>
-                            <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalProtVal">0g</td><td></td></tr></tfoot>
-                        </table>
+                        <div style="font-size:10px; color:#666;" id="macroText">C:0% P:0% F:0%</div>
                     </div>
                 </div>
 
                 <div class="card" id="card-exercise">
-                    <div class="planner-box">
-                        <div class="box-head">H. Exercise Planner</div>
-                        <div class="add-row">
-                            <select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option><option value="outdoor">Outdoor</option><option value="home">Home</option><option value="repair">Repair</option><option value="occupational">Work</option></select>
-                            <select id="exMove"></select>
-                            <input type="number" id="exDur" placeholder="Min" value="30">
-                            <button class="btn btn-p" onclick="addExercise()">+</button>
-                        </div>
-                        <table class="plan-table">
-                            <thead><tr><th style="width:5%">No</th><th style="width:50%">Activity</th><th style="width:20%">Duration</th><th style="width:25%">Burn (kcal)</th><th></th></tr></thead>
-                            <tbody id="planBody"></tbody>
-                            <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalBurn">0</td><td></td></tr></tfoot>
-                        </table>
+                    <h3>H. Exercise Planner</h3>
+                    <div class="mnt-controls">
+                        <select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option><option value="outdoor">Outdoor</option><option value="home">Home</option></select>
+                        <select id="exMove"></select>
+                        <input type="number" id="exDur" placeholder="Min" value="30">
+                        <button class="btn btn-p" onclick="addExercise()">Add Activity</button>
                     </div>
-                </div>
-
-                <div class="card" id="card-tracker">
-                    <h3>I. Net Calorie & Goal Tracker</h3>
-                    <div class="tracker-grid">
-                        <div class="track-item"><div class="track-val" id="tkInput">0</div><div class="track-lbl">Food Intake</div></div>
-                        <div class="track-item"><div class="track-val" id="tkOutput">0</div><div class="track-lbl">Total Output</div></div>
-                        <div class="track-item"><div class="track-val" id="tkNet" style="color:var(--primary);">0</div><div class="track-lbl">Net Balance</div></div>
-                        <div id="tkResult" class="track-result res-maint">Maintenance</div>
-                    </div>
+                    <table class="plan-table">
+                        <thead><tr><th style="width:5%">No</th><th style="width:50%">Exercise</th><th style="width:20%">Duration</th><th style="width:25%">Burn (kcal)</th><th></th></tr></thead>
+                        <tbody id="planBody"></tbody>
+                        <tfoot><tr><td colspan="3" style="text-align:right">Total</td><td id="totalBurn">0</td><td></td></tr></tfoot>
+                    </table>
                 </div>
 
                 <div class="card" id="card-recs">
-                    <h3>J. Weight Loss Recommendation (CPG 2023)</h3>
+                    <h3>I. Weight Loss Recommendation (CPG 2023)</h3>
                     <div id="hContent"></div>
                 </div>
 
                 <div class="card" id="card-remarks">
-                    <h3>K. Clinical Remarks</h3>
+                    <h3>J. Clinical Remarks</h3>
                     <textarea id="docRemarks" rows="4" style="width:100%; border:1px solid #ccc; padding:10px; border-radius:8px;" placeholder="Doctor's notes..."></textarea>
                 </div>
             </div>
@@ -337,269 +322,72 @@
     <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button></div>
 
     <script>
-        // --- INFO DATA ---
-        const infoData = {
-            'bmi': { title: "BMI", content: "<p>Screening tool for weight categories. <br>Normal: 18.5-22.9</p>" },
-            'vfat': { title: "Visceral Fat", content: "<p>Deep abdominal fat. <br>Normal: 1-9, High: 10+</p>" },
-            'fat': { title: "Body Fat %", content: "<p>Total fat mass. <br>Obesity: M >25%, F >35%</p>" },
-            'muscle': { title: "Muscle %", content: "<p>Higher muscle = Higher BMR = Lower Body Age.</p>" },
-            'bmr': { title: "BMR", content: "<p>Calories burned at rest. (Harris-Benedict).</p>" },
-            'tdee': { title: "TDEE", content: "<p>BMR + Activity. Maintain weight at this level.</p>" },
-            'age': { title: "Body Age", content: "<p>Metabolic age based on Omron BMR/Weight ratio logic.</p>" }
+        // MNT PROTOCOLS
+        const protocols = {
+            'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 }, // 50% Carb, 20% Prot, 30% Fat
+            'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 }, // <130g approx
+            'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 }, // >1.2g/kg approx
+            'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 }, // Focus on Veg/Fruit
+            'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 }
         };
-        function showInfo(key) { if(infoData[key]) { document.getElementById('infoTitle').innerText = infoData[key].title; document.getElementById('infoBody').innerHTML = infoData[key].content; document.getElementById('infoModal').style.display = 'flex'; } }
-        function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
 
-        // --- FULL PDF PROTEIN DATABASE (MANUALLY EXTRACTED) ---
-        const proteinDB = [
-            // Milk/Creamers
-            {cat:"Milk/Creamers", name:"Milk, Whole (1/2 cup)", cal:73, p:3.9},
-            {cat:"Milk/Creamers", name:"Milk, 1% (1/2 cup)", cal:52, p:8.5},
-            {cat:"Milk/Creamers", name:"Milk, 2% (1/2 cup)", cal:60, p:4},
-            {cat:"Milk/Creamers", name:"Milk, Skim (1/2 cup)", cal:45, p:4},
-            {cat:"Milk/Creamers", name:"Half and Half (1 tbsp)", cal:19, p:0.4},
-            {cat:"Milk/Creamers", name:"Half and Half, fat free (1 tbsp)", cal:9, p:0.4},
-            {cat:"Milk/Creamers", name:"Heavy Whipping Cream (1 tbsp)", cal:52, p:0.3},
-            {cat:"Milk/Creamers", name:"Coffee Creamer, Powder (1 tbsp)", cal:10, p:0},
-            {cat:"Milk/Creamers", name:"Coffee Creamer, liquid (1 tbsp)", cal:20, p:0},
-            {cat:"Milk/Creamers", name:"Soymilk, light (1/2 cup)", cal:30, p:3},
-            {cat:"Milk/Creamers", name:"Almond milk (1/2 cup)", cal:30, p:0.5},
-            // Yogurt/Sour Cream
-            {cat:"Yogurt/Sour Cream", name:"Greek, 2% low-fat plain (6 oz)", cal:130, p:17},
-            {cat:"Yogurt/Sour Cream", name:"Greek, nonfat (6 oz)", cal:120, p:15},
-            {cat:"Yogurt/Sour Cream", name:"Yogurt, Plain, low-fat (1/2 cup)", cal:77, p:6.5},
-            {cat:"Yogurt/Sour Cream", name:"Yogurt, Plain, non-fat (1/2 cup)", cal:68.5, p:7},
-            {cat:"Yogurt/Sour Cream", name:"Yogurt, Plain, whole-fat (1/2 cup)", cal:75, p:4.25},
-            {cat:"Yogurt/Sour Cream", name:"Sour Cream, cultured (1 tbsp)", cal:26, p:0.4},
-            {cat:"Yogurt/Sour Cream", name:"Sour Cream, fat free (1 tbsp)", cal:9, p:0.4},
-            {cat:"Yogurt/Sour Cream", name:"Sour Cream, light (1 tbsp)", cal:16, p:0.4},
-            {cat:"Yogurt/Sour Cream", name:"Yogurt w/fruit, fat free (1/2 cup)", cal:107.5, p:5},
-            {cat:"Yogurt/Sour Cream", name:"Yogurt w/fruit, low fat (1/2 cup)", cal:112.5, p:5},
-            {cat:"Yogurt/Sour Cream", name:"Yogurt w/fruit, whole fat (1/2 cup)", cal:120, p:6},
-            // Egg
-            {cat:"Egg/Egg Substitute", name:"Egg, large (1)", cal:75, p:6},
-            {cat:"Egg/Egg Substitute", name:"Egg white (1)", cal:16, p:3.6},
-            {cat:"Egg/Egg Substitute", name:"Egg substitute (1/4 cup)", cal:30, p:6},
-            {cat:"Egg/Egg Substitute", name:"Egg substitute white (1/4 cup)", cal:25, p:5},
-            // Cheese/Butter
-            {cat:"Cheese/Butter", name:"American Pasteurized (1 slice)", cal:79, p:4.7},
-            {cat:"Cheese/Butter", name:"Blue Cheese, crumbled (1/4 cup)", cal:119, p:7},
-            {cat:"Cheese/Butter", name:"Butter, salted/unsalted (1 pat)", cal:36, p:0},
-            {cat:"Cheese/Butter", name:"Cheddar or Colby, low fat (1 oz)", cal:48, p:6.8},
-            {cat:"Cheese/Butter", name:"Cottage Cheese, 2% fat (1 oz)", cal:26, p:4},
-            {cat:"Cheese/Butter", name:"Cottage Cheese, low fat (1 oz)", cal:20, p:3.5},
-            {cat:"Cheese/Butter", name:"Cream Cheese (1 tbsp)", cal:51, p:1.1},
-            {cat:"Cheese/Butter", name:"Cream Cheese, fat free (1 tbsp)", cal:17, p:2.6},
-            {cat:"Cheese/Butter", name:"Cream Cheese, low fat (1 tbsp)", cal:23, p:1.1},
-            {cat:"Cheese/Butter", name:"Feta, crumbled (1/4 cup)", cal:99, p:5},
-            {cat:"Cheese/Butter", name:"Firm/Hard, fat-free (1 oz)", cal:31, p:4.7},
-            {cat:"Cheese/Butter", name:"Firm/Hard, low fat (1 oz)", cal:48, p:6.8},
-            {cat:"Cheese/Butter", name:"Firm/Hard, regular (1 oz)", cal:113, p:7},
-            {cat:"Cheese/Butter", name:"Margarine 80% (1 tbsp)", cal:101, p:0},
-            {cat:"Cheese/Butter", name:"Margarine, light (1 tbsp)", cal:40, p:0},
-            {cat:"Cheese/Butter", name:"Parmesan, grated (1 tbsp)", cal:22, p:1.9},
-            // Nuts/Seeds
-            {cat:"Nuts/Seeds", name:"Almonds, dry roasted (1 oz)", cal:170, p:6.3},
-            {cat:"Nuts/Seeds", name:"Cashews, dry roasted (1 oz)", cal:163, p:4.3},
-            {cat:"Nuts/Seeds", name:"Peanuts, roasted (1 oz)", cal:166, p:6.7},
-            {cat:"Nuts/Seeds", name:"Pumpkin seeds, roasted (1 oz)", cal:126, p:12},
-            {cat:"Nuts/Seeds", name:"Soy nuts, roasted (1 oz)", cal:112, p:9},
-            {cat:"Nuts/Seeds", name:"Sunflower seeds, roasted (1 oz)", cal:165, p:5.5},
-            // Beans
-            {cat:"Beans/Legumes", name:"Black beans, boiled (1/2 cup)", cal:113, p:7.5},
-            {cat:"Beans/Legumes", name:"Chickpeas, canned (1/2 cup)", cal:105, p:6},
-            {cat:"Beans/Legumes", name:"Edamame, boiled (1/2 cup)", cal:127, p:11},
-            {cat:"Beans/Legumes", name:"Lentils, boiled (1/2 cup)", cal:115, p:9},
-            {cat:"Beans/Legumes", name:"Pinto beans, boiled (1/2 cup)", cal:122, p:7.5},
-            // Meat/Poultry/Seafood
-            {cat:"Meat/Poultry/Seafood", name:"Atlantic Salmon, baked (4 oz)", cal:175, p:18.8},
-            {cat:"Meat/Poultry/Seafood", name:"Beef 80% lean, broiled (3 oz)", cal:230, p:21.9},
-            {cat:"Meat/Poultry/Seafood", name:"Beef Lean round (3 oz)", cal:138, p:24.9},
-            {cat:"Meat/Poultry/Seafood", name:"Beef Lean sirloin (3 oz)", cal:111, p:18.6},
-            {cat:"Meat/Poultry/Seafood", name:"Catfish, baked (3 oz)", cal:89, p:15.7},
-            {cat:"Meat/Poultry/Seafood", name:"Chicken Breast, skinless (3 oz)", cal:101, p:18},
-            {cat:"Meat/Poultry/Seafood", name:"Chicken Deli (1 oz)", cal:20, p:5},
-            {cat:"Meat/Poultry/Seafood", name:"Chicken Drumstick (1 leg)", cal:75, p:12},
-            {cat:"Meat/Poultry/Seafood", name:"Chicken Thigh (2 oz)", cal:110, p:14},
-            {cat:"Meat/Poultry/Seafood", name:"Chicken Wing (1 wing)", cal:80, p:10},
-            {cat:"Meat/Poultry/Seafood", name:"Cod, baked (3 oz)", cal:89, p:19.4},
-            {cat:"Meat/Poultry/Seafood", name:"Deli Roast beef (1 oz)", cal:29, p:4.9},
-            {cat:"Meat/Poultry/Seafood", name:"Ham, extra lean (3 oz)", cal:123, p:18},
-            {cat:"Meat/Poultry/Seafood", name:"Pork loin (3 oz)", cal:178, p:24.3},
-            {cat:"Meat/Poultry/Seafood", name:"Pork loin roast (3 oz)", cal:180, p:24},
-            {cat:"Meat/Poultry/Seafood", name:"Pork tenderloin (3 oz)", cal:139, p:24},
-            {cat:"Meat/Poultry/Seafood", name:"Shrimp, boiled (1 oz)", cal:28, p:5.9},
-            {cat:"Meat/Poultry/Seafood", name:"Swai, baked (3 oz)", cal:89, p:11.3},
-            {cat:"Meat/Poultry/Seafood", name:"Tuna, canned water (1/4 cup)", cal:45, p:9.8},
-            {cat:"Meat/Poultry/Seafood", name:"Turkey Breast, skinless (4 oz)", cal:153, p:34},
-            {cat:"Meat/Poultry/Seafood", name:"Turkey Deli (1 slice)", cal:22, p:3.6},
-            {cat:"Meat/Poultry/Seafood", name:"Turkey Ground 85% (3 oz)", cal:153, p:14.4},
-            {cat:"Meat/Poultry/Seafood", name:"Turkey Wing (1 wing)", cal:186, p:24.9},
-            // Vegetables
-            {cat:"Vegetables", name:"Brussels Sprouts (1/4 cup)", cal:14, p:1},
-            {cat:"Vegetables", name:"Broccoli (1/4 cup)", cal:7, p:0.6},
-            {cat:"Vegetables", name:"Cauliflower (1/4 cup)", cal:7, p:0.5},
-            {cat:"Vegetables", name:"Carrots, raw (1/4 cup)", cal:13, p:0.3},
-            {cat:"Vegetables", name:"Celery (1 strip)", cal:1, p:0},
-            {cat:"Vegetables", name:"Corn, canned (1/4 cup)", cal:33, p:1.1},
-            {cat:"Vegetables", name:"Corn, cob (1 ear)", cal:59, p:2},
-            {cat:"Vegetables", name:"Cucumber, sliced (1/4 cup)", cal:4, p:0.2},
-            {cat:"Vegetables", name:"Garlic (1 tsp)", cal:4, p:0.2},
-            {cat:"Vegetables", name:"Lettuce (1/4 cup)", cal:2, p:0.1},
-            {cat:"Vegetables", name:"Onion (1 tbsp)", cal:4, p:0},
-            {cat:"Vegetables", name:"Pepper (1 tbsp)", cal:2, p:0},
-            {cat:"Vegetables", name:"Potato, boiled (1/4 cup)", cal:34, p:0.7},
-            {cat:"Vegetables", name:"Spinach, raw (1/4 cup)", cal:2, p:0.2},
-            {cat:"Vegetables", name:"Squash, yellow (1/4 cup)", cal:9, p:0.4},
-            {cat:"Vegetables", name:"Squash, butternut (1/4 cup)", cal:21, p:0.5},
-            {cat:"Vegetables", name:"Squash, spaghetti (1/4 cup)", cal:10, p:0.3},
-            {cat:"Vegetables", name:"Sweet Potato, boiled (1/4 cup)", cal:62, p:1.1},
-            {cat:"Vegetables", name:"Tomato (1/4 cup)", cal:8, p:0.4},
-            {cat:"Vegetables", name:"Zucchini (1/4 cup)", cal:5, p:0.3},
-            // Fruits
-            {cat:"Fruits", name:"Apple, sliced (1/4 cup)", cal:14, p:0},
-            {cat:"Fruits", name:"Banana, sliced (1/4 cup)", cal:33, p:0.4},
-            {cat:"Fruits", name:"Oranges (1/4 cup)", cal:21, p:0.4},
-            {cat:"Fruits", name:"Pears (1/4 cup)", cal:20, p:0.1},
-            {cat:"Fruits", name:"Grapes (1/4 cup)", cal:26, p:0.3},
-            {cat:"Fruits", name:"Watermelon (1/4 cup)", cal:11, p:0.2},
-            {cat:"Fruits", name:"Cantaloupe (1/4 cup)", cal:13, p:0.3},
-            {cat:"Fruits", name:"Peaches (1/4 cup)", cal:15, p:0.4},
-            {cat:"Fruits", name:"Nectarines (1/4 cup)", cal:16, p:0.4},
-            {cat:"Fruits", name:"Strawberries (1/4 cup)", cal:13, p:0.3},
-            {cat:"Fruits", name:"Blueberries (1/4 cup)", cal:21, p:0.3},
-            {cat:"Fruits", name:"Avocado (1/4 cup)", cal:48, p:0.7},
-            // Misc
-            {cat:"Misc", name:"Cream of Wheat (1 pkt)", cal:100, p:3},
-            {cat:"Misc", name:"Oatmeal (1/4 cup)", cal:77, p:2.7},
-            {cat:"Misc", name:"Quinoa (1/4 cup)", cal:56, p:2},
-            {cat:"Misc", name:"Ranch (1 tbsp)", cal:73, p:0.2},
-            {cat:"Misc", name:"Ranch, Fat Free (1 tbsp)", cal:17, p:0},
-            {cat:"Misc", name:"Ranch, Reduced Fat (1 tbsp)", cal:29, p:0.2}
+        const mntDB = [
+            {cat:"Carbs", name:"White Rice (1 cup/158g)", cal:205, c:45, p:4, f:0.4},
+            {cat:"Carbs", name:"Brown Rice (1 cup/195g)", cal:216, c:45, p:5, f:1.8},
+            {cat:"Carbs", name:"Oats Rolled (1/2 cup)", cal:150, c:27, p:5, f:2.5},
+            {cat:"Carbs", name:"Bread Wholemeal (2 slice)", cal:180, c:30, p:8, f:2},
+            {cat:"Carbs", name:"Potato Boiled (1 med)", cal:160, c:37, p:4, f:0.2},
+            {cat:"Carbs", name:"Sweet Potato (1 med)", cal:112, c:26, p:2, f:0.1},
+            {cat:"Carbs", name:"Quinoa (1 cup cooked)", cal:222, c:39, p:8, f:3.6},
+            {cat:"Carbs", name:"Pasta Whole Wheat (1 cup)", cal:174, c:37, p:7.5, f:0.8},
+            {cat:"Meat", name:"Chicken Breast (3oz/85g)", cal:140, c:0, p:26, f:3},
+            {cat:"Meat", name:"Chicken Thigh (3oz/85g)", cal:170, c:0, p:22, f:8},
+            {cat:"Meat", name:"Beef Steak (Lean 3oz)", cal:155, c:0, p:23, f:6},
+            {cat:"Meat", name:"Ground Beef 90% (3oz)", cal:180, c:0, p:22, f:10},
+            {cat:"Meat", name:"Turkey Breast (3oz)", cal:125, c:0, p:26, f:2},
+            {cat:"Meat", name:"Pork Chop (3oz)", cal:180, c:0, p:24, f:9},
+            {cat:"Seafood", name:"Salmon (3oz)", cal:175, c:0, p:19, f:11},
+            {cat:"Seafood", name:"Tuna Canned (3oz)", cal:100, c:0, p:22, f:1},
+            {cat:"Seafood", name:"Shrimp (3oz)", cal:85, c:0.5, p:18, f:1},
+            {cat:"Seafood", name:"Tilapia (3oz)", cal:90, c:0, p:21, f:1},
+            {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, c:12, p:8, f:8},
+            {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, c:12, p:8, f:0},
+            {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, c:6, p:17, f:0.7},
+            {cat:"Dairy", name:"Cottage Cheese (1/2 cup)", cal:110, c:6, p:14, f:4},
+            {cat:"Dairy", name:"Cheddar Cheese (1oz)", cal:115, c:1, p:7, f:9},
+            {cat:"Dairy", name:"Egg Large (1)", cal:72, c:0.6, p:6, f:5},
+            {cat:"Plant", name:"Tofu Firm (1/2 cup)", cal:95, c:2, p:10, f:5},
+            {cat:"Plant", name:"Edamame (1/2 cup)", cal:100, c:8, p:9, f:4},
+            {cat:"Plant", name:"Lentils (1/2 cup)", cal:115, c:20, p:9, f:0.4},
+            {cat:"Plant", name:"Black Beans (1/2 cup)", cal:110, c:20, p:7, f:0.5},
+            {cat:"Plant", name:"Peanut Butter (2tbsp)", cal:190, c:7, p:8, f:16},
+            {cat:"Plant", name:"Almonds (1oz)", cal:164, c:6, p:6, f:14},
+            {cat:"Veg/Fruit", name:"Broccoli (1 cup)", cal:55, c:11, p:4, f:0.6},
+            {cat:"Veg/Fruit", name:"Spinach (1 cup)", cal:23, c:4, p:3, f:0},
+            {cat:"Veg/Fruit", name:"Mixed Veggies (1 cup)", cal:118, c:24, p:5, f:0},
+            {cat:"Veg/Fruit", name:"Apple (1 med)", cal:95, c:25, p:0.5, f:0.3},
+            {cat:"Veg/Fruit", name:"Banana (1 med)", cal:105, c:27, p:1.3, f:0.4},
+            {cat:"Veg/Fruit", name:"Orange (1 med)", cal:62, c:15, p:1, f:0.2},
+            {cat:"Fats", name:"Olive Oil (1 tbsp)", cal:119, c:0, p:0, f:14},
+            {cat:"Fats", name:"Avocado (1/2)", cal:160, c:9, p:2, f:15},
+            {cat:"Fats", name:"Butter (1 tbsp)", cal:102, c:0, p:0.1, f:11.5},
+            {cat:"Supp", name:"Whey Protein (1 scoop)", cal:120, c:3, p:24, f:1},
+            {cat:"Supp", name:"Casein Protein (1 scoop)", cal:120, c:3, p:24, f:1}
         ];
 
-        // FULL HARVARD LIST
-        const moves = {
-            'gym': [ 
-                {name:"Weight Lifting: General", factor:3.17}, {name:"Weight Lifting: Vigorous", factor:6.32},
-                {name:"Aerobics: Water", factor:4.22}, {name:"Aerobics: Low Impact", factor:5.81},
-                {name:"Aerobics: High Impact", factor:7.37}, {name:"Aerobics: Step (Low)", factor:7.37},
-                {name:"Aerobics: Step (High)", factor:10.55}, {name:"Calisthenics: Moderate", factor:4.73},
-                {name:"Calisthenics: Vigorous", factor:8.45}, {name:"Circuit Training", factor:8.45},
-                {name:"Rowing Station: Moderate", factor:7.37}, {name:"Rowing Station: Vigorous", factor:8.96},
-                {name:"Elliptical Trainer", factor:9.50}, {name:"Ski Machine", factor:10.0},
-                {name:"Bicycling Station: Moderate", factor:7.37}, {name:"Bicycling Station: Vigorous", factor:11.09},
-                {name:"Stretching / Hatha Yoga", factor:4.22}, {name:"Riders: General", factor:5.27},
-                {name:"Stair Step Machine", factor:6.32}, {name:"Teaching Aerobics", factor:6.32}
-            ],
-            'sport': [
-                {name:"Billiards", factor:2.63}, {name:"Bowling", factor:3.17},
-                {name:"Curling", factor:4.22}, {name:"Gymnastics", factor:4.22},
-                {name:"Volleyball: Non-Competitive", factor:3.17}, {name:"Volleyball: Competitive/Gym", factor:4.22},
-                {name:"Volleyball: Beach", factor:8.45}, {name:"Badminton", factor:4.73},
-                {name:"Tai Chi", factor:4.22}, {name:"Horseback Riding", factor:4.22},
-                {name:"Archery", factor:3.68}, {name:"Golf: Cart", factor:3.68},
-                {name:"Golf: Carrying Clubs", factor:5.81}, {name:"Basketball: Game", factor:8.45},
-                {name:"Basketball: Wheelchair", factor:6.86}, {name:"Soccer", factor:7.37},
-                {name:"Tennis", factor:7.37}, {name:"Football: Competitive", factor:9.50},
-                {name:"Football: Touch/Flag", factor:8.45}, {name:"Hockey (Field/Ice)", factor:8.45},
-                {name:"Rugby/Wrestling", factor:6.32}, {name:"Martial Arts (Judo/Karate)", factor:10.55},
-                {name:"Boxing: Sparring", factor:9.50}, {name:"Handball", factor:12.65},
-                {name:"Racquetball: Competitive", factor:10.55}, {name:"Racquetball: Casual", factor:7.37},
-                {name:"Squash", factor:12.65}, {name:"Swimming: General", factor:6.32},
-                {name:"Swimming: Laps/Vigorous", factor:10.55}, {name:"Swimming: Backstroke", factor:8.45},
-                {name:"Swimming: Breaststroke", factor:10.55}, {name:"Swimming: Butterfly/Crawl", factor:11.6},
-                {name:"Water Polo", factor:10.55}, {name:"Water Volleyball", factor:3.17},
-                {name:"Scuba Diving", factor:7.37}, {name:"Snorkeling", factor:5.27},
-                {name:"Whitewater Rafting/Kayaking", factor:5.27}, {name:"Kayaking", factor:5.27},
-                {name:"Skateboarding", factor:5.27}, {name:"Rollerblading", factor:7.37},
-                {name:"Ice Skating", factor:7.37}, {name:"Sledding/Toboggan", factor:7.37},
-                {name:"Sky Diving/Hang Gliding", factor:3.68}, {name:"Fencing", factor:6.32},
-                {name:"Rope Jumping", factor:10.55}
-            ],
-            'outdoor': [
-                {name:"Walking: 3.5 mph", factor:4.22}, {name:"Walking: 4.0 mph", factor:4.73},
-                {name:"Walking: 4.5 mph", factor:5.27}, {name:"Race Walking", factor:6.86},
-                {name:"Running: 5 mph (12 min/mi)", factor:8.45}, {name:"Running: 5.2 mph (11.5 min/mi)", factor:9.50},
-                {name:"Running: 6 mph (10 min/mi)", factor:10.55}, {name:"Running: 6.7 mph (9 min/mi)", factor:11.60},
-                {name:"Running: 7.5 mph (8 min/mi)", factor:13.19}, {name:"Running: 8.6 mph (7 min/mi)", factor:15.29},
-                {name:"Running: 10 mph (6 min/mi)", factor:17.41}, {name:"Running: Cross Country", factor:9.50},
-                {name:"Bicycling: 12-13.9 mph", factor:8.45}, {name:"Bicycling: 14-15.9 mph", factor:10.55},
-                {name:"Bicycling: 16-19 mph", factor:12.65}, {name:"Bicycling: >20 mph", factor:17.41},
-                {name:"Bicycling: BMX/Mountain", factor:8.96}, {name:"Hiking: Cross Country", factor:6.32},
-                {name:"Rock Climbing: Ascending", factor:11.60}, {name:"Rock Climbing: Rappelling", factor:8.45},
-                {name:"Skiing: Downhill", factor:6.32}, {name:"Skiing: Cross Country", factor:8.45},
-                {name:"Snow Shoeing", factor:8.45}, {name:"Gardening: General", factor:4.73},
-                {name:"Gardening: Weeding", factor:4.87}, {name:"Planting Trees", factor:4.73},
-                {name:"Raking Lawn", factor:4.22}, {name:"Sacking Leaves", factor:4.22},
-                {name:"Mowing Lawn: Push Power", factor:4.73}, {name:"Mowing Lawn: Push Hand", factor:5.81},
-                {name:"Chopping Wood", factor:6.32}, {name:"Shoveling Snow", factor:6.32},
-                {name:"Carrying/Stacking Wood", factor:5.27}, {name:"Digging Dirt", factor:5.27},
-                {name:"Laying Sod", factor:5.27}
-            ],
-            'home': [
-                {name:"Sleeping", factor:0.65}, {name:"Watching TV", factor:0.79},
-                {name:"Reading: Sitting", factor:1.19}, {name:"Standing in Line", factor:1.33},
-                {name:"Cooking", factor:2.63}, {name:"Food Shopping (Cart)", factor:3.68},
-                {name:"Child Care: Bathing/Feeding", factor:3.68}, {name:"Playing w/ Kids: Moderate", factor:4.22},
-                {name:"Playing w/ Kids: Vigorous", factor:5.27}, {name:"Child Games (Hopscotch)", factor:5.27},
-                {name:"Heavy Cleaning (Car/Windows)", factor:4.73}, {name:"Moving: Unpacking", factor:3.68},
-                {name:"Moving: Furniture", factor:6.32}, {name:"Moving: Carrying Boxes", factor:7.37},
-                {name:"Dancing: Slow/Waltz", factor:3.17}, {name:"Dancing: Disco/Ballroom", factor:5.81},
-                {name:"Dancing: Fast/Twist", factor:6.32}
-            ],
-            'repair': [
-                {name:"Auto Repair", factor:3.17}, {name:"Wiring/Plumbing", factor:3.17},
-                {name:"Carpentry: Refinish Furniture", factor:4.73}, {name:"Carpentry: General", factor:3.68},
-                {name:"Carpentry: Outside", factor:6.32}, {name:"Lay/Remove Carpet/Tile", factor:4.73},
-                {name:"Paint/Paper: Inside", factor:4.73}, {name:"Paint House: Outside", factor:5.27},
-                {name:"Cleaning Rain Gutters", factor:5.27}, {name:"Hanging Storm Windows", factor:5.27},
-                {name:"Roofing", factor:6.32}, {name:"Masonry", factor:7.37}
-            ],
-            'occupational': [
-                {name:"Computer Work", factor:1.44}, {name:"Light Office Work", factor:1.58},
-                {name:"Sitting in Meetings/Class", factor:1.70}, {name:"Desk Work", factor:1.84},
-                {name:"Truck Driving", factor:2.09}, {name:"Bartending/Server", factor:2.63},
-                {name:"Police Officer", factor:2.63}, {name:"Heavy Equip Operator", factor:2.63},
-                {name:"Theater Work", factor:3.17}, {name:"Welding", factor:3.17},
-                {name:"Carpentry Work", factor:3.68}, {name:"Coaching Sports", factor:4.22},
-                {name:"Masseur (Standing)", factor:4.22}, {name:"Construction: General", factor:5.81},
-                {name:"Coal Mining", factor:6.32}, {name:"Horse Grooming", factor:6.32},
-                {name:"Forestry: General", factor:8.45}, {name:"Steel Mill: General", factor:8.45},
-                {name:"Firefighting", factor:12.65}
-            ]
-        };
-
+        const moves = { 'gym': [{name:"Weight Lifting", factor:3}, {name:"Cardio: Moderate", factor:7}, {name:"HIIT", factor:8}], 'sport': [{name:"Badminton", factor:4.5}, {name:"Soccer", factor:7}, {name:"Swimming", factor:6}], 'outdoor': [{name:"Walking (Brisk)", factor:3.8}, {name:"Running", factor:8}, {name:"Cycling", factor:6}], 'home': [{name:"Housework", factor:3}, {name:"Gardening", factor:4}] };
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
-        let plan = [], foodPlan = [];
+        let mntPlan = [], exPlan = [];
+        let globalTargetCal = 1500; // Default
 
-        // OMRON REFERENCE
-        const omronRef = {
-            ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75],
-            maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88],
-            femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 19.925]
-        };
+        const omronRef = { ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75], maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88], femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 19.925] };
 
-        function interpolate(x, xArr, yArr) {
-            if (x >= xArr[0]) return yArr[0];
-            for (let i = 0; i < xArr.length - 1; i++) {
-                if (x <= xArr[i] && x >= xArr[i + 1]) {
-                    return yArr[i] + (x - xArr[i]) * (yArr[i+1] - yArr[i]) / (xArr[i+1] - xArr[i]);
-                }
-            }
-            // Extrapolation
-            const last = xArr.length - 1;
-            return yArr[last] + (x - xArr[last]) * (yArr[last] - yArr[last-1]) / (xArr[last] - xArr[last-1]);
-        }
+        function interpolate(x, xArr, yArr) { if (x >= xArr[0]) return yArr[0]; for (let i = 0; i < xArr.length - 1; i++) { if (x <= xArr[i] && x >= xArr[i + 1]) { const x0 = xArr[i], x1 = xArr[i + 1], y0 = yArr[i], y1 = yArr[i + 1]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); } } const last = xArr.length - 1; return yArr[last]; }
 
         function init() {
-            let pSel = document.getElementById('foodType'); pSel.innerHTML = "";
-            let cats = [...new Set(proteinDB.map(i=>i.cat))];
-            cats.forEach(c => {
-                let grp = document.createElement('optgroup'); grp.label = c;
-                proteinDB.filter(i=>i.cat===c).forEach(i => { let opt = document.createElement('option'); opt.value = `${i.cal}|${i.p}`; opt.text = i.name; grp.appendChild(opt); });
-                pSel.appendChild(grp);
-            });
+            let pSel = document.getElementById('mntFood'); pSel.innerHTML = "";
+            let cats = [...new Set(mntDB.map(i=>i.cat))];
+            cats.forEach(c => { let grp = document.createElement('optgroup'); grp.label = c; mntDB.filter(i=>i.cat===c).forEach(i => { let opt = document.createElement('option'); opt.value = JSON.stringify(i); opt.text = i.name; grp.appendChild(opt); }); pSel.appendChild(grp); });
             updateMoves();
             const inputs = ['pId','pName','age','gender','height','weight','waist','vfat','fat','muscle','activity','snackFreq','drinkFreq','bfType','bfSize','luType','luSize','dnType','dnSize'];
             inputs.forEach(id => { let el = document.getElementById(id); if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); } });
@@ -609,10 +397,24 @@
         }
 
         function updateMoves() {
-            let type = document.getElementById('exType').value;
-            let sel = document.getElementById('exMove');
-            sel.innerHTML = "";
+            let type = document.getElementById('exType').value; let sel = document.getElementById('exMove'); sel.innerHTML = "";
             if(moves[type]) moves[type].forEach(m => { let opt = document.createElement('option'); opt.value = m.factor; opt.text = m.name; sel.add(opt); });
+        }
+
+        function updateMntTargets() {
+            let pKey = document.getElementById('mntProtocol').value;
+            let p = protocols[pKey];
+            let tCal = globalTargetCal; // From runCalc
+            
+            // Calc grams: (TotalCal * Ratio) / KcalPerGram
+            let tCarb = Math.round((tCal * p.c) / 4);
+            let tProt = Math.round((tCal * p.p) / 4);
+            let tFat = Math.round((tCal * p.f) / 9);
+
+            document.getElementById('targetCalVal').innerText = tCal + " kcal";
+            document.getElementById('targetCarbVal').innerText = tCarb + "g (" + (p.c*100) + "%)";
+            document.getElementById('targetProtVal').innerText = tProt + "g (" + (p.p*100) + "%)";
+            document.getElementById('targetFatVal').innerText = tFat + "g (" + (p.f*100) + "%)";
         }
 
         function runCalc() {
@@ -625,19 +427,16 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // BMR (Harris-Benedict Original)
             let bmr = 0;
             if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
             else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
             bmr = Math.round(bmr);
             
-            // Body Age
             let metAge = age;
             if (w > 0 && bmr > 0) {
                 let userBaseValue = bmr / w;
                 let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
-                let calculatedAge = interpolate(userBaseValue, refBase, omronRef.ageMidpoints);
-                metAge = Math.round(calculatedAge);
+                metAge = Math.round(interpolate(userBaseValue, refBase, omronRef.ageMidpoints));
                 if (metAge < 18) metAge = 18; if (metAge > 99) metAge = 99;
             }
             document.getElementById('sMetAge').innerText = metAge;
@@ -647,29 +446,11 @@
             ['bf','lu','dn'].forEach(m => { intake += calMap[document.getElementById(m+'Type').value][document.getElementById(m+'Size').value]; });
             intake += (parseFloat(document.getElementById('snackFreq').value)||0)*200 + (parseFloat(document.getElementById('drinkFreq').value)||0)*150;
             
-            // Exercise Burn
-            let exerciseBurn = 0;
-            plan.forEach(p => { exerciseBurn += p.k; });
-
             document.getElementById('sIntake').innerText = Math.round(intake);
             document.getElementById('sBMR').innerText = bmr;
             document.getElementById('sTDEE').innerText = tdee;
-            document.getElementById('sBal').innerText = (intake - tdee); 
+            document.getElementById('sBal').innerText = (intake - tdee);
 
-            // Tracker
-            let totalOutput = tdee + exerciseBurn;
-            let net = intake - totalOutput;
-            document.getElementById('tkInput').innerText = intake;
-            document.getElementById('tkOutput').innerText = totalOutput;
-            let tkNet = document.getElementById('tkNet');
-            tkNet.innerText = net;
-            let tkRes = document.getElementById('tkResult');
-            let lossPerWeek = (net * 7) / 7700;
-            if (net < -200) { tkNet.style.color = "var(--success)"; tkRes.className = "track-result res-loss"; tkRes.innerHTML = `Losing ${Math.abs(lossPerWeek).toFixed(1)} kg/wk`; }
-            else if (net > 200) { tkNet.style.color = "var(--danger)"; tkRes.className = "track-result res-gain"; tkRes.innerHTML = `Gaining ${lossPerWeek.toFixed(1)} kg/wk`; }
-            else { tkNet.style.color = "#FF9500"; tkRes.className = "track-result res-maint"; tkRes.innerHTML = "Maintenance"; }
-
-            // Analysis
             let risk = "Unknown";
             if(bmiVal < 18.5) risk = "Low Risk"; else if(bmiVal < 23.0) risk = "Acceptable"; else if(bmiVal < 27.5) risk = "Increased"; else if(bmiVal < 32.5) risk = "High"; else if(bmiVal < 37.5) risk = "Very High"; else risk = "Extremely High";
             let vHTML = getBar("BMI (CPG 2023)", bmiVal, 50, [{l:18.5,c:"#F59E0B"}, {l:22.9,c:"#34C759"}, {l:27.4,c:"#FBBF24"}, {l:32.4,c:"#F97316"}, {l:37.4,c:"#EF4444"}, {l:50,c:"#991B1B"}], risk);
@@ -686,7 +467,6 @@
             vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk);
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // Recs
             let isMafld = document.getElementById('risk_mafld').checked;
             let isT2dm = document.getElementById('risk_t2dm').checked;
             let isHtn = document.getElementById('risk_htn').checked;
@@ -703,21 +483,37 @@
             else if (isOsa) { targetPct = 0.07; maxPct = 0.11; reason = "Sleep Apnea Management"; }
             else if (isAsthma) { targetPct = 0.07; maxPct = 0.08; reason = "Asthma Symptom Control"; }
 
-            let calStrat = (gender === 'female') ? "<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>" : "<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>";
             let defMin = Math.max(1000, tdee - 750); let defMax = Math.max(1200, tdee - 500);
-            calStrat += `<li><b>Option B:</b> Reduce daily energy by 500-750 kcal (${defMin}-${defMax} kcal/day)</li>`;
+            let calStrat = "";
+            
+            // SET GLOBAL TARGET FOR MNT SECTION
+            // CPG Strategy: "Reduce daily energy by 500-750 kcal" OR use 1200-1500 (F) / 1500-1800 (M)
+            // We will set the target to the LOWER bound of the gender-specific range for strictness, or TDEE-500
+            let clinicalTarget = 0;
+            if(gender === 'female') {
+                calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`;
+                clinicalTarget = 1200; 
+            } else {
+                calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`;
+                clinicalTarget = 1500;
+            }
+            calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal (${defMin}-${defMax} kcal)</li>`;
+            
+            globalTargetCal = clinicalTarget; // Update Global
+            updateMntTargets(); // Refresh Header
 
             let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
             let drugRec = "";
-            if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct to lifestyle.</li>";
+            if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct.</li>";
 
-            let hHTML = `<div class="rec-container"><h4>${reason}</h4><table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr><tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${(w*(1-targetPct)).toFixed(1)} kg</td><td>3 Months</td></tr><tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${(w*(1-maxPct)).toFixed(1)} kg</td><td>6 Months</td></tr></table><div style="margin-top:10px; font-size:12px;"><strong>Strategies to achieve 0.5-1.0 kg/week loss:</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate intensity</li>${drugRec}</ul></div></div>`;
+            let hHTML = `<div class="rec-container"><h4>${reason}</h4>
+            <table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr>
+            <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${(w*(1-targetPct)).toFixed(1)} kg</td><td>3 Months</td></tr>
+            <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${(w*(1-maxPct)).toFixed(1)} kg</td><td>6 Months</td></tr></table>
+            <div style="margin-top:10px; font-size:12px;"><strong>Strategies (0.5-1.0 kg/week loss):</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate</li>${drugRec}</ul></div></div>`;
             document.getElementById('hContent').innerHTML = hHTML;
             
-            // Protein Rec Update
-            let protFactor = (act >= 1.55 || mpRisk === "Low") ? 1.2 : 0.8;
-            let protMin = Math.round(w * protFactor); let protMax = Math.round(w * (protFactor + 0.3));
-            document.getElementById('protRecTag').innerText = `Target: ${protMin}g - ${protMax}g`;
+            recalcExercises(w);
         }
 
         function getBar(label, val, max, segs, status) {
@@ -730,18 +526,36 @@
             return h;
         }
 
-        function addFood() {
-            let sel = document.getElementById('foodType'); let vals = sel.value.split('|');
-            let name = sel.options[sel.selectedIndex].text.split('(')[0].trim();
-            let qty = parseFloat(document.getElementById('foodQty').value)||1;
-            foodPlan.push({n:name, q:qty, p:Math.round(vals[1]*qty)});
-            renderFood();
+        function addMnt() {
+            let sel = document.getElementById('mntFood'); if(!sel.value) return;
+            let item = JSON.parse(sel.value);
+            let qty = parseFloat(document.getElementById('mntQty').value)||1;
+            mntPlan.push({ ...item, q: qty, tC: item.cal*qty, tCb: item.c*qty, tP: item.p*qty, tF: item.f*qty });
+            renderMnt();
         }
-        function renderFood() {
-            let h="", tp=0;
-            foodPlan.forEach((f,i) => { tp+=f.p; h+=`<tr><td>${i+1}</td><td>${f.n}</td><td>x${f.q}</td><td>${f.p}g</td><td class="del-btn" onclick="foodPlan.splice(${i},1);renderFood()">×</td></tr>`; });
-            document.getElementById('foodTableBody').innerHTML = h; document.getElementById('totalProtVal').innerText = tp+"g";
-            runCalc();
+
+        function renderMnt() {
+            let h="", tc=0, tcb=0, tp=0, tf=0;
+            mntPlan.forEach((f,i) => {
+                tc+=f.tC; tcb+=f.tCb; tp+=f.tP; tf+=f.tF;
+                h+=`<tr><td>${f.name}</td><td>${f.q}</td><td>${Math.round(f.tC)}</td><td>${Math.round(f.tCb)}</td><td>${Math.round(f.tP)}</td><td>${Math.round(f.tF)}</td><td class="del-btn" onclick="mntPlan.splice(${i},1);renderMnt()">×</td></tr>`;
+            });
+            document.getElementById('mntBody').innerHTML = h;
+            document.getElementById('tCal').innerText = Math.round(tc);
+            document.getElementById('tCarb').innerText = Math.round(tcb);
+            document.getElementById('tProt').innerText = Math.round(tp);
+            document.getElementById('tFat').innerText = Math.round(tf);
+
+            let totalG = tcb*4 + tp*4 + tf*9;
+            if(totalG > 0) {
+                let pc = Math.round((tcb*4/totalG)*100);
+                let pp = Math.round((tp*4/totalG)*100);
+                let pf = Math.round((tf*9/totalG)*100);
+                document.getElementById('barCarb').style.width = pc+"%";
+                document.getElementById('barProt').style.width = pp+"%";
+                document.getElementById('barFat').style.width = pf+"%";
+                document.getElementById('macroText').innerText = `Carb:${pc}% Prot:${pp}% Fat:${pf}%`;
+            }
         }
 
         function addExercise() {
@@ -749,14 +563,17 @@
             let dur = parseFloat(document.getElementById('exDur').value);
             let f = parseFloat(sel.value);
             let k = Math.round(f * (parseFloat(document.getElementById('weight').value)||70) * (dur/60));
-            plan.push({n:name, d:dur, f:f, k:k});
+            exPlan.push({n:name, d:dur, f:f, k:k});
             renderEx();
         }
         function renderEx() {
             let h="", tk=0;
-            plan.forEach((p,i) => { tk+=p.k; h+=`<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="plan.splice(${i},1);renderEx()">×</td></tr>`; });
+            exPlan.forEach((p,i) => { tk+=p.k; h+=`<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="exPlan.splice(${i},1);renderEx()">×</td></tr>`; });
             document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
-            runCalc();
+        }
+        function recalcExercises(w) {
+            exPlan.forEach(p => { p.k = Math.round(p.f * w * (p.d / 60)); });
+            renderEx();
         }
 
         window.onload = init;
