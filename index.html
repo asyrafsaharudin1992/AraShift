@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v46.0 (Massive DB)</title>
+    <title>AraShift System v46.0 (Restored)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -99,12 +99,14 @@
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -5px; transition: left 0.3s ease; z-index: 10; }
         .bar-status-label { text-align: right; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
-        /* MNT PLANNER (Section G) */
+        /* MNT PLANNER (Section G - v46 Layout) */
         .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; }
         .mnt-stat-item { text-align: center; }
         .mnt-stat-val { font-size: 14px; font-weight: 800; display: block; }
         
-        .mnt-controls { display: grid; grid-template-columns: 1.5fr 2fr 1fr 1fr; gap: 10px; margin-bottom: 10px; align-items: end; }
+        /* v46 Control Grid: Protocol | Search | FoodDropdown | Qty | Add */
+        .mnt-controls { display: grid; grid-template-columns: 1fr 1fr 1fr 0.5fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: end; }
+        
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: #666; border-bottom: 1px solid #ccc; }
         .plan-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
@@ -200,7 +202,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v46.0 (Massive DB)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v46.0 (Restored)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -275,10 +277,15 @@
                             <option value="dash">DASH Diet</option>
                             <option value="keto">Ketogenic</option>
                         </select>
+                        
+                        <input type="text" id="foodSearch" placeholder="Search food..." onkeyup="filterFood()">
+                        
                         <select id="mntFood"></select>
+                        
                         <input type="number" id="mntQty" placeholder="Qty" value="1">
-                        <button class="btn btn-p" onclick="addMnt()">Add Food</button>
+                        <button class="btn btn-p" onclick="addMnt()">Add</button>
                     </div>
+                    
                     <table class="plan-table">
                         <thead>
                             <tr>
@@ -318,7 +325,7 @@
 
                 <div class="card" id="card-exercise">
                     <h3>H. Exercise Planner</h3>
-                    <div class="mnt-controls">
+                    <div class="mnt-controls" style="grid-template-columns: 1.5fr 2fr 1fr 1fr;">
                         <select id="exType" onchange="updateMoves()">
                             <option value="gym">Gym</option>
                             <option value="sport">Sport</option>
@@ -329,7 +336,7 @@
                         </select>
                         <select id="exMove"></select>
                         <input type="number" id="exDur" placeholder="Min" value="30">
-                        <button class="btn btn-p" onclick="addExercise()">Add Activity</button>
+                        <button class="btn btn-p" onclick="addExercise()">Add</button>
                     </div>
                     <table class="plan-table">
                         <thead><tr><th style="width:5%">No</th><th style="width:50%">Exercise</th><th style="width:20%">Duration</th><th style="width:25%">Burn (kcal)</th><th></th></tr></thead>
@@ -354,25 +361,14 @@
     <div class="action-bar"><button class="btn btn-s" onclick="location.reload()">Reset</button><button class="btn btn-s" onclick="window.print()">🖨️ Print Report</button></div>
 
     <script>
-        // MNT PROTOCOLS
-        const protocols = {
-            'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 },
-            'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 },
-            'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 },
-            'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 },
-            'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 }
-        };
+        const protocols = { 'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 }, 'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 }, 'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 }, 'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 }, 'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 } };
 
-        // --- MASSIVE MNT DATABASE EXPANSION ---
+        // --- MASSIVE MNT DATABASE (RESTORED) ---
         const mntDB = [
-            // --- CPG STANDARDS ---
-            {cat:"Standard", name:"[STD] Rice (1 scoop / 50g)", cal:65, c:14, p:1.2, f:0.1},
-            {cat:"Standard", name:"[STD] Milk (1 glass / 250ml)", cal:160, c:12, p:8, f:8},
-            {cat:"Standard", name:"[STD] Milo/Tea (1 cup / 200ml)", cal:120, c:20, p:2, f:3},
-            {cat:"Standard", name:"[STD] Oil (1 tbsp / 15ml)", cal:120, c:0, p:0, f:14},
-            {cat:"Standard", name:"[STD] Sugar (1 tsp / 5g)", cal:20, c:5, p:0, f:0},
-
-            // --- CARBS ---
+            {cat:"Standard", name:"[STD] Rice Scoop (50g)", cal:65, c:14, p:1.2, f:0.1},
+            {cat:"Standard", name:"[STD] Milk Glass (250ml)", cal:150, c:12, p:8, f:8},
+            {cat:"Standard", name:"[STD] Oil Tbsp (15ml)", cal:120, c:0, p:0, f:14},
+            {cat:"Standard", name:"[STD] Sugar Tsp (5g)", cal:20, c:5, p:0, f:0},
             {cat:"Carbs", name:"White Rice (1 cup/158g)", cal:205, c:45, p:4, f:0.4},
             {cat:"Carbs", name:"Brown Rice (1 cup/195g)", cal:216, c:45, p:5, f:1.8},
             {cat:"Carbs", name:"Basmati Rice (1 cup)", cal:205, c:44, p:4, f:0.5},
@@ -380,133 +376,60 @@
             {cat:"Carbs", name:"Glutinous Rice (1 cup)", cal:250, c:53, p:4, f:0.5},
             {cat:"Carbs", name:"Oats Rolled (1/2 cup)", cal:150, c:27, p:5, f:2.5},
             {cat:"Carbs", name:"Oats Instant (1 pkt)", cal:130, c:23, p:4, f:2},
-            {cat:"Carbs", name:"Bread White (2 slice)", cal:150, c:28, p:4, f:2},
             {cat:"Carbs", name:"Bread Wholemeal (2 slice)", cal:180, c:30, p:8, f:2},
-            {cat:"Carbs", name:"Bread Multigrain (2 slice)", cal:190, c:32, p:9, f:3},
-            {cat:"Carbs", name:"Bread Sourdough (2 slice)", cal:190, c:36, p:8, f:1},
             {cat:"Carbs", name:"Chapati (1 piece)", cal:120, c:18, p:3, f:4},
             {cat:"Carbs", name:"Roti Canai (1 piece)", cal:300, c:35, p:6, f:15},
             {cat:"Carbs", name:"Tortilla Wrap (1 pc)", cal:140, c:24, p:4, f:3},
             {cat:"Carbs", name:"Potato Boiled (1 med)", cal:160, c:37, p:4, f:0.2},
-            {cat:"Carbs", name:"Potato Baked (1 med)", cal:161, c:37, p:4, f:0.2},
-            {cat:"Carbs", name:"Potato Mashed (1 cup)", cal:214, c:35, p:4, f:7},
             {cat:"Carbs", name:"Sweet Potato (1 med)", cal:112, c:26, p:2, f:0.1},
             {cat:"Carbs", name:"Corn (1 cup)", cal:143, c:31, p:5, f:2},
-            {cat:"Carbs", name:"Pumpkin (1 cup)", cal:30, c:8, p:1, f:0.1},
             {cat:"Carbs", name:"Quinoa (1 cup cooked)", cal:222, c:39, p:8, f:3.6},
             {cat:"Carbs", name:"Pasta Whole Wheat (1 cup)", cal:174, c:37, p:7.5, f:0.8},
-            {cat:"Carbs", name:"Pasta White (1 cup)", cal:200, c:40, p:7, f:1},
             {cat:"Carbs", name:"Noodles Yellow (1 cup)", cal:220, c:40, p:6, f:3},
             {cat:"Carbs", name:"Noodles Bihun/Rice (1 cup)", cal:190, c:42, p:3, f:0.5},
             {cat:"Carbs", name:"Kway Teow (1 cup)", cal:200, c:40, p:3, f:3},
-
-            // --- MEAT ---
             {cat:"Meat", name:"Chicken Breast (3oz/85g)", cal:140, c:0, p:26, f:3},
             {cat:"Meat", name:"Chicken Thigh (3oz/85g)", cal:170, c:0, p:22, f:8},
             {cat:"Meat", name:"Chicken Drumstick (1)", cal:120, c:0, p:12, f:6},
-            {cat:"Meat", name:"Chicken Wing (1)", cal:90, c:0, p:8, f:6},
             {cat:"Meat", name:"Beef Steak (Lean 3oz)", cal:155, c:0, p:23, f:6},
-            {cat:"Meat", name:"Beef Ribeye (3oz)", cal:230, c:0, p:20, f:16},
             {cat:"Meat", name:"Beef Minced (3oz)", cal:210, c:0, p:20, f:14},
-            {cat:"Meat", name:"Ground Beef 90% (3oz)", cal:180, c:0, p:22, f:10},
             {cat:"Meat", name:"Lamb Chop (3oz)", cal:250, c:0, p:22, f:18},
-            {cat:"Meat", name:"Turkey Breast (3oz)", cal:125, c:0, p:26, f:2},
-            {cat:"Meat", name:"Duck Breast (3oz)", cal:120, c:0, p:23, f:2.5},
-            {cat:"Meat", name:"Pork Chop (3oz)", cal:180, c:0, p:24, f:9},
-
-            // --- SEAFOOD ---
             {cat:"Seafood", name:"Salmon (3oz)", cal:175, c:0, p:19, f:11},
             {cat:"Seafood", name:"Tuna Canned (3oz)", cal:100, c:0, p:22, f:1},
             {cat:"Seafood", name:"Shrimp (3oz)", cal:85, c:0.5, p:18, f:1},
-            {cat:"Seafood", name:"Tilapia (3oz)", cal:90, c:0, p:21, f:1},
-            {cat:"Seafood", name:"Cod (3oz)", cal:90, c:0, p:20, f:1},
             {cat:"Seafood", name:"Seabass (3oz)", cal:105, c:0, p:20, f:2},
             {cat:"Seafood", name:"Squid/Sotong (3oz)", cal:80, c:2, p:14, f:1},
             {cat:"Seafood", name:"Anchovies/Ikan Bilis (1oz)", cal:60, c:0, p:8, f:2},
-            {cat:"Seafood", name:"Crab Meat (3oz)", cal:85, c:0, p:16, f:1},
-
-            // --- DAIRY ---
             {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, c:12, p:8, f:8},
-            {cat:"Dairy", name:"Low Fat Milk (1 cup)", cal:110, c:12, p:8, f:2.5},
             {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, c:12, p:8, f:0},
             {cat:"Dairy", name:"Soy Milk (1 cup)", cal:100, c:8, p:7, f:4},
-            {cat:"Dairy", name:"Almond Milk (1 cup)", cal:40, c:1, p:1, f:3},
             {cat:"Dairy", name:"Greek Yogurt (170g)", cal:100, c:6, p:17, f:0.7},
-            {cat:"Dairy", name:"Plain Yogurt (1 cup)", cal:150, c:12, p:9, f:8},
-            {cat:"Dairy", name:"Cottage Cheese (1/2 cup)", cal:110, c:6, p:14, f:4},
-            {cat:"Dairy", name:"Cheddar Cheese (1oz)", cal:115, c:1, p:7, f:9},
-            {cat:"Dairy", name:"Mozzarella (1oz)", cal:85, c:1, p:6, f:6},
             {cat:"Dairy", name:"Egg Large (1)", cal:72, c:0.6, p:6, f:5},
-            {cat:"Dairy", name:"Egg White (1)", cal:17, c:0.2, p:3.6, f:0},
-
-            // --- PLANT PROTEIN ---
             {cat:"Plant", name:"Tofu Firm (1/2 cup)", cal:95, c:2, p:10, f:5},
-            {cat:"Plant", name:"Tofu Soft (1/2 cup)", cal:70, c:2, p:7, f:3},
             {cat:"Plant", name:"Tempeh (1/2 cup)", cal:160, c:10, p:15, f:9},
             {cat:"Plant", name:"Edamame (1/2 cup)", cal:100, c:8, p:9, f:4},
-            {cat:"Plant", name:"Lentils (1/2 cup)", cal:115, c:20, p:9, f:0.4},
-            {cat:"Plant", name:"Dhal (1/2 cup)", cal:120, c:18, p:7, f:3},
+            {cat:"Plant", name:"Lentils/Dhal (1/2 cup)", cal:115, c:20, p:9, f:0.4},
             {cat:"Plant", name:"Chickpeas (1/2 cup)", cal:135, c:22, p:7, f:2},
-            {cat:"Plant", name:"Red Kidney Beans (1/2 cup)", cal:110, c:20, p:8, f:0.5},
-            {cat:"Plant", name:"Baked Beans (1/2 cup)", cal:140, c:25, p:6, f:1},
-            {cat:"Plant", name:"Peanut Butter (2tbsp)", cal:190, c:7, p:8, f:16},
             {cat:"Plant", name:"Almonds (1oz)", cal:164, c:6, p:6, f:14},
-            {cat:"Plant", name:"Walnuts (1oz)", cal:185, c:4, p:4, f:18},
-            {cat:"Plant", name:"Peanuts (1oz)", cal:160, c:5, p:7, f:14},
-            {cat:"Plant", name:"Cashews (1oz)", cal:155, c:9, p:5, f:12},
-            {cat:"Plant", name:"Chia Seeds (1 tbsp)", cal:60, c:5, p:2, f:4},
-
-            // --- VEGETABLES ---
             {cat:"Vegetables", name:"Broccoli (1 cup)", cal:55, c:11, p:4, f:0.6},
             {cat:"Vegetables", name:"Spinach (1 cup)", cal:23, c:4, p:3, f:0},
             {cat:"Vegetables", name:"Cabbage (1 cup)", cal:22, c:5, p:1, f:0},
-            {cat:"Vegetables", name:"Bok Choy (1 cup)", cal:20, c:3, p:2, f:0},
-            {cat:"Vegetables", name:"Cauliflower (1 cup)", cal:27, c:5, p:2, f:0},
-            {cat:"Vegetables", name:"Carrot (1 med)", cal:25, c:6, p:0.5, f:0},
             {cat:"Vegetables", name:"Cucumber (1 cup)", cal:16, c:4, p:1, f:0},
-            {cat:"Vegetables", name:"Tomato (1 med)", cal:22, c:5, p:1, f:0},
-            {cat:"Vegetables", name:"Lettuce (1 cup)", cal:5, c:1, p:0.5, f:0},
-            {cat:"Vegetables", name:"Green Beans (1 cup)", cal:31, c:7, p:2, f:0},
-            {cat:"Vegetables", name:"Mushrooms (1 cup)", cal:20, c:3, p:3, f:0},
-            {cat:"Vegetables", name:"Onion (1 med)", cal:40, c:9, p:1, f:0},
             {cat:"Vegetables", name:"Mixed Veggies (1 cup)", cal:118, c:24, p:5, f:0},
-
-            // --- FRUITS ---
             {cat:"Fruits", name:"Apple (1 med)", cal:95, c:25, p:0.5, f:0.3},
             {cat:"Fruits", name:"Banana (1 med)", cal:105, c:27, p:1.3, f:0.4},
             {cat:"Fruits", name:"Orange (1 med)", cal:62, c:15, p:1, f:0.2},
-            {cat:"Fruits", name:"Pear (1 med)", cal:100, c:27, p:1, f:0},
-            {cat:"Fruits", name:"Grapes (1 cup)", cal:104, c:27, p:1, f:0},
-            {cat:"Fruits", name:"Watermelon (1 cup)", cal:46, c:12, p:1, f:0},
             {cat:"Fruits", name:"Papaya (1 cup)", cal:60, c:15, p:1, f:0},
-            {cat:"Fruits", name:"Mango (1 cup)", cal:100, c:25, p:1, f:0.5},
-            {cat:"Fruits", name:"Pineapple (1 cup)", cal:80, c:21, p:1, f:0},
-            {cat:"Fruits", name:"Berries (1 cup)", cal:85, c:21, p:1, f:0.5},
+            {cat:"Fruits", name:"Durian (5 ulas/40g)", cal:60, c:11, p:1, f:2},
             {cat:"Fruits", name:"Dates (1 med)", cal:20, c:5, p:0, f:0},
-
-            // --- FATS ---
             {cat:"Fats", name:"Olive Oil (1 tbsp)", cal:119, c:0, p:0, f:14},
-            {cat:"Fats", name:"Coconut Oil (1 tbsp)", cal:117, c:0, p:0, f:14},
-            {cat:"Fats", name:"Vegetable Oil (1 tbsp)", cal:120, c:0, p:0, f:14},
-            {cat:"Fats", name:"Butter (1 tbsp)", cal:102, c:0, p:0.1, f:11.5},
-            {cat:"Fats", name:"Ghee (1 tbsp)", cal:112, c:0, p:0, f:13},
-            {cat:"Fats", name:"Mayonnaise (1 tbsp)", cal:94, c:0, p:0, f:10},
             {cat:"Fats", name:"Avocado (1/2)", cal:160, c:9, p:2, f:15},
-
-            // --- BEVERAGES ---
-            {cat:"Beverages", name:"Coffee O (Black, No Sugar)", cal:5, c:0, p:0, f:0},
-            {cat:"Beverages", name:"Coffee C (with Milk)", cal:80, c:10, p:2, f:3},
-            {cat:"Beverages", name:"Tea O (No Sugar)", cal:2, c:0, p:0, f:0},
-            {cat:"Beverages", name:"Tea with Milk", cal:80, c:10, p:2, f:3},
+            {cat:"Beverages", name:"Coffee O (No Sugar)", cal:5, c:0, p:0, f:0},
+            {cat:"Beverages", name:"Coffee C (Milk)", cal:80, c:10, p:2, f:3},
             {cat:"Beverages", name:"Milo (1 cup)", cal:150, c:25, p:3, f:4},
-            {cat:"Beverages", name:"Soft Drink (1 can)", cal:140, c:39, p:0, f:0},
-
-            // --- SUPPLEMENTS ---
-            {cat:"Supp", name:"Whey Protein (1 scoop)", cal:120, c:3, p:24, f:1},
-            {cat:"Supp", name:"Casein Protein (1 scoop)", cal:120, c:3, p:24, f:1}
+            {cat:"Supp", name:"Whey Protein (1 scoop)", cal:120, c:3, p:24, f:1}
         ];
 
-        // --- FULLY RESTORED EXERCISE DB ---
         const moves = {
             'gym': [ {name:"Weight Lifting: General", factor:3}, {name:"Weight Lifting: Vigorous", factor:6}, {name:"Aerobics: Water", factor:4}, {name:"Aerobics: Low Impact", factor:5}, {name:"Aerobics: High Impact", factor:7}, {name:"Aerobics: Step", factor:8.5}, {name:"Calisthenics: Moderate", factor:4.5}, {name:"Calisthenics: Vigorous", factor:8}, {name:"Circuit Training", factor:8}, {name:"Rowing: Moderate", factor:7}, {name:"Rowing: Vigorous", factor:8.5}, {name:"Elliptical Trainer", factor:5}, {name:"Ski Machine", factor:9.5}, {name:"Stair Step Machine", factor:6}, {name:"Cycling: Stationary (Mod)", factor:7}, {name:"Cycling: Stationary (Vig)", factor:10.5}, {name:"Stretching / Hatha Yoga", factor:2.5}, {name:"Pilates", factor:3} ],
             'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball: Game", factor:8}, {name:"Basketball: Shooting", factor:4.5}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming: Leisure", factor:6}, {name:"Swimming: Laps", factor:10}, {name:"Golf: Carrying Clubs", factor:4.5}, {name:"Golf: Cart", factor:3.5}, {name:"Bowling", factor:3}, {name:"Volleyball", factor:3}, {name:"Martial Arts", factor:10}, {name:"Boxing: Sparring", factor:9}, {name:"Handball", factor:12}, {name:"Squash", factor:12}, {name:"Table Tennis", factor:7} ],
@@ -525,15 +448,35 @@
         function interpolate(x, xArr, yArr) { if (x >= xArr[0]) return yArr[0]; for (let i = 0; i < xArr.length - 1; i++) { if (x <= xArr[i] && x >= xArr[i + 1]) { const x0 = xArr[i], x1 = xArr[i + 1], y0 = yArr[i], y1 = yArr[i + 1]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); } } const last = xArr.length - 1; const x0 = xArr[last-1], x1 = xArr[last], y0 = yArr[last-1], y1 = yArr[last]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
 
         function init() {
-            let pSel = document.getElementById('mntFood'); pSel.innerHTML = "";
-            let cats = [...new Set(mntDB.map(i=>i.cat))];
-            cats.forEach(c => { let grp = document.createElement('optgroup'); grp.label = c; mntDB.filter(i=>i.cat===c).forEach(i => { let opt = document.createElement('option'); opt.value = JSON.stringify(i); opt.text = i.name; grp.appendChild(opt); }); pSel.appendChild(grp); });
+            renderFoodOptions(mntDB); // Initial render with full DB
             updateMoves();
             const inputs = ['pId','pName','age','gender','height','weight','waist','vfat','fat','muscle','activity','snackFreq','drinkFreq','bfType','bfSize','luType','luSize','dnType','dnSize'];
             inputs.forEach(id => { let el = document.getElementById(id); if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); } });
             const toggles = ['risk_mafld','risk_t2dm','risk_htn','risk_dys','risk_osa','risk_meta','risk_pcos','risk_asthma'];
             toggles.forEach(id => { let el = document.getElementById(id); if(el) { el.addEventListener('change', runCalc); } });
             runCalc();
+        }
+
+        // --- FILTER FUNCTION (v46 Logic) ---
+        function filterFood() {
+            let input = document.getElementById('foodSearch').value.toLowerCase();
+            let filtered = mntDB.filter(i => i.name.toLowerCase().includes(input));
+            renderFoodOptions(filtered);
+        }
+
+        function renderFoodOptions(data) {
+            let pSel = document.getElementById('mntFood'); pSel.innerHTML = "";
+            let cats = [...new Set(data.map(i=>i.cat))];
+            cats.forEach(c => { 
+                let grp = document.createElement('optgroup'); grp.label = c; 
+                data.filter(i=>i.cat===c).forEach(i => { 
+                    let opt = document.createElement('option'); 
+                    opt.value = JSON.stringify(i); 
+                    opt.text = i.name; 
+                    grp.appendChild(opt); 
+                }); 
+                pSel.appendChild(grp); 
+            });
         }
 
         function updateMoves() {
@@ -640,7 +583,6 @@
             <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${(w*(1-maxPct)).toFixed(1)} kg</td><td>6 Months</td></tr></table>
             <div style="margin-top:10px; font-size:12px;"><strong>Strategies (0.5-1.0 kg/week loss):</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate</li>${drugRec}</ul></div></div>`;
             document.getElementById('hContent').innerHTML = hHTML;
-            
             recalcExercises(w);
         }
 
@@ -659,6 +601,10 @@
             let item = JSON.parse(sel.value);
             let qty = parseFloat(document.getElementById('mntQty').value)||1;
             mntPlan.push({ ...item, q: qty, tC: item.cal*qty, tCb: item.c*qty, tP: item.p*qty, tF: item.f*qty });
+            
+            // Clear input after add
+            document.getElementById('foodSearch').value = "";
+            renderFoodOptions(mntDB); // Reset list
             renderMnt();
         }
 
