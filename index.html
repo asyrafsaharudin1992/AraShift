@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v43.0 (Full DB Restoration)</title>
+    <title>AraShift System v45.0 (Golden Master)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -128,8 +128,13 @@
         .btn-p { background: var(--primary); color: white; }
         .btn-s { background: transparent; border: 1px solid var(--border); }
 
-        #clinical-report { display: none; }
-        
+        /* GUIDE MODAL */
+        #guideModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .guide-box { background: white; padding: 20px; border-radius: 18px; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .guide-table th, .guide-table td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+        .guide-table th { background: #f5f5f7; }
+
         /* ---------------- PRINT CSS ---------------- */
         @media print {
             @page { margin: 10mm; size: A4; }
@@ -156,7 +161,7 @@
             #card-profile .form-group { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; margin-bottom: 5px; }
             #card-profile label { width: 50%; } #card-profile input, #card-profile select { width: 50%; text-align: right; }
 
-            .action-bar, .logout, .nav-tabs, .help-icon, .mnt-controls, .del-btn, .version-tag { display: none !important; }
+            .action-bar, .logout, .nav-tabs, .help-icon, .mnt-controls, .del-btn, .version-tag, #guideModal, .portion-btn { display: none !important; }
             
             .plan-table { border: 1px solid #ccc; font-size: 10pt; }
             .plan-table th { background-color: #EFEFEF !important; color: #000 !important; border: 1px solid #ccc !important; }
@@ -178,8 +183,24 @@
 </head>
 <body>
 
+    <div id="guideModal" class="hidden">
+        <div class="guide-box">
+            <h3 style="margin-top:0; color:var(--primary);">Standard Household Measurements</h3>
+            <table class="guide-table">
+                <tr><th>Item</th><th>Standard</th></tr>
+                <tr><td>Rice Scoop</td><td>50 g</td></tr>
+                <tr><td>Teaspoon (tsp)</td><td>5 ml</td></tr>
+                <tr><td>Tablespoon (tbsp)</td><td>15 ml</td></tr>
+                <tr><td>Dessert Spoon (dsp)</td><td>10 ml</td></tr>
+                <tr><td>Glass</td><td>250 ml</td></tr>
+                <tr><td>Cup</td><td>200 ml</td></tr>
+            </table>
+            <button class="btn btn-p" onclick="document.getElementById('guideModal').classList.add('hidden')" style="width:100%; margin-top:15px;">Close</button>
+        </div>
+    </div>
+
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v43.0 (Full Restoration)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v45.0 (Golden Master)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -234,7 +255,10 @@
                 </div>
 
                 <div class="card" id="card-mnt">
-                    <h3>G. Medical Nutrition Therapy (MNT)</h3>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="margin:0;">G. Medical Nutrition Therapy (MNT)</h3>
+                        <button class="btn btn-s portion-btn" style="font-size:11px; padding:5px 10px;" onclick="document.getElementById('guideModal').classList.remove('hidden')">📏 Portion Guide</button>
+                    </div>
                     
                     <div class="mnt-header-summary">
                         <div class="mnt-stat-item">Target Intake<span class="mnt-stat-val" id="targetCalVal">0 kcal</span></div>
@@ -339,7 +363,16 @@
             'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 }
         };
 
+        // --- FULLY RESTORED & EXTENDED DATABASE ---
         const mntDB = [
+            // CPG STANDARD MEASURES
+            {cat:"Standard", name:"[STD] Rice (1 scoop / 50g)", cal:65, c:14, p:1.2, f:0.1},
+            {cat:"Standard", name:"[STD] Milk (1 glass / 250ml)", cal:160, c:12, p:8, f:8},
+            {cat:"Standard", name:"[STD] Milo/Tea (1 cup / 200ml)", cal:120, c:20, p:2, f:3},
+            {cat:"Standard", name:"[STD] Oil (1 tbsp / 15ml)", cal:120, c:0, p:0, f:14},
+            {cat:"Standard", name:"[STD] Sugar (1 tsp / 5g)", cal:20, c:5, p:0, f:0},
+
+            // GENERAL ITEMS
             {cat:"Carbs", name:"White Rice (1 cup/158g)", cal:205, c:45, p:4, f:0.4},
             {cat:"Carbs", name:"Brown Rice (1 cup/195g)", cal:216, c:45, p:5, f:1.8},
             {cat:"Carbs", name:"Oats Rolled (1/2 cup)", cal:150, c:27, p:5, f:2.5},
@@ -383,7 +416,7 @@
             {cat:"Supp", name:"Casein Protein (1 scoop)", cal:120, c:3, p:24, f:1}
         ];
 
-        // RESTORED EXTENSIVE HARVARD MOVES (v25)
+        // --- FULLY RESTORED EXERCISE DB (From v43) ---
         const moves = {
             'gym': [ {name:"Weight Lifting: General", factor:3}, {name:"Weight Lifting: Vigorous", factor:6}, {name:"Aerobics: Water", factor:4}, {name:"Aerobics: Low Impact", factor:5}, {name:"Aerobics: High Impact", factor:7}, {name:"Aerobics: Step", factor:8.5}, {name:"Calisthenics: Moderate", factor:4.5}, {name:"Calisthenics: Vigorous", factor:8}, {name:"Circuit Training", factor:8}, {name:"Rowing: Moderate", factor:7}, {name:"Rowing: Vigorous", factor:8.5}, {name:"Elliptical Trainer", factor:5}, {name:"Ski Machine", factor:9.5}, {name:"Stair Step Machine", factor:6}, {name:"Cycling: Stationary (Mod)", factor:7}, {name:"Cycling: Stationary (Vig)", factor:10.5}, {name:"Stretching / Hatha Yoga", factor:2.5}, {name:"Pilates", factor:3} ],
             'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball: Game", factor:8}, {name:"Basketball: Shooting", factor:4.5}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming: Leisure", factor:6}, {name:"Swimming: Laps", factor:10}, {name:"Golf: Carrying Clubs", factor:4.5}, {name:"Golf: Cart", factor:3.5}, {name:"Bowling", factor:3}, {name:"Volleyball", factor:3}, {name:"Martial Arts", factor:10}, {name:"Boxing: Sparring", factor:9}, {name:"Handball", factor:12}, {name:"Squash", factor:12}, {name:"Table Tennis", factor:7} ],
@@ -397,7 +430,7 @@
         let mntPlan = [], exPlan = [];
         let globalTargetCal = 1500;
 
-        const omronRef = { ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75], maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88], femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 19.925] };
+        const omronRef = { ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75], maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88], femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 18.0] };
 
         function interpolate(x, xArr, yArr) { if (x >= xArr[0]) return yArr[0]; for (let i = 0; i < xArr.length - 1; i++) { if (x <= xArr[i] && x >= xArr[i + 1]) { const x0 = xArr[i], x1 = xArr[i + 1], y0 = yArr[i], y1 = yArr[i + 1]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); } } const last = xArr.length - 1; const x0 = xArr[last-1], x1 = xArr[last], y0 = yArr[last-1], y1 = yArr[last]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
 
@@ -422,11 +455,9 @@
             let pKey = document.getElementById('mntProtocol').value;
             let p = protocols[pKey];
             let tCal = globalTargetCal;
-            
             let tCarb = Math.round((tCal * p.c) / 4);
             let tProt = Math.round((tCal * p.p) / 4);
             let tFat = Math.round((tCal * p.f) / 9);
-
             document.getElementById('targetCalVal').innerText = tCal + " kcal";
             document.getElementById('targetCarbVal').innerText = tCarb + "g (" + (p.c*100) + "%)";
             document.getElementById('targetProtVal').innerText = tProt + "g (" + (p.p*100) + "%)";
@@ -502,13 +533,8 @@
             let calStrat = "";
             let defMin = Math.max(1000, tdee - 750); let defMax = Math.max(1200, tdee - 500);
             let clinicalTarget = 0;
-            if(gender === 'female') {
-                calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`;
-                clinicalTarget = 1200; 
-            } else {
-                calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`;
-                clinicalTarget = 1500;
-            }
+            if(gender === 'female') { calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`; clinicalTarget = 1200; } 
+            else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; clinicalTarget = 1500; }
             calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal (${defMin}-${defMax} kcal)</li>`;
             
             globalTargetCal = clinicalTarget;
