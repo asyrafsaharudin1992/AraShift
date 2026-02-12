@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v42.0 (Clinical Protocol Engine)</title>
+    <title>AraShift System v43.0 (Full DB Restoration)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -167,6 +167,7 @@
             .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; }
             input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; appearance: none; resize: none; }
             select { background-image: none !important; } ::placeholder { color: transparent; }
+            .planner-header div { display: none !important; } 
             
             .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
             .bar-marker { background: #000 !important; border: 2px solid #fff; }
@@ -178,7 +179,7 @@
 <body>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v42.0 (Clinical Protocol)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v43.0 (Full Restoration)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -294,7 +295,14 @@
                 <div class="card" id="card-exercise">
                     <h3>H. Exercise Planner</h3>
                     <div class="mnt-controls">
-                        <select id="exType" onchange="updateMoves()"><option value="gym">Gym</option><option value="sport">Sport</option><option value="outdoor">Outdoor</option><option value="home">Home</option></select>
+                        <select id="exType" onchange="updateMoves()">
+                            <option value="gym">Gym</option>
+                            <option value="sport">Sport</option>
+                            <option value="outdoor">Outdoor</option>
+                            <option value="home">Home</option>
+                            <option value="repair">Repair</option>
+                            <option value="occupational">Occupational</option>
+                        </select>
                         <select id="exMove"></select>
                         <input type="number" id="exDur" placeholder="Min" value="30">
                         <button class="btn btn-p" onclick="addExercise()">Add Activity</button>
@@ -324,10 +332,10 @@
     <script>
         // MNT PROTOCOLS
         const protocols = {
-            'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 }, // 50% Carb, 20% Prot, 30% Fat
-            'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 }, // <130g approx
-            'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 }, // >1.2g/kg approx
-            'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 }, // Focus on Veg/Fruit
+            'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 },
+            'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 },
+            'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 },
+            'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 },
             'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 }
         };
 
@@ -375,14 +383,23 @@
             {cat:"Supp", name:"Casein Protein (1 scoop)", cal:120, c:3, p:24, f:1}
         ];
 
-        const moves = { 'gym': [{name:"Weight Lifting", factor:3}, {name:"Cardio: Moderate", factor:7}, {name:"HIIT", factor:8}], 'sport': [{name:"Badminton", factor:4.5}, {name:"Soccer", factor:7}, {name:"Swimming", factor:6}], 'outdoor': [{name:"Walking (Brisk)", factor:3.8}, {name:"Running", factor:8}, {name:"Cycling", factor:6}], 'home': [{name:"Housework", factor:3}, {name:"Gardening", factor:4}] };
+        // RESTORED EXTENSIVE HARVARD MOVES (v25)
+        const moves = {
+            'gym': [ {name:"Weight Lifting: General", factor:3}, {name:"Weight Lifting: Vigorous", factor:6}, {name:"Aerobics: Water", factor:4}, {name:"Aerobics: Low Impact", factor:5}, {name:"Aerobics: High Impact", factor:7}, {name:"Aerobics: Step", factor:8.5}, {name:"Calisthenics: Moderate", factor:4.5}, {name:"Calisthenics: Vigorous", factor:8}, {name:"Circuit Training", factor:8}, {name:"Rowing: Moderate", factor:7}, {name:"Rowing: Vigorous", factor:8.5}, {name:"Elliptical Trainer", factor:5}, {name:"Ski Machine", factor:9.5}, {name:"Stair Step Machine", factor:6}, {name:"Cycling: Stationary (Mod)", factor:7}, {name:"Cycling: Stationary (Vig)", factor:10.5}, {name:"Stretching / Hatha Yoga", factor:2.5}, {name:"Pilates", factor:3} ],
+            'sport': [ {name:"Badminton", factor:4.5}, {name:"Basketball: Game", factor:8}, {name:"Basketball: Shooting", factor:4.5}, {name:"Soccer", factor:7}, {name:"Tennis", factor:7}, {name:"Swimming: Leisure", factor:6}, {name:"Swimming: Laps", factor:10}, {name:"Golf: Carrying Clubs", factor:4.5}, {name:"Golf: Cart", factor:3.5}, {name:"Bowling", factor:3}, {name:"Volleyball", factor:3}, {name:"Martial Arts", factor:10}, {name:"Boxing: Sparring", factor:9}, {name:"Handball", factor:12}, {name:"Squash", factor:12}, {name:"Table Tennis", factor:7} ],
+            'outdoor': [ {name:"Walking: 3.5 mph (Brisk)", factor:3.8}, {name:"Walking: 4.0 mph (Very Brisk)", factor:5}, {name:"Walking: 4.5 mph", factor:6.3}, {name:"Running: 5 mph", factor:8}, {name:"Running: 6 mph", factor:10}, {name:"Running: 7.5 mph", factor:12.5}, {name:"Running: 10 mph", factor:16}, {name:"Cycling: <10 mph", factor:4}, {name:"Cycling: 12-14 mph", factor:8}, {name:"Hiking: Cross Country", factor:6}, {name:"Gardening: General", factor:4}, {name:"Mowing Lawn", factor:5.5}, {name:"Raking Lawn", factor:4}, {name:"Shoveling Snow", factor:6} ],
+            'home': [ {name:"Sleeping", factor:0.9}, {name:"Watching TV", factor:1}, {name:"Reading", factor:1.3}, {name:"Cooking", factor:2}, {name:"Child Care: Bathing/Feeding", factor:3.5}, {name:"Child Care: Playing", factor:4}, {name:"Food Shopping", factor:3.5}, {name:"Moving Furniture", factor:6}, {name:"Heavy Cleaning", factor:4.5}, {name:"Vacuuming", factor:3.5} ],
+            'repair': [ {name:"Auto Repair", factor:3}, {name:"Carpentry", factor:3.5}, {name:"Painting", factor:4.5}, {name:"Plumbing", factor:3}, {name:"Roofing", factor:6}, {name:"Laying Tile", factor:4} ],
+            'occupational': [ {name:"Desk Work", factor:1.5}, {name:"Standing Work", factor:2}, {name:"Heavy Lifting (Cons.)", factor:8}, {name:"Farming: Baling Hay", factor:8}, {name:"Firefighting", factor:12}, {name:"Forestry", factor:8}, {name:"Massage Therapist", factor:4}, {name:"Police Officer", factor:2.5}, {name:"Truck Driving", factor:2} ]
+        };
+
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let mntPlan = [], exPlan = [];
-        let globalTargetCal = 1500; // Default
+        let globalTargetCal = 1500;
 
         const omronRef = { ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75], maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88], femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 19.925] };
 
-        function interpolate(x, xArr, yArr) { if (x >= xArr[0]) return yArr[0]; for (let i = 0; i < xArr.length - 1; i++) { if (x <= xArr[i] && x >= xArr[i + 1]) { const x0 = xArr[i], x1 = xArr[i + 1], y0 = yArr[i], y1 = yArr[i + 1]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); } } const last = xArr.length - 1; return yArr[last]; }
+        function interpolate(x, xArr, yArr) { if (x >= xArr[0]) return yArr[0]; for (let i = 0; i < xArr.length - 1; i++) { if (x <= xArr[i] && x >= xArr[i + 1]) { const x0 = xArr[i], x1 = xArr[i + 1], y0 = yArr[i], y1 = yArr[i + 1]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); } } const last = xArr.length - 1; const x0 = xArr[last-1], x1 = xArr[last], y0 = yArr[last-1], y1 = yArr[last]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
 
         function init() {
             let pSel = document.getElementById('mntFood'); pSel.innerHTML = "";
@@ -404,9 +421,8 @@
         function updateMntTargets() {
             let pKey = document.getElementById('mntProtocol').value;
             let p = protocols[pKey];
-            let tCal = globalTargetCal; // From runCalc
+            let tCal = globalTargetCal;
             
-            // Calc grams: (TotalCal * Ratio) / KcalPerGram
             let tCarb = Math.round((tCal * p.c) / 4);
             let tProt = Math.round((tCal * p.p) / 4);
             let tFat = Math.round((tCal * p.f) / 9);
@@ -483,12 +499,8 @@
             else if (isOsa) { targetPct = 0.07; maxPct = 0.11; reason = "Sleep Apnea Management"; }
             else if (isAsthma) { targetPct = 0.07; maxPct = 0.08; reason = "Asthma Symptom Control"; }
 
-            let defMin = Math.max(1000, tdee - 750); let defMax = Math.max(1200, tdee - 500);
             let calStrat = "";
-            
-            // SET GLOBAL TARGET FOR MNT SECTION
-            // CPG Strategy: "Reduce daily energy by 500-750 kcal" OR use 1200-1500 (F) / 1500-1800 (M)
-            // We will set the target to the LOWER bound of the gender-specific range for strictness, or TDEE-500
+            let defMin = Math.max(1000, tdee - 750); let defMax = Math.max(1200, tdee - 500);
             let clinicalTarget = 0;
             if(gender === 'female') {
                 calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`;
@@ -499,8 +511,8 @@
             }
             calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal (${defMin}-${defMax} kcal)</li>`;
             
-            globalTargetCal = clinicalTarget; // Update Global
-            updateMntTargets(); // Refresh Header
+            globalTargetCal = clinicalTarget;
+            updateMntTargets();
 
             let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
             let drugRec = "";
