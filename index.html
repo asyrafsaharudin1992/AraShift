@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v50.0</title>
+    <title>AraShift System v51.0 (CPG Restored)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -79,7 +79,7 @@
             content: attr(data-tooltip);
             position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
             background: #333; color: #fff; padding: 8px 12px; border-radius: 6px;
-            font-size: 11px; font-weight: 400; width: 200px; text-align: left;
+            font-size: 11px; font-weight: 400; width: 220px; text-align: left;
             z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.2); white-space: normal; line-height: 1.4;
         }
 
@@ -99,8 +99,6 @@
         .meta-val { font-size: 28px; font-weight: 800; color: #1D1D1F; order: 1; line-height: 1.1; margin-bottom: 4px; }
         .meta-label { font-size: 11px; text-transform: uppercase; color: #86868B; font-weight: 700; order: 2; display:flex; align-items:center; gap:4px; }
         .meta-desc { font-size: 10px; color: #86868B; font-weight: 500; order: 3; margin-top: 2px; }
-        .meta-card.surplus { background: #FFF7ED; border-color: #FED7AA; } .meta-card.surplus .meta-val { color: #EA580C; }
-        .meta-card.deficit { background: #ECFDF5; border-color: #A7F3D0; } .meta-card.deficit .meta-val { color: #059669; }
 
         /* VISUALS */
         .visual-row { margin-bottom: 25px; }
@@ -112,11 +110,10 @@
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -5px; transition: left 0.3s ease; z-index: 10; }
         .bar-status-label { text-align: right; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
-        /* MNT PLANNER (Section G) */
+        /* MNT PLANNER */
         .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; }
         .mnt-stat-item { text-align: center; }
         .mnt-stat-val { font-size: 14px; font-weight: 800; display: block; }
-        
         .mnt-controls { display: grid; grid-template-columns: 1fr 2fr 0.5fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: #666; border-bottom: 1px solid #ccc; }
@@ -124,7 +121,6 @@
         .plan-table td:first-child { text-align: left; font-weight: 600; }
         .plan-table tfoot td { font-weight: 800; background: #F9FAFB; padding: 10px; border-top: 2px solid #E5E5EA; }
         .del-btn { color: #FF3B30; cursor: pointer; font-weight: 700; }
-        
         .macro-viz { margin-top:15px; background:#F5F5F7; padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; }
         .macro-bar-container { width: 70%; height: 10px; background: #E5E5EA; border-radius: 5px; overflow: hidden; display: flex; }
         .macro-seg { height: 100%; }
@@ -195,7 +191,6 @@
             .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; }
             input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; appearance: none; resize: none; }
             select { background-image: none !important; } ::placeholder { color: transparent; }
-            .planner-header div { display: none !important; } 
             
             .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
             .bar-marker { background: #000 !important; border: 2px solid #fff; }
@@ -224,7 +219,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v50.0 (Manual Body Age & Info)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v51.0 (CPG Restored)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -299,9 +294,7 @@
                             <option value="dash">DASH Diet</option>
                             <option value="keto">Ketogenic</option>
                         </select>
-                        
                         <select id="mntFood"></select>
-                        
                         <input type="number" id="mntQty" placeholder="Qty" value="1">
                         <button class="btn btn-p" onclick="addMnt()">Add</button>
                     </div>
@@ -404,7 +397,6 @@
     <script>
         const protocols = { 'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 }, 'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 }, 'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 }, 'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 }, 'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 } };
 
-        // --- MASSIVE MNT DATABASE (150+ Items) ---
         const mntDB = [
             {cat:"Standard", name:"[STD] Rice Scoop (50g)", cal:65, c:14, p:1.2, f:0.1},
             {cat:"Standard", name:"[STD] Milk Glass (250ml)", cal:150, c:12, p:8, f:8},
@@ -530,10 +522,6 @@
         let mntPlan = [], exPlan = [];
         let globalTargetCal = 1500;
 
-        const omronRef = { ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75], maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88], femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 18.0] };
-
-        function interpolate(x, xArr, yArr) { if (x >= xArr[0]) return yArr[0]; for (let i = 0; i < xArr.length - 1; i++) { if (x <= xArr[i] && x >= xArr[i + 1]) { const x0 = xArr[i], x1 = xArr[i + 1], y0 = yArr[i], y1 = yArr[i + 1]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); } } const last = xArr.length - 1; const x0 = xArr[last-1], x1 = xArr[last], y0 = yArr[last-1], y1 = yArr[last]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
-
         function init() {
             let pSel = document.getElementById('mntFood'); pSel.innerHTML = "";
             let cats = [...new Set(mntDB.map(i=>i.cat))];
@@ -610,6 +598,7 @@
             vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk);
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
+            // RECOMMENDATION LOGIC (RESTORED FROM v48)
             let isMafld = document.getElementById('risk_mafld').checked;
             let isT2dm = document.getElementById('risk_t2dm').checked;
             let isHtn = document.getElementById('risk_htn').checked;
@@ -732,4 +721,3 @@
     </script>
 </body>
 </html>
-
