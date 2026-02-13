@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v51.0 (CPG Restored)</title>
+    <title>AraShift System v52.0 (Target Customization)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -110,10 +110,12 @@
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -5px; transition: left 0.3s ease; z-index: 10; }
         .bar-status-label { text-align: right; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
-        /* MNT PLANNER */
-        .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; }
+        /* MNT PLANNER (Section G) - UPDATED */
+        .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; align-items: center; }
         .mnt-stat-item { text-align: center; }
         .mnt-stat-val { font-size: 14px; font-weight: 800; display: block; }
+        .target-input { width: 80px; padding: 4px; border: 1px solid #34D399; border-radius: 4px; text-align: center; font-weight: 800; color: #065F46; }
+        
         .mnt-controls { display: grid; grid-template-columns: 1fr 2fr 0.5fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
         .plan-table th { background: #E5E5EA; padding: 10px; text-align: center; font-size: 11px; font-weight: 700; color: #666; border-bottom: 1px solid #ccc; }
@@ -159,7 +161,6 @@
             body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; width: 100%; zoom: 85%; }
             .container { max-width: 100% !important; margin: 0 !important; width: 100%; }
             
-            /* GRID */
             .layout-grid {
                 display: grid !important;
                 grid-template-columns: 1fr 1.5fr;
@@ -197,6 +198,7 @@
             
             .mnt-header-summary { background: #eee !important; border: 1px solid #ccc !important; color: #000 !important; }
             .balance-container { border: 1px solid #ccc !important; background: #fff !important; }
+            .target-input { border: none !important; font-size: 14px; background: transparent; }
         }
     </style>
 </head>
@@ -219,7 +221,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v51.0 (CPG Restored)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v52.0 (Target Fix)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -280,14 +282,14 @@
                     </div>
                     
                     <div class="mnt-header-summary">
-                        <div class="mnt-stat-item">Target Intake<span class="mnt-stat-val" id="targetCalVal">0 kcal</span></div>
+                        <div class="mnt-stat-item">Target Intake<br><input type="number" id="customTargetCal" class="target-input" value="1500" onchange="updateMntTargets()"></div>
                         <div class="mnt-stat-item">Carb Goal<span class="mnt-stat-val" id="targetCarbVal">0g</span></div>
                         <div class="mnt-stat-item">Prot Goal<span class="mnt-stat-val" id="targetProtVal">0g</span></div>
                         <div class="mnt-stat-item">Fat Goal<span class="mnt-stat-val" id="targetFatVal">0g</span></div>
                     </div>
 
                     <div class="mnt-controls">
-                        <select id="mntProtocol" onchange="runCalc()">
+                        <select id="mntProtocol" onchange="updateMntTargets()">
                             <option value="std" selected>Standard Balanced</option>
                             <option value="lcd">Low Carb (LCD)</option>
                             <option value="hp">High Protein</option>
@@ -375,7 +377,7 @@
                         <div class="bal-status" id="balStatus">--</div>
                     </div>
                     <div style="font-size:11px; margin-top:10px; color:#666;">
-                        * Comparison against TDEE and Clinical Target. Green = Deficit (Weight Loss). Red = Surplus.
+                        * Comparison against TDEE. Green = Deficit (Weight Loss). Red = Surplus (Weight Gain).
                     </div>
                 </div>
 
@@ -397,12 +399,12 @@
     <script>
         const protocols = { 'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 }, 'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 }, 'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 }, 'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 }, 'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 } };
 
+        // --- MASSIVE MNT DATABASE ---
         const mntDB = [
             {cat:"Standard", name:"[STD] Rice Scoop (50g)", cal:65, c:14, p:1.2, f:0.1},
             {cat:"Standard", name:"[STD] Milk Glass (250ml)", cal:150, c:12, p:8, f:8},
             {cat:"Standard", name:"[STD] Oil Tbsp (15ml)", cal:120, c:0, p:0, f:14},
             {cat:"Standard", name:"[STD] Sugar Tsp (5g)", cal:20, c:5, p:0, f:0},
-            // CARBS
             {cat:"Carbs", name:"White Rice (1 cup/158g)", cal:205, c:45, p:4, f:0.4},
             {cat:"Carbs", name:"Brown Rice (1 cup/195g)", cal:216, c:45, p:5, f:1.8},
             {cat:"Carbs", name:"Basmati Rice (1 cup)", cal:205, c:44, p:4, f:0.5},
@@ -425,7 +427,6 @@
             {cat:"Carbs", name:"Putu Mayam (2 pcs/100g)", cal:180, c:40, p:2, f:1},
             {cat:"Carbs", name:"Idli (2 small/110g)", cal:150, c:30, p:5, f:1},
             {cat:"Carbs", name:"Tosai (1 pc/80g)", cal:160, c:28, p:3, f:4},
-            // MEAT
             {cat:"Meat", name:"Chicken Breast (3oz/85g)", cal:140, c:0, p:26, f:3},
             {cat:"Meat", name:"Chicken Thigh (3oz/85g)", cal:170, c:0, p:22, f:8},
             {cat:"Meat", name:"Chicken Drumstick (1)", cal:120, c:0, p:12, f:6},
@@ -437,7 +438,6 @@
             {cat:"Meat", name:"Turkey Breast (3oz)", cal:125, c:0, p:26, f:2},
             {cat:"Meat", name:"Duck Breast (3oz)", cal:120, c:0, p:23, f:2.5},
             {cat:"Meat", name:"Pork Chop (3oz)", cal:180, c:0, p:24, f:9},
-            // SEAFOOD
             {cat:"Seafood", name:"Salmon (3oz)", cal:175, c:0, p:19, f:11},
             {cat:"Seafood", name:"Tuna Canned (3oz)", cal:100, c:0, p:22, f:1},
             {cat:"Seafood", name:"Shrimp (3oz)", cal:85, c:0.5, p:18, f:1},
@@ -449,7 +449,6 @@
             {cat:"Seafood", name:"Cod (3oz)", cal:90, c:0, p:20, f:1},
             {cat:"Seafood", name:"Ikan Kembong (1 med)", cal:115, c:0, p:14, f:6},
             {cat:"Seafood", name:"Ikan Tenggiri (1 pc)", cal:100, c:0, p:15, f:4},
-            // DAIRY
             {cat:"Dairy", name:"Whole Milk (1 cup)", cal:150, c:12, p:8, f:8},
             {cat:"Dairy", name:"Skim Milk (1 cup)", cal:90, c:12, p:8, f:0},
             {cat:"Dairy", name:"Soy Milk (1 cup)", cal:100, c:8, p:7, f:4},
@@ -460,7 +459,6 @@
             {cat:"Dairy", name:"Egg Large (1)", cal:72, c:0.6, p:6, f:5},
             {cat:"Dairy", name:"Egg White (1)", cal:17, c:0.2, p:3.6, f:0},
             {cat:"Dairy", name:"Quail Eggs (5)", cal:70, c:0.5, p:6, f:5},
-            // PLANT
             {cat:"Plant", name:"Tofu Firm (1/2 cup)", cal:95, c:2, p:10, f:5},
             {cat:"Plant", name:"Tempeh (1/2 cup)", cal:160, c:10, p:15, f:9},
             {cat:"Plant", name:"Edamame (1/2 cup)", cal:100, c:8, p:9, f:4},
@@ -472,7 +470,6 @@
             {cat:"Plant", name:"Almonds (1oz)", cal:164, c:6, p:6, f:14},
             {cat:"Plant", name:"Walnuts (1oz)", cal:185, c:4, p:4, f:18},
             {cat:"Plant", name:"Chia Seeds (1 tbsp)", cal:60, c:5, p:2, f:4},
-            // VEG
             {cat:"Vegetables", name:"Broccoli (1 cup)", cal:55, c:11, p:4, f:0.6},
             {cat:"Vegetables", name:"Spinach (1 cup)", cal:23, c:4, p:3, f:0},
             {cat:"Vegetables", name:"Cabbage (1 cup)", cal:22, c:5, p:1, f:0},
@@ -484,7 +481,6 @@
             {cat:"Vegetables", name:"Green Beans (1 cup)", cal:31, c:7, p:2, f:0},
             {cat:"Vegetables", name:"Mushrooms (1 cup)", cal:20, c:3, p:3, f:0},
             {cat:"Vegetables", name:"Mixed Veggies (1 cup)", cal:118, c:24, p:5, f:0},
-            // FRUIT
             {cat:"Fruits", name:"Apple (1 med)", cal:95, c:25, p:0.5, f:0.3},
             {cat:"Fruits", name:"Banana (1 med)", cal:105, c:27, p:1.3, f:0.4},
             {cat:"Fruits", name:"Orange (1 med)", cal:62, c:15, p:1, f:0.2},
@@ -496,12 +492,10 @@
             {cat:"Fruits", name:"Pineapple (1 cup)", cal:80, c:21, p:1, f:0},
             {cat:"Fruits", name:"Durian (5 ulas/40g)", cal:60, c:11, p:1, f:2},
             {cat:"Fruits", name:"Dates (1 med)", cal:20, c:5, p:0, f:0},
-            // FATS
             {cat:"Fats", name:"Olive Oil (1 tbsp)", cal:119, c:0, p:0, f:14},
             {cat:"Fats", name:"Coconut Oil (1 tbsp)", cal:117, c:0, p:0, f:14},
             {cat:"Fats", name:"Butter (1 tbsp)", cal:102, c:0, p:0.1, f:11.5},
             {cat:"Fats", name:"Avocado (1/2)", cal:160, c:9, p:2, f:15},
-            // BEV
             {cat:"Beverages", name:"Coffee O (No Sugar)", cal:5, c:0, p:0, f:0},
             {cat:"Beverages", name:"Coffee C (Milk)", cal:80, c:10, p:2, f:3},
             {cat:"Beverages", name:"Milo (1 cup)", cal:150, c:25, p:3, f:4},
@@ -520,7 +514,6 @@
 
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let mntPlan = [], exPlan = [];
-        let globalTargetCal = 1500;
 
         function init() {
             let pSel = document.getElementById('mntFood'); pSel.innerHTML = "";
@@ -542,11 +535,13 @@
         function updateMntTargets() {
             let pKey = document.getElementById('mntProtocol').value;
             let p = protocols[pKey];
-            let tCal = globalTargetCal;
+            // USE THE VALUE FROM THE INPUT FIELD
+            let tCal = parseFloat(document.getElementById('customTargetCal').value) || 1500;
+            
             let tCarb = Math.round((tCal * p.c) / 4);
             let tProt = Math.round((tCal * p.p) / 4);
             let tFat = Math.round((tCal * p.f) / 9);
-            document.getElementById('targetCalVal').innerText = tCal + " kcal";
+            // Don't update the input value itself here, just the grams
             document.getElementById('targetCarbVal').innerText = tCarb + "g (" + (p.c*100) + "%)";
             document.getElementById('targetProtVal').innerText = tProt + "g (" + (p.p*100) + "%)";
             document.getElementById('targetFatVal').innerText = tFat + "g (" + (p.f*100) + "%)";
@@ -562,13 +557,11 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // BMR (Mifflin-St Jeor)
             let bmr = 0;
             if (gender === 'male') bmr = (10 * w) + (6.25 * h) - (5 * age) + 5;
             else bmr = (10 * w) + (6.25 * h) - (5 * age) - 161;
             bmr = Math.round(bmr);
             
-            // Manual Body Age
             let mba = document.getElementById('manualBodyAge').value;
             document.getElementById('sMetAge').innerText = mba ? mba : "-";
 
@@ -598,7 +591,7 @@
             vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk);
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // RECOMMENDATION LOGIC (RESTORED FROM v48)
+            // SECTION J - RECS (RESTORED)
             let isMafld = document.getElementById('risk_mafld').checked;
             let isT2dm = document.getElementById('risk_t2dm').checked;
             let isHtn = document.getElementById('risk_htn').checked;
@@ -622,7 +615,11 @@
             else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; clinicalTarget = 1500; }
             calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal (${defMin}-${defMax} kcal)</li>`;
             
-            globalTargetCal = clinicalTarget;
+            // Only overwrite if it hasn't been manually edited or is 0/default
+            let currentVal = document.getElementById('customTargetCal').value;
+            if(!currentVal || currentVal == "1500" || currentVal == "1200") {
+                 document.getElementById('customTargetCal').value = clinicalTarget;
+            }
             updateMntTargets();
 
             let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
