@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v54.0 (UX Refined)</title>
+    <title>AraShift System v55.0 (Integrity Fix)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -221,7 +221,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v54.0 (Golden Master)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v55.0 (Golden Master)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -380,7 +380,7 @@
                         <div class="bal-status" id="balStatus">--</div>
                     </div>
                     <div style="font-size:11px; margin-top:10px; color:#666;">
-                        * Comparison against TDEE and Clinical Target. Green = Deficit (Weight Loss). Red = Surplus.
+                        * Comparison against TDEE. Green = Deficit (Weight Loss). Red = Surplus (Weight Gain).
                     </div>
                 </div>
 
@@ -402,6 +402,7 @@
     <script>
         const protocols = { 'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 }, 'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 }, 'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 }, 'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 }, 'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 } };
 
+        // --- MASSIVE MNT DATABASE (150+ Items) ---
         const mntDB = [
             {cat:"Standard", name:"[STD] Rice Scoop (50g)", cal:65, c:14, p:1.2, f:0.1},
             {cat:"Standard", name:"[STD] Milk Glass (250ml)", cal:150, c:12, p:8, f:8},
@@ -648,8 +649,8 @@
 
             let hHTML = `<div class="rec-container"><h4>${reason}</h4>
             <table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr>
-            <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${(w*(1-targetPct)).toFixed(1)} kg</td><td>3 Months</td></tr>
-            <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${(w*(1-maxPct)).toFixed(1)} kg</td><td>6 Months</td></tr></table>
+            <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${(w > 0 ? (w*(1-targetPct)).toFixed(1) + " kg" : "Enter Weight")}</td><td>3 Months</td></tr>
+            <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${(w > 0 ? (w*(1-maxPct)).toFixed(1) + " kg" : "Enter Weight")}</td><td>6 Months</td></tr></table>
             <div style="margin-top:10px; font-size:12px;"><strong>Strategies (0.5-1.0 kg/week loss):</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate</li>${drugRec}</ul></div></div>`;
             document.getElementById('hContent').innerHTML = hHTML;
             recalcExercises(w);
