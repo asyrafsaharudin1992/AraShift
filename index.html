@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v49.0 (Mega-DB Revert)</title>
+    <title>AraShift System v49.0 (Mega-DB Restored)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -101,7 +101,7 @@
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -5px; transition: left 0.3s ease; z-index: 10; }
         .bar-status-label { text-align: right; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
-        /* MNT PLANNER (Section G) */
+        /* MNT & EXERCISE */
         .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; }
         .mnt-stat-item { text-align: center; }
         .mnt-stat-val { font-size: 14px; font-weight: 800; display: block; }
@@ -213,7 +213,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v49.0 (Mega-DB)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v49.0 (Mega-DB Restored)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -400,6 +400,7 @@
     <script>
         const protocols = { 'std': { label: "Standard", c: 0.50, p: 0.20, f: 0.30 }, 'lcd': { label: "Low Carb", c: 0.25, p: 0.35, f: 0.40 }, 'hp':  { label: "High Prot", c: 0.40, p: 0.30, f: 0.30 }, 'dash':{ label: "DASH",      c: 0.55, p: 0.18, f: 0.27 }, 'keto':{ label: "Ketogenic", c: 0.05, p: 0.20, f: 0.75 } };
 
+        // --- MASSIVE MNT DATABASE (150+ Items) ---
         const mntDB = [
             {cat:"Standard", name:"[STD] Rice Scoop (50g)", cal:65, c:14, p:1.2, f:0.1},
             {cat:"Standard", name:"[STD] Milk Glass (250ml)", cal:150, c:12, p:8, f:8},
@@ -741,14 +742,6 @@
             vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk);
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // SECTION J - RECS
-            renderRecommendations(w, bmiVal);
-
-            recalcExercises(w);
-        }
-
-        // --- NEW RENDER RECS FUNCTION ---
-        function renderRecommendations(w, bmiVal) {
             let isMafld = document.getElementById('risk_mafld').checked;
             let isT2dm = document.getElementById('risk_t2dm').checked;
             let isHtn = document.getElementById('risk_htn').checked;
@@ -766,32 +759,27 @@
             else if (isAsthma) { targetPct = 0.07; maxPct = 0.08; reason = "Asthma Symptom Control"; }
 
             let calStrat = "";
-            let defMin = 500; let defMax = 750;
-            let gender = document.getElementById('gender').value;
+            let defMin = Math.max(1000, tdee - 750); let defMax = Math.max(1200, tdee - 500);
+            let clinicalTarget = 0;
+            if(gender === 'female') { calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`; clinicalTarget = 1200; } 
+            else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; clinicalTarget = 1500; }
+            calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal (${defMin}-${defMax} kcal)</li>`;
             
-            if(gender === 'female') { calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`; } 
-            else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; }
-            calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal (${defMin}-${defMax} kcal/day)</li>`;
+            globalTargetCal = clinicalTarget;
+            updateMntTargets();
 
             let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
             let drugRec = "";
             if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct.</li>";
 
-            // Safe display for 0 weight
-            let initTargetStr = (w > 0) ? (w*(1-targetPct)).toFixed(1) + " kg" : "Enter Wt";
-            let goalTargetStr = (w > 0) ? (w*(1-maxPct)).toFixed(1) + " kg" : "Enter Wt";
-
             let hHTML = `<div class="rec-container"><h4>${reason}</h4>
             <table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr>
-            <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${initTargetStr}</td><td>3 Months</td></tr>
-            <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${goalTargetStr}</td><td>6 Months</td></tr></table>
+            <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${(w*(1-targetPct)).toFixed(1)} kg</td><td>3 Months</td></tr>
+            <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${(w*(1-maxPct)).toFixed(1)} kg</td><td>6 Months</td></tr></table>
             <div style="margin-top:10px; font-size:12px;"><strong>Strategies (0.5-1.0 kg/week loss):</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate</li>${drugRec}</ul></div></div>`;
             document.getElementById('hContent').innerHTML = hHTML;
             
-            // Set global target for MNT
-            let clinicalTarget = (gender === 'female') ? 1200 : 1500;
-            globalTargetCal = clinicalTarget;
-            updateMntTargets();
+            recalcExercises(w);
         }
 
         function getBar(label, val, max, segs, status) {
@@ -802,6 +790,31 @@
             prev=0; segs.forEach(s=>{ let l=(s.l/max)*100; h+=`<div class="bar-number-item" style="left:${l}%">${s.l}</div>`; });
             h+=`</div><div class="bar-status-label" style="clear:both;">Risk: ${status}</div></div>`;
             return h;
+        }
+
+        function updateBalance() {
+            let foodIn = parseInt(document.getElementById('tCal').innerText) || 0;
+            let exOut = parseInt(document.getElementById('totalBurn').innerText) || 0;
+            let tdee = parseInt(document.getElementById('sTDEE').innerText) || 0;
+            let net = foodIn - exOut;
+            let diff = net - tdee;
+
+            document.getElementById('balFood').innerText = foodIn;
+            document.getElementById('balEx').innerText = exOut;
+            document.getElementById('balNet').innerText = net;
+
+            let statusEl = document.getElementById('balStatus');
+            if (diff < -200) {
+                statusEl.className = "bal-status loss";
+                statusEl.innerText = "DEFICIT (Weight Loss)";
+            } else if (diff > 200) {
+                statusEl.className = "bal-status gain";
+                statusEl.innerText = "SURPLUS (Weight Gain)";
+            } else {
+                statusEl.className = "bal-status";
+                statusEl.style.background = "#F59E0B";
+                statusEl.innerText = "MAINTENANCE";
+            }
         }
 
         function addMnt() {
@@ -837,35 +850,6 @@
             updateBalance();
         }
 
-        // --- SECTION I: BALANCE CALC ---
-        function updateBalance() {
-            let foodIn = parseInt(document.getElementById('tCal').innerText) || 0;
-            let exOut = parseInt(document.getElementById('totalBurn').innerText) || 0;
-            let tdee = parseInt(document.getElementById('sTDEE').innerText) || 0;
-            
-            let net = foodIn - exOut;
-            let diff = net - tdee; // Surplus or Deficit
-
-            document.getElementById('balFood').innerText = foodIn;
-            document.getElementById('balEx').innerText = exOut;
-            document.getElementById('balNet').innerText = net;
-
-            let statusEl = document.getElementById('balStatus');
-            if (diff < -200) {
-                statusEl.className = "bal-status loss";
-                statusEl.innerText = "DEFICIT (Weight Loss)";
-                statusEl.style.background = "#007AFF"; // Blue/Green
-            } else if (diff > 200) {
-                statusEl.className = "bal-status gain";
-                statusEl.innerText = "SURPLUS (Weight Gain)";
-                statusEl.style.background = "#FF3B30"; // Red
-            } else {
-                statusEl.className = "bal-status";
-                statusEl.innerText = "MAINTENANCE";
-                statusEl.style.background = "#F59E0B"; // Orange
-            }
-        }
-
         function addExercise() {
             let sel = document.getElementById('exMove'); let name = sel.options[sel.selectedIndex].text;
             let dur = parseFloat(document.getElementById('exDur').value);
@@ -878,7 +862,7 @@
             let h="", tk=0;
             exPlan.forEach((p,i) => { tk+=p.k; h+=`<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="exPlan.splice(${i},1);renderEx()">×</td></tr>`; });
             document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
-            updateBalance(); // Update Balance on exercise change
+            updateBalance();
         }
         function recalcExercises(w) {
             exPlan.forEach(p => { p.k = Math.round(p.f * w * (p.d / 60)); });
