@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v56.0 (Final Repair)</title>
+    <title>AraShift System v57.0 (Section J Fixed)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -110,7 +110,7 @@
         .bar-marker { position: absolute; width: 4px; height: 24px; background: var(--text); border: 2px solid #fff; border-radius: 2px; transform: translateX(-50%); box-shadow: 0 2px 4px rgba(0,0,0,0.3); top: -5px; transition: left 0.3s ease; z-index: 10; }
         .bar-status-label { text-align: right; font-size: 12px; font-weight: 700; margin-top: 4px; }
 
-        /* MNT PLANNER (Section G) */
+        /* MNT PLANNER */
         .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; align-items: center; }
         .mnt-stat-item { text-align: center; }
         .mnt-stat-val { font-size: 14px; font-weight: 800; display: block; }
@@ -127,7 +127,7 @@
         .macro-bar-container { width: 70%; height: 10px; background: #E5E5EA; border-radius: 5px; overflow: hidden; display: flex; }
         .macro-seg { height: 100%; }
 
-        /* BALANCE ENGINE (Section I) */
+        /* BALANCE ENGINE */
         .balance-container { display: grid; grid-template-columns: 1fr 1fr 1fr 1.5fr; gap: 10px; align-items: center; background: #F8F9FA; padding: 15px; border-radius: 12px; border: 1px solid #E5E5EB; }
         .bal-box { text-align: center; }
         .bal-label { font-size: 10px; text-transform: uppercase; color: #86868B; font-weight: 700; }
@@ -221,7 +221,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v56.0 (Logic Fix)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v57.0 (Golden Master)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -380,7 +380,7 @@
                         <div class="bal-status" id="balStatus">--</div>
                     </div>
                     <div style="font-size:11px; margin-top:10px; color:#666;">
-                        * Comparison against TDEE. Green = Deficit (Weight Loss). Red = Surplus.
+                        * Comparison against TDEE and Clinical Target. Green = Deficit (Weight Loss). Red = Surplus.
                     </div>
                 </div>
 
