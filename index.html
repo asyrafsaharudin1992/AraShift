@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v49.0 (Mega-DB Restored)</title>
+    <title>AraShift System v67.0 (CPG 2023)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -13,7 +13,6 @@
             --bg: #F5F5F7; --card-bg: #FFFFFF; --text: #1D1D1F; --text-sec: #86868B;
             --border: #E5E5EA;
             --c-norm: #34C759; --c-over: #FBBF24; --c-ob1: #F97316; --c-ob2: #EF4444; --c-ob3: #991B1B;
-            --z1: #A7F3D0; --z2: #34D399; --z3: #FBBF24; --z4: #F87171; --z5: #EF4444;
         }
 
         body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 100px; -webkit-font-smoothing: antialiased; }
@@ -173,7 +172,7 @@
             #card-profile .form-group { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; margin-bottom: 5px; }
             #card-profile label { width: 50%; } #card-profile input, #card-profile select { width: 50%; text-align: right; }
 
-            .action-bar, .logout, .nav-tabs, .help-icon, .mnt-controls, .del-btn, .version-tag, #guideModal, .portion-btn { display: none !important; }
+            .action-bar, .logout, .nav-tabs, .help-icon, .mnt-controls, .del-btn, .version-tag, #guideModal, .portion-btn, .info-icon { display: none !important; }
             
             .plan-table { border: 1px solid #ccc; font-size: 10pt; }
             .plan-table th { background-color: #EFEFEF !important; color: #000 !important; border: 1px solid #ccc !important; }
@@ -191,6 +190,7 @@
             
             .mnt-header-summary { background: #eee !important; border: 1px solid #ccc !important; color: #000 !important; }
             .balance-container { border: 1px solid #ccc !important; background: #fff !important; }
+            .target-input { border: none !important; font-size: 14px; background: transparent; }
         }
     </style>
 </head>
@@ -213,7 +213,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v49.0 (Mega-DB Restored)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v67.0 (CPG 2023)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -225,8 +225,13 @@
 
                 <div class="card" id="card-bio">
                     <h3>B. Biochemistry</h3>
-                    <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI</label><input type="number" id="bmi" readonly></div></div>
-                    <div class="input-grid-3"><div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div><div class="form-group"><label>Fat %</label><input type="number" id="fat"></div><div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div></div>
+                    <div class="input-grid-4"><div class="form-group"><label>Ht (cm)</label><input type="number" id="height"></div><div class="form-group"><label>Wt (kg)</label><input type="number" id="weight"></div><div class="form-group"><label>Waist</label><input type="number" id="waist"></div><div class="form-group"><label>BMI <span class="info-icon" data-tooltip="Body Mass Index (kg/m²). CPG 2023 Classification: 18.5-22.9 Normal, 23-27.4 Overweight, >27.5 Obesity.">ⓘ</span></label><input type="number" id="bmi" readonly></div></div>
+                    <div class="input-grid-4">
+                        <div class="form-group"><label>V.Fat</label><input type="number" id="vfat"></div>
+                        <div class="form-group"><label>Fat %</label><input type="number" id="fat"></div>
+                        <div class="form-group"><label>Muscle %</label><input type="number" id="muscle"></div>
+                        <div class="form-group"><label style="color:var(--primary);">Body Age</label><input type="number" id="manualBodyAge" placeholder="Manual"></div>
+                    </div>
                 </div>
 
                 <div class="card" id="card-diet">
@@ -280,8 +285,8 @@
                         <div class="mnt-stat-item">Fat Goal<span class="mnt-stat-val" id="targetFatVal">0g</span></div>
                     </div>
 
-                    <div class="mnt-controls" style="grid-template-columns: 1fr 2fr 0.5fr 0.5fr;">
-                        <select id="mntProtocol" onchange="runCalc()">
+                    <div class="mnt-controls">
+                        <select id="mntProtocol" onchange="updateMntTargets()">
                             <option value="std" selected>Standard Balanced</option>
                             <option value="lcd">Low Carb (LCD)</option>
                             <option value="hp">High Protein</option>
@@ -658,16 +663,78 @@
         let mntPlan = [], exPlan = [];
         let globalTargetCal = 1500;
 
-        const omronRef = { ageMidpoints: [1.5, 4, 6.5, 8.5, 10.5, 13, 16, 23.5, 39.5, 59.5, 75], maleBase: [61.0, 54.8, 44.3, 40.8, 37.4, 31.0, 27.0, 24.0, 22.3, 21.5, 20.88], femaleBase: [59.7, 52.2, 41.9, 38.3, 34.8, 29.6, 25.3, 22.1, 21.7, 20.7, 18.0] };
+        // --- NEW: ROBUST SECTION J RENDERER (DEFINED BEFORE USAGE) ---
+        function renderRecommendations(w, bmiVal) {
+            let isMafld = document.getElementById('risk_mafld').checked;
+            let isT2dm = document.getElementById('risk_t2dm').checked;
+            let isHtn = document.getElementById('risk_htn').checked;
+            let isDys = document.getElementById('risk_dys').checked;
+            let isPcos = document.getElementById('risk_pcos').checked;
+            let isAsthma = document.getElementById('risk_asthma').checked;
+            let isOsa = document.getElementById('risk_osa').checked;
+            let isMeta = document.getElementById('risk_meta').checked;
 
-        function interpolate(x, xArr, yArr) { if (x >= xArr[0]) return yArr[0]; for (let i = 0; i < xArr.length - 1; i++) { if (x <= xArr[i] && x >= xArr[i + 1]) { const x0 = xArr[i], x1 = xArr[i + 1], y0 = yArr[i], y1 = yArr[i + 1]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); } } const last = xArr.length - 1; const x0 = xArr[last-1], x1 = xArr[last], y0 = yArr[last-1], y1 = yArr[last]; return y0 + (x - x0) * (y1 - y0) / (x1 - x0); }
+            // DEFAULT: GENERAL WEIGHT MANAGEMENT (CPG 2023 5-10%)
+            let targetPct = 0.05; let maxPct = 0.10; let reason = "General Weight Management";
+
+            // RISK OVERRIDES (CPG 2023 SPECIFIC)
+            if (isMafld) { targetPct = 0.10; maxPct = 0.40; reason = "MAFLD (Intensive)"; } // Updated to 40%
+            else if (isT2dm || isHtn || isDys || isPcos) { targetPct = 0.05; maxPct = 0.15; reason = "Metabolic Disease Control"; }
+            else if (isMeta) { targetPct = 0.10; maxPct = 0.10; reason = "Metabolic Syndrome Prevention"; }
+            else if (isOsa) { targetPct = 0.07; maxPct = 0.11; reason = "Sleep Apnea Management"; }
+            else if (isAsthma) { targetPct = 0.07; maxPct = 0.08; reason = "Asthma Symptom Control"; }
+
+            // PHARMA LOGIC
+            let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
+            let drugRec = "";
+            if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct.</li>";
+
+            // CALORIE STRATEGY TEXT
+            let gender = document.getElementById('gender').value;
+            let calStrat = "";
+            let defMin = 500; let defMax = 750;
+            if(gender === 'female') { calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`; } 
+            else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; }
+            calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal/day</li>`;
+
+            // DISPLAY LOGIC (Even if weight is 0)
+            let wDisplay = (w > 0) ? w : 0;
+            let initTargetStr = (wDisplay > 0) ? (wDisplay*(1-targetPct)).toFixed(1) + " kg" : "Enter Wt";
+            let goalTargetStr = (wDisplay > 0) ? (wDisplay*(1-maxPct)).toFixed(1) + " kg" : "Enter Wt";
+
+            let hHTML = `<div class="rec-container"><h4>${reason} (${(targetPct*100).toFixed(0)}-${(maxPct*100).toFixed(0)}%)</h4>
+            <table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr>
+            <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${initTargetStr}</td><td>3 Months</td></tr>
+            <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${goalTargetStr}</td><td>6 Months</td></tr></table>
+            <div style="margin-top:10px; font-size:12px;"><strong>Strategies (0.5-1.0 kg/week loss):</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate</li>${drugRec}</ul></div></div>`;
+            
+            document.getElementById('hContent').innerHTML = hHTML;
+            
+            // Auto-update Global Target for MNT
+            let clinicalTarget = (gender === 'female') ? 1200 : 1500;
+            // Only update input if it hasn't been modified by user (simple check: if empty or default)
+            let currentVal = document.getElementById('targetCalVal').innerText; // Using text for v49
+            globalTargetCal = clinicalTarget;
+            updateMntTargets();
+        }
 
         function init() {
+            // POPULATE DROPDOWN (v49 Standard Dropdown)
             let pSel = document.getElementById('mntFood'); pSel.innerHTML = "";
             let cats = [...new Set(mntDB.map(i=>i.cat))];
-            cats.forEach(c => { let grp = document.createElement('optgroup'); grp.label = c; mntDB.filter(i=>i.cat===c).forEach(i => { let opt = document.createElement('option'); opt.value = JSON.stringify(i); opt.text = i.name; grp.appendChild(opt); }); pSel.appendChild(grp); });
+            cats.forEach(c => { 
+                let grp = document.createElement('optgroup'); grp.label = c; 
+                mntDB.filter(i=>i.cat===c).forEach(i => { 
+                    let opt = document.createElement('option'); 
+                    opt.value = JSON.stringify(i); 
+                    opt.text = i.name; 
+                    grp.appendChild(opt); 
+                }); 
+                pSel.appendChild(grp); 
+            });
+
             updateMoves();
-            const inputs = ['pId','pName','age','gender','height','weight','waist','vfat','fat','muscle','activity','snackFreq','drinkFreq','bfType','bfSize','luType','luSize','dnType','dnSize'];
+            const inputs = ['pId','pName','age','gender','height','weight','waist','vfat','fat','muscle','activity','snackFreq','drinkFreq','bfType','bfSize','luType','luSize','dnType','dnSize','manualBodyAge'];
             inputs.forEach(id => { let el = document.getElementById(id); if(el) { el.addEventListener('input', runCalc); el.addEventListener('change', runCalc); } });
             const toggles = ['risk_mafld','risk_t2dm','risk_htn','risk_dys','risk_osa','risk_meta','risk_pcos','risk_asthma'];
             toggles.forEach(id => { let el = document.getElementById(id); if(el) { el.addEventListener('change', runCalc); } });
@@ -702,19 +769,15 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
+            // BMR (Harris-Benedict v49)
             let bmr = 0;
             if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
             else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
             bmr = Math.round(bmr);
             
-            let metAge = age;
-            if (w > 0 && bmr > 0) {
-                let userBaseValue = bmr / w;
-                let refBase = (gender === 'male') ? omronRef.maleBase : omronRef.femaleBase;
-                metAge = Math.round(interpolate(userBaseValue, refBase, omronRef.ageMidpoints));
-                if (metAge < 18) metAge = 18; if (metAge > 99) metAge = 99;
-            }
-            document.getElementById('sMetAge').innerText = metAge;
+            // MANUAL BODY AGE (v50.1 Change)
+            let mba = document.getElementById('manualBodyAge').value;
+            document.getElementById('sMetAge').innerText = mba ? mba : "-";
 
             let tdee = Math.round(bmr * act);
             let intake = 0;
@@ -742,42 +805,8 @@
             vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk);
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            let isMafld = document.getElementById('risk_mafld').checked;
-            let isT2dm = document.getElementById('risk_t2dm').checked;
-            let isHtn = document.getElementById('risk_htn').checked;
-            let isDys = document.getElementById('risk_dys').checked;
-            let isPcos = document.getElementById('risk_pcos').checked;
-            let isAsthma = document.getElementById('risk_asthma').checked;
-            let isOsa = document.getElementById('risk_osa').checked;
-            let isMeta = document.getElementById('risk_meta').checked;
-
-            let targetPct = 0.05; let maxPct = 0.10; let reason = "General Obesity Management";
-            if (isMafld) { targetPct = 0.10; maxPct = 0.40; reason = "MAFLD (Fatty Liver) - Intensive"; }
-            else if (isT2dm || isHtn || isDys || isPcos) { targetPct = 0.05; maxPct = 0.15; reason = "Metabolic Disease Control"; }
-            else if (isMeta) { targetPct = 0.10; maxPct = 0.10; reason = "Metabolic Syndrome Prevention"; }
-            else if (isOsa) { targetPct = 0.07; maxPct = 0.11; reason = "Sleep Apnea Management"; }
-            else if (isAsthma) { targetPct = 0.07; maxPct = 0.08; reason = "Asthma Symptom Control"; }
-
-            let calStrat = "";
-            let defMin = Math.max(1000, tdee - 750); let defMax = Math.max(1200, tdee - 500);
-            let clinicalTarget = 0;
-            if(gender === 'female') { calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`; clinicalTarget = 1200; } 
-            else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; clinicalTarget = 1500; }
-            calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal (${defMin}-${defMax} kcal)</li>`;
-            
-            globalTargetCal = clinicalTarget;
-            updateMntTargets();
-
-            let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
-            let drugRec = "";
-            if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct.</li>";
-
-            let hHTML = `<div class="rec-container"><h4>${reason}</h4>
-            <table class="milestone-table"><tr><th>Phase</th><th>Target Weight</th><th>Timeline</th></tr>
-            <tr><td>Initial (${(targetPct*100).toFixed(0)}%)</td><td>${(w*(1-targetPct)).toFixed(1)} kg</td><td>3 Months</td></tr>
-            <tr><td>Goal (${(maxPct*100).toFixed(0)}%)</td><td>${(w*(1-maxPct)).toFixed(1)} kg</td><td>6 Months</td></tr></table>
-            <div style="margin-top:10px; font-size:12px;"><strong>Strategies (0.5-1.0 kg/week loss):</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate</li>${drugRec}</ul></div></div>`;
-            document.getElementById('hContent').innerHTML = hHTML;
+            // RENDER SECTION J
+            renderRecommendations(w, bmiVal);
             
             recalcExercises(w);
         }
@@ -807,13 +836,15 @@
             if (diff < -200) {
                 statusEl.className = "bal-status loss";
                 statusEl.innerText = "DEFICIT (Weight Loss)";
+                statusEl.style.background = "#007AFF"; // Blue/Green
             } else if (diff > 200) {
                 statusEl.className = "bal-status gain";
                 statusEl.innerText = "SURPLUS (Weight Gain)";
+                statusEl.style.background = "#FF3B30"; // Red
             } else {
                 statusEl.className = "bal-status";
-                statusEl.style.background = "#F59E0B";
                 statusEl.innerText = "MAINTENANCE";
+                statusEl.style.background = "#F59E0B"; // Orange
             }
         }
 
