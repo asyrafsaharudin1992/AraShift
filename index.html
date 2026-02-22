@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v75.0 (All Systems Fixed)</title>
+    <title>AraShift System v71.0 (Physical Portions)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -116,6 +116,7 @@
         .mnt-header-summary { background: #ECFDF5; border: 1px solid #A7F3D0; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46; font-weight: 600; align-items: center; }
         .mnt-stat-item { text-align: center; }
         .mnt-stat-val { font-size: 14px; font-weight: 800; display: block; }
+        .target-input { width: 80px; padding: 4px; border: 1px solid #34D399; border-radius: 4px; text-align: center; font-weight: 800; color: #065F46; background: #fff; }
         
         .mnt-controls { display: grid; grid-template-columns: 1fr 2fr 0.5fr 0.5fr; gap: 10px; margin-bottom: 10px; align-items: end; }
         .plan-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; border-radius: 8px; overflow: hidden; margin-top: 10px; }
@@ -149,7 +150,7 @@
         .btn-p { background: var(--primary); color: white; }
         .btn-s { background: transparent; border: 1px solid var(--border); }
 
-        /* MODALS */
+        /* GUIDE MODAL (Standard) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; justify-content: center; align-items: center; }
         .guide-box { background: white; padding: 20px; border-radius: 18px; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 90%; max-height: 90vh; overflow-y: auto; }
         .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -183,7 +184,7 @@
             #card-profile .form-group { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; margin-bottom: 5px; }
             #card-profile label { width: 50%; } #card-profile input, #card-profile select { width: 50%; text-align: right; }
 
-            .action-bar, .logout, .nav-tabs, .help-icon, .mnt-controls, .del-btn, .version-tag, #guideModal, #mealGuideModal, #plateModal, .portion-btn, .info-icon { display: none !important; }
+            .action-bar, .logout, .nav-tabs, .help-icon, .mnt-controls, .del-btn, .version-tag, #guideModal, #mealGuideModal, .portion-btn, .info-icon { display: none !important; }
             
             .plan-table { border: 1px solid #ccc; font-size: 10pt; }
             .plan-table th { background-color: #EFEFEF !important; color: #000 !important; border: 1px solid #ccc !important; }
@@ -194,6 +195,7 @@
             .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; page-break-inside: avoid; }
             input, select, textarea { border: none !important; background: transparent !important; padding: 0 !important; color: #000 !important; font-weight: 700 !important; appearance: none; resize: none; }
             select { background-image: none !important; } ::placeholder { color: transparent; }
+            .target-input { border: none !important; }
             
             .bar-complex, .bar-seg { -webkit-print-color-adjust: exact; }
             .bar-marker { background: #000 !important; border: 2px solid #fff; }
@@ -229,26 +231,15 @@
                 <tr><td><strong>Small</strong></td><td>1 Scoop (½ Cup)</td><td>1 Piece (Palm size)</td></tr>
                 <tr><td><strong>Medium</strong></td><td>2 Scoops (1 Cup)</td><td>1 Piece (Palm size)</td></tr>
                 <tr><td><strong>Large</strong></td><td>3-4 Scoops (2 Cups)</td><td>2 Pieces (2 Palms)</td></tr>
-                <tr><td><strong>Extra</strong></td><td>Banquet / Buffet</td><td>Unlimited</td></tr>
+                <tr><td><strong>Extra Large</strong></td><td>Banquet / Buffet</td><td>Unlimited</td></tr>
             </table>
             <div style="margin-top:10px; font-size:11px; color:#666;">*Based on standard Malaysian serving sizes (Suku Suku Separuh).</div>
             <button class="btn btn-p" onclick="document.getElementById('mealGuideModal').classList.add('hidden')" style="width:100%; margin-top:15px;">Close</button>
         </div>
     </div>
 
-    <div id="plateModal" class="modal-overlay hidden">
-        <div class="guide-box" style="text-align:center; width: 600px;">
-            <h3 style="margin-top:0; color:var(--primary);">Malaysian Healthy Plate #SukuSukuSeparuh</h3>
-            <img src="https://www.moh.gov.my/moh/resources/Penerbitan/Garis%20Panduan/Pemakanan/Malaysian_Healthy_Plate.jpg" onerror="this.src='https://via.placeholder.com/500x500?text=Malaysian+Healthy+Plate+Image'" style="width:100%; border-radius:8px; margin-bottom:10px; border:1px solid #eee;" alt="#QuarterQuarterHalf">
-            <div style="margin-bottom:10px;">
-                <a href="https://www.moh.gov.my/moh/resources/Penerbitan/Garis%20Panduan/Pemakanan/Malaysian_Healthy_Plate.jpg" target="_blank" class="btn btn-s" style="text-decoration:none; font-size:12px;">Open Image in New Tab ↗</a>
-            </div>
-            <button class="btn btn-p" onclick="document.getElementById('plateModal').classList.add('hidden')" style="width:100%;">Close</button>
-        </div>
-    </div>
-
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v75.0 (All Fixed)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v71.0 (Physical Portions)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -313,21 +304,18 @@
                 <div class="card" id="card-mnt">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         <h3 style="margin:0;">G. Medical Nutrition Therapy (MNT)</h3>
-                        <div style="display:flex; gap:5px;">
-                            <button class="btn btn-s portion-btn" style="font-size:11px; padding:5px 10px;" onclick="document.getElementById('guideModal').classList.remove('hidden')">📏 Portion Guide</button>
-                            <button class="btn btn-s portion-btn" style="font-size:11px; padding:5px 10px;" onclick="document.getElementById('plateModal').classList.remove('hidden')">🍽️ #SukuSukuSeparuh</button>
-                        </div>
+                        <button class="btn btn-s portion-btn" style="font-size:11px; padding:5px 10px;" onclick="document.getElementById('guideModal').classList.remove('hidden')">📏 Portion Guide</button>
                     </div>
                     
                     <div class="mnt-header-summary">
-                        <div class="mnt-stat-item">Target Intake<span class="mnt-stat-val" id="targetCalVal">0 kcal</span></div>
+                        <div class="mnt-stat-item">Target Intake<br><input type="number" id="customTargetCal" class="target-input" value="1500" onchange="updateMntTargets()"></div>
                         <div class="mnt-stat-item">Carb Goal<span class="mnt-stat-val" id="targetCarbVal">0g</span></div>
                         <div class="mnt-stat-item">Prot Goal<span class="mnt-stat-val" id="targetProtVal">0g</span></div>
                         <div class="mnt-stat-item">Fat Goal<span class="mnt-stat-val" id="targetFatVal">0g</span></div>
                     </div>
 
-                    <div class="mnt-controls" style="grid-template-columns: 1fr 2fr 0.5fr 0.5fr;">
-                        <select id="mntProtocol" onchange="runCalc()">
+                    <div class="mnt-controls">
+                        <select id="mntProtocol" onchange="updateMntTargets()">
                             <option value="std" selected>Standard Balanced</option>
                             <option value="lcd">Low Carb (LCD)</option>
                             <option value="hp">High Protein</option>
@@ -335,7 +323,8 @@
                             <option value="keto">Ketogenic</option>
                         </select>
                         
-                        <select id="mntFood" style="width:100%;"></select>
+                        <input list="foodList" id="mntFoodInput" placeholder="Type or Select Food..." style="width:100%;">
+                        <datalist id="foodList"></datalist>
                         
                         <input type="number" id="mntQty" placeholder="Qty" value="1">
                         <button class="btn btn-p" onclick="addMnt()">Add</button>
@@ -716,27 +705,11 @@
             let isAsthma = document.getElementById('risk_asthma').checked;
             let isOsa = document.getElementById('risk_osa').checked;
             let isMeta = document.getElementById('risk_meta').checked;
-            let gender = document.getElementById('gender').value;
-
-            // NORMAL BMI CHECK
-            if (bmiVal > 0 && bmiVal < 23.0) {
-                document.getElementById('hContent').innerHTML = `
-                    <div class="rec-container" style="border-left-color: var(--success); background-color: #ECFDF5; border-color: #A7F3D0;">
-                        <h4 style="color: var(--success);">Normal BMI Range</h4>
-                        <p style="font-size: 13px;">Patient is within normal BMI range. Weight loss is not indicated. Maintain a healthy lifestyle, balanced diet, and regular physical activity.</p>
-                    </div>`;
-                
-                // Keep targets calculating properly even if normal BMI
-                let clinicalTarget = (gender === 'female') ? 1200 : 1500;
-                globalTargetCal = clinicalTarget;
-                updateMntTargets();
-                return; // Exit early
-            }
 
             // DEFAULT: GENERAL WEIGHT MANAGEMENT (5-10%)
             let targetPct = 0.05; let maxPct = 0.10; let reason = "General Weight Management";
 
-            // RISK OVERRIDES (CPG 2023 40% Logic)
+            // RISK OVERRIDES (HIERARCHY) (CPG 2023 40% Logic)
             if (isMafld) { targetPct = 0.10; maxPct = 0.40; reason = "MAFLD (Intensive)"; }
             else if (isT2dm || isHtn || isDys || isPcos) { targetPct = 0.05; maxPct = 0.15; reason = "Metabolic Disease Control"; }
             else if (isMeta) { targetPct = 0.10; maxPct = 0.10; reason = "Metabolic Syndrome Prevention"; }
@@ -749,12 +722,14 @@
             if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct.</li>";
 
             // CALORIE STRATEGY TEXT
+            let gender = document.getElementById('gender').value;
             let calStrat = "";
+            let defMin = 500; let defMax = 750;
             if(gender === 'female') { calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`; } 
             else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; }
             calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal/day</li>`;
 
-            // DISPLAY LOGIC
+            // DISPLAY LOGIC (Even if weight is 0)
             let wDisplay = (w > 0) ? w : 0;
             let initTargetStr = (wDisplay > 0) ? (wDisplay*(1-targetPct)).toFixed(1) + " kg" : "Enter Wt";
             let goalTargetStr = (wDisplay > 0) ? (wDisplay*(1-maxPct)).toFixed(1) + " kg" : "Enter Wt";
@@ -769,24 +744,23 @@
             
             // Auto-update Global Target for MNT
             let clinicalTarget = (gender === 'female') ? 1200 : 1500;
-            globalTargetCal = clinicalTarget;
+            // Only update input if it hasn't been modified by user (simple check: if empty or default)
+            let currentVal = document.getElementById('customTargetCal').value;
+            if(!currentVal || currentVal == "1500" || currentVal == "1200") {
+                 document.getElementById('customTargetCal').value = clinicalTarget;
+            }
             updateMntTargets();
         }
 
         function init() {
-            // POPULATE DROPDOWN (Fixed missing elements from previous version)
-            let pSel = document.getElementById('mntFood'); 
+            // POPULATE DROPDOWN (Smart Combo)
+            let pSel = document.getElementById('foodList'); 
             pSel.innerHTML = "";
-            let cats = [...new Set(mntDB.map(i=>i.cat))];
-            cats.forEach(c => { 
-                let grp = document.createElement('optgroup'); grp.label = c; 
-                mntDB.filter(i=>i.cat===c).forEach(i => { 
-                    let opt = document.createElement('option'); 
-                    opt.value = JSON.stringify(i); 
-                    opt.text = i.name; 
-                    grp.appendChild(opt); 
-                }); 
-                pSel.appendChild(grp); 
+            mntDB.sort((a,b) => (a.cat > b.cat) ? 1 : ((b.cat > a.cat) ? -1 : 0));
+            mntDB.forEach(item => { 
+                let opt = document.createElement('option'); 
+                opt.value = item.name; 
+                pSel.appendChild(opt); 
             });
 
             updateMoves();
@@ -805,12 +779,11 @@
         function updateMntTargets() {
             let pKey = document.getElementById('mntProtocol').value;
             let p = protocols[pKey];
-            let tCal = globalTargetCal;
+            let tCal = parseFloat(document.getElementById('customTargetCal').value) || 1500;
             
             let tCarb = Math.round((tCal * p.c) / 4);
             let tProt = Math.round((tCal * p.p) / 4);
             let tFat = Math.round((tCal * p.f) / 9);
-            document.getElementById('targetCalVal').innerText = tCal + " kcal";
             document.getElementById('targetCarbVal').innerText = tCarb + "g (" + (p.c*100) + "%)";
             document.getElementById('targetProtVal').innerText = tProt + "g (" + (p.p*100) + "%)";
             document.getElementById('targetFatVal').innerText = tFat + "g (" + (p.f*100) + "%)";
@@ -823,26 +796,20 @@
             let gender = document.getElementById('gender').value;
             let act = parseFloat(document.getElementById('activity').value);
             
-            // Fixed BMI Parser
-            let bmiVal = 0;
-            if (w > 0 && h > 0) {
-                bmiVal = parseFloat((w / ((h/100)*(h/100))).toFixed(1));
-            }
-            document.getElementById('bmi').value = (bmiVal > 0) ? bmiVal : "";
+            let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
+            document.getElementById('bmi').value = bmiVal;
 
-            // BMR (Harris-Benedict v49/71)
+            // BMR (Harris-Benedict v49)
             let bmr = 0;
-            if (w > 0 && h > 0) {
-                if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
-                else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
-            }
-            bmr = Math.max(0, Math.round(bmr));
+            if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
+            else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
+            bmr = Math.round(bmr);
             
-            // MANUAL BODY AGE
+            // MANUAL BODY AGE (v50.1 Change)
             let mba = document.getElementById('manualBodyAge').value;
             document.getElementById('sMetAge').innerText = mba ? mba : "-";
 
-            let tdee = Math.max(0, Math.round(bmr * act));
+            let tdee = Math.round(bmr * act);
             let intake = 0;
             ['bf','lu','dn'].forEach(m => { intake += calMap[document.getElementById(m+'Type').value][document.getElementById(m+'Size').value]; });
             intake += (parseFloat(document.getElementById('snackFreq').value)||0)*200 + (parseFloat(document.getElementById('drinkFreq').value)||0)*150;
@@ -853,14 +820,7 @@
             document.getElementById('sBal').innerText = (intake - tdee);
 
             let risk = "Unknown";
-            if (bmiVal === 0) risk = "Enter Data";
-            else if(bmiVal < 18.5) risk = "Low Risk"; 
-            else if(bmiVal < 23.0) risk = "Acceptable"; 
-            else if(bmiVal < 27.5) risk = "Increased"; 
-            else if(bmiVal < 32.5) risk = "High"; 
-            else if(bmiVal < 37.5) risk = "Very High"; 
-            else risk = "Extremely High";
-            
+            if(bmiVal < 18.5) risk = "Low Risk"; else if(bmiVal < 23.0) risk = "Acceptable"; else if(bmiVal < 27.5) risk = "Increased"; else if(bmiVal < 32.5) risk = "High"; else if(bmiVal < 37.5) risk = "Very High"; else risk = "Extremely High";
             let vHTML = getBar("BMI (CPG 2023)", bmiVal, 50, [{l:18.5,c:"#F59E0B"}, {l:22.9,c:"#34C759"}, {l:27.4,c:"#FBBF24"}, {l:32.4,c:"#F97316"}, {l:37.4,c:"#EF4444"}, {l:50,c:"#991B1B"}], risk);
             let vf = parseFloat(document.getElementById('vfat').value)||0;
             let vfRisk = vf < 10 ? "Normal" : (vf < 15 ? "High" : "Very High");
@@ -869,13 +829,10 @@
             let fpRisk = "Normal";
             if(gender==='male') { if(fp>25) fpRisk="Very High"; else if(fp>20) fpRisk="High"; } else { if(fp>35) fpRisk="Very High"; else if(fp>30) fpRisk="High"; }
             vHTML += getBar("Body Fat %", fp, 50, [{l:20,c:"#34C759"},{l:30,c:"#F97316"},{l:50,c:"#EF4444"}], fpRisk);
-            
-            // MUSCLE MASS (Changed to Classification)
             let mp = parseFloat(document.getElementById('muscle').value)||0;
             let mpRisk = "Normal";
             if(gender==='male') { if(mp<32.9) mpRisk="Low"; else if(mp>35.8) mpRisk="High"; } else { if(mp<25.9) mpRisk="Low"; else if(mp>28) mpRisk="High"; }
-            vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk, "Classification");
-            
+            vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk);
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
             // RENDER SECTION J
@@ -884,14 +841,13 @@
             recalcExercises(w);
         }
 
-        // Updated getBar function to accept custom status label
-        function getBar(label, val, max, segs, status, statusLabel = "Risk") {
+        function getBar(label, val, max, segs, status) {
             let pct = Math.min((val/max)*100, 100);
             let h = `<div class="visual-row"><div class="visual-header"><span>${label}</span><span>${val}</span></div><div class="bar-complex">`;
             let prev=0; segs.forEach(s=>{ let w=((s.l-prev)/max)*100; h+=`<div class="bar-seg" style="width:${w}%; background:${s.c}; float:left;"></div>`; prev=s.l; });
             h+=`<div class="bar-marker" style="left:${pct}%"></div></div><div class="bar-numbers-row">`;
             prev=0; segs.forEach(s=>{ let l=(s.l/max)*100; h+=`<div class="bar-number-item" style="left:${l}%">${s.l}</div>`; });
-            h+=`</div><div class="bar-status-label" style="clear:both;">${statusLabel}: ${status}</div></div>`;
+            h+=`</div><div class="bar-status-label" style="clear:both;">Risk: ${status}</div></div>`;
             return h;
         }
 
@@ -923,12 +879,15 @@
         }
 
         function addMnt() {
-            let sel = document.getElementById('mntFood'); 
-            if(!sel.value) return;
-            let item = JSON.parse(sel.value);
+            let inputVal = document.getElementById('mntFoodInput').value;
+            if(!inputVal) return;
+            let item = mntDB.find(f => f.name === inputVal);
+            if(!item) { alert("Please select a valid food from the list."); return; }
+
             let qty = parseFloat(document.getElementById('mntQty').value)||1;
             mntPlan.push({ ...item, q: qty, tC: item.cal*qty, tCb: item.c*qty, tP: item.p*qty, tF: item.f*qty });
             
+            document.getElementById('mntFoodInput').value = "";
             renderMnt();
         }
 
@@ -953,23 +912,15 @@
                 document.getElementById('barProt').style.width = pp+"%";
                 document.getElementById('barFat').style.width = pf+"%";
                 document.getElementById('macroText').innerText = `Carb:${pc}% Prot:${pp}% Fat:${pf}%`;
-            } else {
-                document.getElementById('barCarb').style.width = "0%";
-                document.getElementById('barProt').style.width = "0%";
-                document.getElementById('barFat').style.width = "0%";
-                document.getElementById('macroText').innerText = `C:0% P:0% F:0%`;
             }
             updateBalance();
         }
 
         function addExercise() {
-            let sel = document.getElementById('exMove'); 
-            if(!sel.value) return;
-            let name = sel.options[sel.selectedIndex].text;
-            let dur = parseFloat(document.getElementById('exDur').value) || 30;
+            let sel = document.getElementById('exMove'); let name = sel.options[sel.selectedIndex].text;
+            let dur = parseFloat(document.getElementById('exDur').value);
             let f = parseFloat(sel.value);
-            let w = parseFloat(document.getElementById('weight').value) || 70;
-            let k = Math.round(f * w * (dur/60));
+            let k = Math.round(f * (parseFloat(document.getElementById('weight').value)||70) * (dur/60));
             exPlan.push({n:name, d:dur, f:f, k:k});
             renderEx();
         }
@@ -977,7 +928,7 @@
             let h="", tk=0;
             exPlan.forEach((p,i) => { tk+=p.k; h+=`<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="exPlan.splice(${i},1);renderEx()">×</td></tr>`; });
             document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
-            updateBalance(); 
+            updateBalance(); // Update Balance on exercise change
         }
         function recalcExercises(w) {
             exPlan.forEach(p => { p.k = Math.round(p.f * w * (p.d / 60)); });
