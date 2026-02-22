@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AraShift System v71.0 (Physical Portions)</title>
+    <title>AraShift System v71.1 (Logic Restored)</title>
     <link rel="icon" href="Logo Ara Plato.png" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -139,7 +139,7 @@
         .bal-status.loss { background: #007AFF; }
 
         /* RECS */
-        .rec-container { background: #FFF7ED; padding: 15px; border-radius: 12px; border: 1px solid #FED7AA; border-left: 5px solid #F97316; }
+        .rec-container { background: #FFF7ED; padding: 15px; border-radius: 12px; border: 1px solid #FED7AA; border-left: 5px solid #F97316; margin-bottom: 10px;}
         .milestone-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #E5E5EA; margin-bottom: 10px; }
         .milestone-table th { padding: 8px; background: #F2F2F7; font-size: 11px; text-transform: uppercase; text-align: left; }
         .milestone-table td { padding: 8px; font-size: 13px; border-bottom: 1px solid #eee; }
@@ -151,11 +151,14 @@
         .btn-s { background: transparent; border: 1px solid var(--border); }
 
         /* GUIDE MODAL (Standard) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; justify-content: center; align-items: center; }
-        .guide-box { background: white; padding: 20px; border-radius: 18px; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 90%; max-height: 90vh; overflow-y: auto; }
+        #guideModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .guide-box { background: white; padding: 20px; border-radius: 18px; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         .guide-table { width: 100%; border-collapse: collapse; font-size: 13px; }
         .guide-table th, .guide-table td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
         .guide-table th { background: #f5f5f7; }
+
+        /* MEAL SIZE MODAL */
+        #mealGuideModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10001; display: flex; justify-content: center; align-items: center; }
 
         /* ---------------- PRINT CSS ---------------- */
         @media print {
@@ -207,7 +210,7 @@
 </head>
 <body>
 
-    <div id="guideModal" class="modal-overlay hidden">
+    <div id="guideModal" class="hidden">
         <div class="guide-box">
             <h3 style="margin-top:0; color:var(--primary);">Standard Household Measurements</h3>
             <table class="guide-table">
@@ -223,7 +226,7 @@
         </div>
     </div>
 
-    <div id="mealGuideModal" class="modal-overlay hidden">
+    <div id="mealGuideModal" class="hidden">
         <div class="guide-box" style="width: 500px;">
             <h3 style="margin-top:0; color:var(--primary);">Visual Meal Estimation</h3>
             <table class="guide-table">
@@ -239,7 +242,7 @@
     </div>
 
     <div class="container" id="app-ui">
-        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v71.0 (Physical Portions)</span></div><div class="logout">Logout</div></header>
+        <header><div class="brand">Ara<span>Shift</span> <span class="version-tag">v71.1 (Logic Restored)</span></div><div class="logout">Logout</div></header>
         <div class="nav-tabs"><button class="tab-btn active">AraShift (Obesity)</button></div>
 
         <div id="tab-arashift">
@@ -693,10 +696,39 @@
 
         const calMap = { 'carb': {'S':300,'M':500,'L':800}, 'prot': {'S':250,'M':450,'L':700}, 'bal': {'S':350,'M':550,'L':750}, 'lite': {'S':150,'M':250,'L':350}, 'skip': {'S':0,'M':0,'L':0} };
         let mntPlan = [], exPlan = [];
-        let globalTargetCal = 1500;
-
+        
         // --- NEW: ROBUST SECTION J RENDERER ---
         function renderRecommendations(w, bmiVal) {
+            let gender = document.getElementById('gender').value;
+
+            // Auto-update Global Target safely BEFORE evaluating returns
+            let clinicalTarget = (gender === 'female') ? 1200 : 1500;
+            let currentVal = document.getElementById('customTargetCal').value;
+            if(!currentVal || currentVal == "1500" || currentVal == "1200") {
+                 document.getElementById('customTargetCal').value = clinicalTarget;
+            }
+            updateMntTargets();
+
+            // BMI LOGIC CHECKS
+            if (bmiVal > 0 && bmiVal < 18.5) {
+                document.getElementById('hContent').innerHTML = `
+                    <div class="rec-container" style="border-left-color: #F59E0B; background-color: #FEF3C7; border-color: #FDE68A;">
+                        <h4 style="color: #D97706; margin-top:0;">Underweight (BMI < 18.5)</h4>
+                        <p style="font-size: 13px; margin: 5px 0 0 0;">Patient is underweight. Weight gain and nutritional optimization indicated. Focus on a caloric surplus with nutrient-dense foods.</p>
+                    </div>`;
+                return; 
+            }
+            
+            if (bmiVal >= 18.5 && bmiVal < 23.0) {
+                document.getElementById('hContent').innerHTML = `
+                    <div class="rec-container" style="border-left-color: #34C759; background-color: #ECFDF5; border-color: #A7F3D0;">
+                        <h4 style="color: #059669; margin-top:0;">Normal BMI Range (18.5 - 22.9)</h4>
+                        <p style="font-size: 13px; margin: 5px 0 0 0;">Patient is within normal BMI range. Weight loss is not indicated. Maintain a healthy lifestyle, balanced diet, and regular physical activity.</p>
+                    </div>`;
+                return; 
+            }
+
+            // --- STANDARD LOGIC FOR BMI >= 23.0 ---
             let isMafld = document.getElementById('risk_mafld').checked;
             let isT2dm = document.getElementById('risk_t2dm').checked;
             let isHtn = document.getElementById('risk_htn').checked;
@@ -706,30 +738,24 @@
             let isOsa = document.getElementById('risk_osa').checked;
             let isMeta = document.getElementById('risk_meta').checked;
 
-            // DEFAULT: GENERAL WEIGHT MANAGEMENT (5-10%)
             let targetPct = 0.05; let maxPct = 0.10; let reason = "General Weight Management";
 
-            // RISK OVERRIDES (HIERARCHY) (CPG 2023 40% Logic)
             if (isMafld) { targetPct = 0.10; maxPct = 0.40; reason = "MAFLD (Intensive)"; }
             else if (isT2dm || isHtn || isDys || isPcos) { targetPct = 0.05; maxPct = 0.15; reason = "Metabolic Disease Control"; }
             else if (isMeta) { targetPct = 0.10; maxPct = 0.10; reason = "Metabolic Syndrome Prevention"; }
             else if (isOsa) { targetPct = 0.07; maxPct = 0.11; reason = "Sleep Apnea Management"; }
             else if (isAsthma) { targetPct = 0.07; maxPct = 0.08; reason = "Asthma Symptom Control"; }
 
-            // PHARMA LOGIC
             let hasComorbid = (isT2dm || isHtn || isDys || isOsa);
             let drugRec = "";
             if (bmiVal >= 30 || (bmiVal >= 27 && hasComorbid)) drugRec = "<li><b>Pharmacotherapy:</b> Indicated as adjunct.</li>";
 
-            // CALORIE STRATEGY TEXT
-            let gender = document.getElementById('gender').value;
             let calStrat = "";
             let defMin = 500; let defMax = 750;
             if(gender === 'female') { calStrat = `<li><b>Option A:</b> 1,200 - 1,500 kcal/day (Fixed Target)</li>`; } 
             else { calStrat = `<li><b>Option A:</b> 1,500 - 1,800 kcal/day (Fixed Target)</li>`; }
             calStrat += `<li><b>Option B:</b> Reduce by 500-750 kcal/day</li>`;
 
-            // DISPLAY LOGIC (Even if weight is 0)
             let wDisplay = (w > 0) ? w : 0;
             let initTargetStr = (wDisplay > 0) ? (wDisplay*(1-targetPct)).toFixed(1) + " kg" : "Enter Wt";
             let goalTargetStr = (wDisplay > 0) ? (wDisplay*(1-maxPct)).toFixed(1) + " kg" : "Enter Wt";
@@ -741,19 +767,9 @@
             <div style="margin-top:10px; font-size:12px;"><strong>Strategies (0.5-1.0 kg/week loss):</strong><ul style="padding-left:20px; margin-top:5px;">${calStrat}<li>Physical Activity: >150 min/week moderate</li>${drugRec}</ul></div></div>`;
             
             document.getElementById('hContent').innerHTML = hHTML;
-            
-            // Auto-update Global Target for MNT
-            let clinicalTarget = (gender === 'female') ? 1200 : 1500;
-            // Only update input if it hasn't been modified by user (simple check: if empty or default)
-            let currentVal = document.getElementById('customTargetCal').value;
-            if(!currentVal || currentVal == "1500" || currentVal == "1200") {
-                 document.getElementById('customTargetCal').value = clinicalTarget;
-            }
-            updateMntTargets();
         }
 
         function init() {
-            // POPULATE DROPDOWN (Smart Combo)
             let pSel = document.getElementById('foodList'); 
             pSel.innerHTML = "";
             mntDB.sort((a,b) => (a.cat > b.cat) ? 1 : ((b.cat > a.cat) ? -1 : 0));
@@ -799,13 +815,11 @@
             let bmiVal = (w > 0 && h > 0) ? (w / ((h/100)*(h/100))).toFixed(1) : 0;
             document.getElementById('bmi').value = bmiVal;
 
-            // BMR (Harris-Benedict v49)
             let bmr = 0;
             if (gender === 'male') bmr = 66.5 + (13.75*w) + (5.003*h) - (6.775*age);
             else bmr = 655.1 + (9.563*w) + (1.850*h) - (4.676*age);
             bmr = Math.round(bmr);
             
-            // MANUAL BODY AGE (v50.1 Change)
             let mba = document.getElementById('manualBodyAge').value;
             document.getElementById('sMetAge').innerText = mba ? mba : "-";
 
@@ -829,25 +843,27 @@
             let fpRisk = "Normal";
             if(gender==='male') { if(fp>25) fpRisk="Very High"; else if(fp>20) fpRisk="High"; } else { if(fp>35) fpRisk="Very High"; else if(fp>30) fpRisk="High"; }
             vHTML += getBar("Body Fat %", fp, 50, [{l:20,c:"#34C759"},{l:30,c:"#F97316"},{l:50,c:"#EF4444"}], fpRisk);
+            
+            // MUSCLE MASS (Updated to use "Classification" instead of Risk)
             let mp = parseFloat(document.getElementById('muscle').value)||0;
             let mpRisk = "Normal";
             if(gender==='male') { if(mp<32.9) mpRisk="Low"; else if(mp>35.8) mpRisk="High"; } else { if(mp<25.9) mpRisk="Low"; else if(mp>28) mpRisk="High"; }
-            vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk);
+            vHTML += getBar("Muscle %", mp, 60, [{l:26,c:"#EF4444"},{l:33,c:"#34C759"},{l:60,c:"#34C759"}], mpRisk, "Classification");
+            
             document.getElementById('sAnalysis').innerHTML = vHTML;
 
-            // RENDER SECTION J
             renderRecommendations(w, bmiVal);
-            
             recalcExercises(w);
         }
 
-        function getBar(label, val, max, segs, status) {
+        // Updated getBar to accept prefix parameter
+        function getBar(label, val, max, segs, status, prefix="Risk") {
             let pct = Math.min((val/max)*100, 100);
             let h = `<div class="visual-row"><div class="visual-header"><span>${label}</span><span>${val}</span></div><div class="bar-complex">`;
             let prev=0; segs.forEach(s=>{ let w=((s.l-prev)/max)*100; h+=`<div class="bar-seg" style="width:${w}%; background:${s.c}; float:left;"></div>`; prev=s.l; });
             h+=`<div class="bar-marker" style="left:${pct}%"></div></div><div class="bar-numbers-row">`;
             prev=0; segs.forEach(s=>{ let l=(s.l/max)*100; h+=`<div class="bar-number-item" style="left:${l}%">${s.l}</div>`; });
-            h+=`</div><div class="bar-status-label" style="clear:both;">Risk: ${status}</div></div>`;
+            h+=`</div><div class="bar-status-label" style="clear:both;">${prefix}: ${status}</div></div>`;
             return h;
         }
 
@@ -866,15 +882,15 @@
             if (diff < -200) {
                 statusEl.className = "bal-status loss";
                 statusEl.innerText = "DEFICIT (Weight Loss)";
-                statusEl.style.background = "#007AFF"; // Blue/Green
+                statusEl.style.background = "#007AFF"; 
             } else if (diff > 200) {
                 statusEl.className = "bal-status gain";
                 statusEl.innerText = "SURPLUS (Weight Gain)";
-                statusEl.style.background = "#FF3B30"; // Red
+                statusEl.style.background = "#FF3B30"; 
             } else {
                 statusEl.className = "bal-status";
                 statusEl.innerText = "MAINTENANCE";
-                statusEl.style.background = "#F59E0B"; // Orange
+                statusEl.style.background = "#F59E0B"; 
             }
         }
 
@@ -928,7 +944,7 @@
             let h="", tk=0;
             exPlan.forEach((p,i) => { tk+=p.k; h+=`<tr><td>${i+1}</td><td>${p.n}</td><td>${p.d}</td><td>${p.k}</td><td class="del-btn" onclick="exPlan.splice(${i},1);renderEx()">×</td></tr>`; });
             document.getElementById('planBody').innerHTML = h; document.getElementById('totalBurn').innerText = tk;
-            updateBalance(); // Update Balance on exercise change
+            updateBalance(); 
         }
         function recalcExercises(w) {
             exPlan.forEach(p => { p.k = Math.round(p.f * w * (p.d / 60)); });
